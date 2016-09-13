@@ -6,9 +6,11 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Pair;
 import android.view.MotionEvent;
 
 import com.example.ggamedirdev.BitmapUtil;
+import com.example.ggamedirdev.listview.ListViewLayer.IndexPath;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
@@ -16,153 +18,435 @@ import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.stage.StageManager;
 
-public class ListViewLayer extends Layer{
-	private List<? extends ILayer> mlayers;
+public class ListViewLayer extends ScrollViewLayer{
+	private List<ALayer> sectionContentLayers = new ArrayList<ALayer>();
+	private List<ALayer> contentLayers = new ArrayList<ALayer>();
+	private List<? extends ALayer> sectionLayers;
+	private List<? extends ALayer> itemLayers;
+	private List<Integer> nullSectionsPosition = new ArrayList<Integer>();
+	private List<Integer> nullItemsPosition = new ArrayList<Integer>();
+	
 	private float itemHeight;
 	
-	public static final int SCROLL_LIMIT_DEFAULT = 0;
-	public static final int SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP = 1;
-	public static final int SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM = 2;
-	public static final int SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW = 4;
 	
-	private int listviewFlag = SCROLL_LIMIT_DEFAULT;
 	
-	SingleFingerGesture gestureDetector;
+	private ListViewLayerListener listViewLayerListener = new DefaultListViewLayerListener() {
+
+		@Override
+		public int numberOfItemsInSection(int section) {
+			// TODO Auto-generated method stub
+			return contentLayers.size();
+		}
+	};
 	
-	public void setListViewFlag(int listviewFlag){
-		this.listviewFlag = listviewFlag;
+	private ALayer getItemAtIndexPath(IndexPath indexPath){
+		return contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition());
 	}
 	
-	public int getListViewFlag(){
-		return this.listviewFlag;
+	private ALayer getSectionAtIndexPath(IndexPath indexPath){
+		return sectionContentLayers.get(indexPath.getSection());
 	}
 	
-	public void addListViewFlag(int listviewFlag){
-		this.listviewFlag = this.listviewFlag|listviewFlag;
+	public abstract class DefaultListViewLayerListener implements ListViewLayerListener{
+		@Override
+		public ALayer itemForPositionAtIndexPath(ALayer contentLayer, IndexPath indexPath) {
+			return contentLayer;
+		}
+		@Override
+		public ALayer sectionForPostionAtIndexPath(ALayer sectionContentLayer,IndexPath indexPath) {
+			return sectionContentLayer;
+		}
+		
+		@Override
+		public int numberOfSections(){
+			return sectionContentLayers.size();
+		}
+		@Override
+		public int heightForItemAtIndexPath(IndexPath indexPath){
+			return itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath).getHeight();
+		}
+		@Override
+		public int heightForSectionAtIndexPath(IndexPath indexPath){
+			return sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath).getHeight();
+		}
+		@Override
+		public int heightForSectionHeaderSpaceAtIndexPath(IndexPath indexPath){
+			return 50;
+		}
+		@Override
+		public int heightForSectionFooterSpaceAtIndexPath(IndexPath indexPath){
+			return 50;
+		}
+		@Override
+		public void didSelected(IndexPath indexPath) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void didUnSelected(IndexPath indexPath) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 	
-	public void removeListViewFlag(int listviewFlag){
-		this.listviewFlag &= ~listviewFlag;
+	public void scrollToItemPosition(IndexPath indexPath){
+		ALayer layer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);
+		float dy = 0 - layer.getTop();
+		scroll(dy);
 	}
 	
-//	class SingleFingerScroll {
-//		boolean startScroll;
-//		
-//		public boolean onTouchEvent(MotionEvent event){
-//			
-//			
-//			
-//			if(!startScroll){
-//				if(Math.abs(e1.getY() - e2.getY())>5){
-//					startScroll = true;
-//					for(ILayer layer : mlayers){
-//						MotionEvent cancelEvent = MotionEvent.obtain(e2);
-//						cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
-//						layer.onTouchEvent(cancelEvent);
-//					}
-//				}else
-//					return true;
-//			}
-//			
-//			for(ILayer layer : mlayers){
-////				MotionEvent cancelEvent = MotionEvent.obtain(e2);
-////				cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
-////				layer.onTouchEvent(cancelEvent);
-////				layer.addFlag(TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE);
-//				layer.setY(layer.getY() - distanceY);
-//			}
-//		}
-//	}
+	public void scrollToSectionPosition(IndexPath indexPath){
+		ALayer layer = listViewLayerListener.sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath);
+		float dy = 0 - layer.getTop();
+		scroll(dy);
+	}
+	
+	public void scroll(float dy){
+		for(ALayer layer : sectionContentLayers){
+			layer.setY(layer.getY() + dy);
+		}
+		for(ALayer layer : contentLayers){
+			layer.setY(layer.getY() + dy);
+		}
+	}
+	
+	public class IndexPath{
+		private int section;
+		private int position;
+		
+		public int getSection() {
+			return section;
+		}
+		public int getPosition() {
+			return position;
+		}
+		public void setSection(int section) {
+			this.section = section;
+		}
+		public void setPosition(int position) {
+			this.position = position;
+		}
+	}
+	
+	public interface OnSelectListener{
+		public void didSelected(IndexPath indexPath);
+		public void didUnSelected(IndexPath indexPath);
+	}
+	
+	public interface ListViewLayerListener extends OnSelectListener{
+		public ALayer itemForPositionAtIndexPath(ALayer contentLayer,
+				IndexPath indexPath);
+
+		public ALayer sectionForPostionAtIndexPath(ALayer sectionContentLayer,
+				IndexPath indexPath);
+
+		public int numberOfSections();
+
+		public int numberOfItemsInSection(int section);
+		
+		public int heightForSectionAtIndexPath(IndexPath indexPath);
+
+		public int heightForItemAtIndexPath(IndexPath indexPath);
+		
+		public int heightForSectionHeaderSpaceAtIndexPath(IndexPath indexPath);
+		
+		public int heightForSectionFooterSpaceAtIndexPath(IndexPath indexPath);
+	}
 	
 	public ListViewLayer() {
 		// TODO Auto-generated constructor stub
-//		setWidth(200);
-//		setHeight(1850);
 		setPosition(70, 70);
 		setBackgroundColor(Color.BLUE);
 		addFlag(TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN);
 		
-		itemHeight = 100;
+		itemHeight = 60;
 		
-//		initButtons();
+		
+		
+		initButtons();
 //		initSprites();
-		initClipSprites();
+//		initClipSprites();
 		
 
-
+	}
+	
+	@Override
+	protected void willStartScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		MotionEvent cancelEvent = MotionEvent.obtain(e2);
+		cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
 		
-		gestureDetector = new SingleFingerGesture(StageManager.getCurrentStage(), new SingleFingerGesture.OnGestureListener() {
-			boolean startScroll;
+		for(ILayer layer : sectionContentLayers){
+			layer.onTouchEvent(cancelEvent);
+		}
+		for(ILayer layer : contentLayers){
+			layer.onTouchEvent(cancelEvent);
+		}
+	}
+	
+	@Override
+	protected void scrollContents(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		for(ILayer layer : sectionContentLayers){
+			layer.setY(layer.getY() - distanceY);
+		}
+		for(ILayer layer : contentLayers){
+			layer.setY(layer.getY() - distanceY);
+		}
+	}
+
+	@Override
+	public void frameTrig() {
+		// TODO Auto-generated method stub
+		super.frameTrig();
+		nullSectionsPosition.clear();
+		nullItemsPosition.clear();
+		
+		IndexPath indexPath = new IndexPath();
+		int numberOfSections = listViewLayerListener.numberOfSections();
+		float newY = topY;
+		int currentPosition = 0;
+		for(int iSec = 0; iSec < numberOfSections; iSec++){
+			indexPath.setSection(iSec);
 			
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				// TODO Auto-generated method stub
-//				startScroll = false;
-				return false;
-			}
+			int sectionHeaderHeight = listViewLayerListener.heightForSectionHeaderSpaceAtIndexPath(indexPath);
+			newY += sectionHeaderHeight;
+			ALayer sectionLayer = listViewLayerListener.sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath);
 			
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// TODO Auto-generated method stub
+			boolean isSectionLayerNull = false;
+			if(sectionLayer!=null){
+				int sectionHeight = listViewLayerListener.heightForSectionAtIndexPath(indexPath);
 				
-			}
-			
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-					float distanceY) {
-				// TODO Auto-generated method stub
-				if(!startScroll){
-//					if(Math.abs(e1.getY() - e2.getY())>5){
-						startScroll = true;
-						distanceY = distanceY > 0 ? 1:-1;
-						for(ILayer layer : mlayers){
-							MotionEvent cancelEvent = MotionEvent.obtain(e2);
-							cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
-							layer.onTouchEvent(cancelEvent);
-						}
-//					}else
-//						return true;
+				if(sectionLayer.getHeight() != sectionHeight){
+					sectionLayer.setHeight(sectionHeight);
 				}
-//				if(e1.getY() > e2.getY() + 50)
-					for(ILayer layer : mlayers){
-//						MotionEvent cancelEvent = MotionEvent.obtain(e2);
-//						cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
-//						layer.onTouchEvent(cancelEvent);
-//						layer.addFlag(TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE);
-						layer.setY(layer.getY() - distanceY);
-					}
-//				}
-					
-				return true;
+				if(sectionLayer.getY() != newY){
+					sectionLayer.setY(newY);
+				}
+				newY += sectionHeight;
+			}else{
+				isSectionLayerNull = true;
+				nullSectionsPosition.add(currentPosition);
 			}
 			
-			@Override
-			public void onLongPress(MotionEvent e) {
-				// TODO Auto-generated method stub
+			int numberOfItems = listViewLayerListener.numberOfItemsInSection(iSec);
+			
+			if(isSectionLayerNull){
+				currentPosition += numberOfItems;
+				continue;
+			}
+			
+			for(int iItem = 0; iItem < numberOfItems; iItem++){
+				indexPath.setPosition(iItem);
 				
+				ALayer itemLayer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);
+				
+				if(itemLayer!=null){
+					int itemHeight = listViewLayerListener.heightForItemAtIndexPath(indexPath);
+					
+					if(itemLayer.getHeight() != itemHeight){
+						itemLayer.setHeight(itemHeight);
+					}
+					if(itemLayer.getY() != newY){
+						itemLayer.setY(newY);
+					}
+					newY += itemHeight;
+				}else{
+					nullItemsPosition.add(currentPosition);
+				}
+				currentPosition++;
 			}
 			
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-					float velocityY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
+			int sectionFooterHeight = listViewLayerListener.heightForSectionFooterSpaceAtIndexPath(indexPath);
+			newY += sectionFooterHeight;
+			currentPosition++;
+		}
+		
+		bottomY = newY;
+	}
+	
+	private ALayer createSectionAndItemContentLayers(float positionY, int height){
+		ButtonLayer defaultSectionLayer = new ButtonLayer();
+		defaultSectionLayer.setHeight(height);
+//		defaultSectionLayer.setWidth(width);
+		LayerParam layerParam = new LayerParam();
+		layerParam.setEnabledPercentageSizeW(true);
+		layerParam.setPercentageW(1.0f);
+		defaultSectionLayer.setLayerParam(layerParam);
+		defaultSectionLayer.setOnClickListener(new ButtonLayer.OnClickListener() {
 			
 			@Override
-			public boolean onDown(MotionEvent e) {
+			public void onClick(ButtonLayer buttonLayer) {
 				// TODO Auto-generated method stub
-				startScroll = false;
-				return false;
+				listViewLayerListener.didSelected(getItemPosition(buttonLayer));
 			}
 		});
-		
-		gestureDetector.setIsLongpressEnabled(false);
+		return defaultSectionLayer;
 	}
+	
+	/**
+	 * @param layers 
+	 * 			the layers you set to {@code ListViewLayer} as items. They be added to {@code ListViewLayer} as children, so need to use {@link #removeItems()}.
+	 */
+	public void setItems(List<? extends ALayer> layers){
+		removeItems();
+		
+		if(sectionContentLayers.size()==0){
+//			ALayer defaultSectionLayer = new Layer();
+			ALayer sectionContentLayer = createSectionAndItemContentLayers(0, (int)itemHeight);
+			addChild(sectionContentLayer);
+			sectionContentLayers.add(sectionContentLayer);
+		}
+		
+		itemLayers = layers;
+		
+		if(itemLayers==null)
+			return;
+		
+		int y = 0;
+		for(ILayer layer : itemLayers){
+//			ALayer contentLayer = new Layer();
+//			contentLayer.setWidth(getWidth());
+//			contentLayer.setHeight((int)itemHeight);
+//			contentLayer.setY(y);
+			ALayer contentLayer = createSectionAndItemContentLayers(y, (int)itemHeight);
+			contentLayers.add(contentLayer);
+			contentLayer.addChild(layer);
+			addChild(contentLayer);
+			if(isClipOutside())
+				contentLayer.setIsClipOutside(isClipOutside());
+			y += (int)itemHeight;
+		}
+	}
+	
+	public void setSections(List<? extends ALayer> layers){
+		removeSections();
+		
+		sectionLayers = layers;
+		int y = 0;
+		for(ILayer layer : sectionLayers){
+//			ALayer sectionContentLayer = new Layer();
+//			sectionContentLayer.setWidth(getWidth());
+//			sectionContentLayer.setHeight((int)itemHeight);
+//			sectionContentLayer.setY(y);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers(y, (int)itemHeight);
+			sectionContentLayers.add(sectionContentLayer);
+			sectionContentLayer.addChild(layer);
+			addChild(sectionContentLayer);
+			if(isClipOutside())
+				sectionContentLayer.setIsClipOutside(isClipOutside());
+			y += (int)itemHeight;
+		}
+	}
+	
+	/**
+	 * Remove items from {@code ListViewLayer}, it make the items do {@link #removeFromParent()};
+	 */
+	public void removeItems(){
+		for(ALayer layer : contentLayers){
+			layer.removeFromParent();
+		}
+		
+		contentLayers.clear();
+		nullItemsPosition.clear();
+		
+		if(itemLayers==null)
+			return;
+		
+		for(ILayer layer : itemLayers){
+			layer.removeFromParent();
+		}
+		
+		itemLayers.clear();
+	}
+	
+	public void removeSections(){
+		for(ALayer layer : sectionContentLayers){
+			layer.removeFromParent();
+		}
+		
+		sectionContentLayers.clear();
+		nullSectionsPosition.clear();
+		
+		if(sectionLayers==null)
+			return;
+		
+		for(ILayer layer : sectionLayers){
+			layer.removeFromParent();
+		}
+		
+		sectionLayers.clear();
+	}
+	
+	@Override
+	public void setWidth(int w) {
+		// TODO Auto-generated method stub
+		super.setWidth(w);
+		for(ILayer layer : contentLayers){
+			layer.setWidth(getWidth());
+		}
+	}
+	
+	@Override
+	public void setIsClipOutside(boolean isClipOutside) {
+		// TODO Auto-generated method stub
+		super.setIsClipOutside(isClipOutside);
+		for(ALayer layer : contentLayers){
+			layer.setIsClipOutside(isClipOutside());
+		}
+	}
+	
+	public int getSectionsCount(){
+		for(ALayer layer : sectionContentLayers){
+			
+		}
+		return itemLayers.size();
+	}
+	
+//	private int getItemsCount(){
+//		
+//	}
+	
+	public IndexPath getItemPosition(ALayer contentLayer){
+		IndexPath indexPath = null;
+		int position = contentLayers.indexOf(contentLayer);
+		int sectionNum = listViewLayerListener.numberOfSections();
+		int currentPosition = 0;
+		for(int iSec = 0; iSec < sectionNum; iSec++){
+			int numberOfItemsInSection = listViewLayerListener.numberOfItemsInSection(iSec);
+			
+			if(nullSectionsPosition.contains(iSec)){
+				currentPosition += numberOfItemsInSection;
+				continue;
+			}
+			
+			
+			for(int iItem = 0; iItem < numberOfItemsInSection; iItem++){
+				if(nullItemsPosition.contains(iItem)){
+					currentPosition++;
+					continue;
+				}
+				
+				if(position == currentPosition){
+					indexPath = new IndexPath();
+					indexPath.setSection(iSec);
+					indexPath.setPosition(position);
+					break;
+				}
+				
+				currentPosition++;
+			}
+			
+			currentPosition++;
+		}
+		return indexPath;
+	}
+	
+//	private int numberOfSections
 	
 	private void initClipSprites(){
 		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
+//		itemLayers = layers;
 		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
 		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
 		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
@@ -190,10 +474,8 @@ public class ListViewLayer extends Layer{
 			layer.setYscale(0.5f);
 			layer.setRotation(45);
 			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
+//			addChild(layer);
+//			y += itemHeight;
 			layer.setOnLayerClickListener(new OnLayerClickListener() {
 				
 				@Override
@@ -203,11 +485,13 @@ public class ListViewLayer extends Layer{
 				}
 			});
 		}
+		
+		setItems(layers);
 	}
 	
 	private void initSprites(){
 		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
+		itemLayers = layers;
 		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
 		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
 		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
@@ -246,7 +530,7 @@ public class ListViewLayer extends Layer{
 	
 	private void initButtons(){
 		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-		mlayers = layers;
+//		itemLayers = layers;
 		layers.add(new ButtonLayer("1", 100, (int) itemHeight, false));
 		layers.add(new ButtonLayer("2", 100, (int) itemHeight, false));
 		layers.add(new ButtonLayer("3", 100, (int) itemHeight, false));
@@ -266,9 +550,9 @@ public class ListViewLayer extends Layer{
 			layer.setBackgroundColor(Color.RED);
 			layer.setTextColor(Color.WHITE);
 			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
+//			addChild(layer);
 //			layer.setIsClipOutside(true);
-			y += itemHeight;
+//			y += itemHeight;
 			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
 				
 				@Override
@@ -278,6 +562,8 @@ public class ListViewLayer extends Layer{
 				}
 			});
 		}
+		
+		setItems(layers);
 	}
 	
 	
@@ -285,51 +571,9 @@ public class ListViewLayer extends Layer{
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);
-			
-//		Paint mPaint = new Paint();
-//		mPaint.setColor(Color.BLUE);
-//		for(ILayer layer : mlayers){
-//			canvas.drawRect(layer.getFrame(), mPaint);
-//		}
-		
 	}
 	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-		if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_UP 
-				|| (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP){
-			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-			super.onTouchEvent(event);
-			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-			super.onTouchEvent(event);
-			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-			return gestureDetector.onTouchEvent(event);
-		}else{
-			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-			if(super.onTouchEvent(event)){
-				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-				return gestureDetector.onTouchEvent(event);
-			}else{
-				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-				addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-				if(super.onTouchEvent(event)){
-					removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-					return gestureDetector.onTouchEvent(event);
-				}
-				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-			}
-		}
-		return false;
-	}
 
-	@Override
-	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public void setEnableMultiTouch(boolean isEnableMultiTouch) {

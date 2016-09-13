@@ -63,7 +63,7 @@ public class MyScene extends EasyScene{
 	private DetectArea rectDetectArea;
 	private DetectArea circleDetectArea;
 	private DetectArea pointDetectArea;
-	private ListViewLayer listViewLayer;
+	private ScrollViewLayer listViewLayer;
 	private SelectViewLayer selectViewLayer;
 	private ScaleGuestureViewLayer scaleGuestureViewLayer;
 	private ScrollViewLayer scrollViewLayer;
@@ -169,14 +169,17 @@ public class MyScene extends EasyScene{
 		pointMsgLayer.setPaint(paint);
 		
 		listViewLayer = new ListViewLayer();
+		listViewLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
 		listViewLayer.setWidth(200);
-		listViewLayer.setHeight(1850);
+//		listViewLayer.setHeight(850);
+		listViewLayer.setHeight(500);
 		listViewLayer.setAutoAdd(true);
 		
 		selectViewLayer = new SelectViewLayer();
 		selectViewLayer.setWidth(200);
 		selectViewLayer.setHeight(1850);
-		selectViewLayer.setAutoAdd(true);
 		
 //		scaleGuestureViewLayer = new ScaleGuestureViewLayer();
 //		scaleGuestureViewLayer.setPosition(500, 200);
@@ -217,6 +220,7 @@ public class MyScene extends EasyScene{
 	@Override
 	public void process() {
 		// TODO Auto-generated method stub
+		listViewLayer.frameTrig();
 		checkPlayerMoved();
 		checkDetectAreasCollision();
 		tickTime();
@@ -329,6 +333,7 @@ public class MyScene extends EasyScene{
 		// TODO Auto-generated method stub
 		gameTimeUtil = new GameTimeUtil(1000);
 //		getCamera().setLocation(gameview.getWidth()/2, gameview.getHeight()/2);
+		/*
 		Camera camera = new Camera(0, 0, gameview.getWidth()+500, gameview.getHeight());
 		setCamera(camera);
 //		getCamera().translate(1500, 1500);
@@ -339,7 +344,7 @@ public class MyScene extends EasyScene{
 		getCamera().getViewPortRectF();
 		
 		getCamera().applyCameraSpaceToViewPort();
-		
+		*/
 //		getCamera().applyCameraScale();
 //		getCamera().applyCameraRotate();
 //		getCamera().applyCameraTranslate();
