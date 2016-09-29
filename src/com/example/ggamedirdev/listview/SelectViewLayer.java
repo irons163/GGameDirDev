@@ -20,16 +20,11 @@ import com.example.try_gameengine.framework.Sprite;
 public class SelectViewLayer extends Layer{
 	private List<? extends ILayer> mlayers;
 	private float itemHeight;
-	
 	GestureDetector gestureDetector;
-	
 	List<ILayer> tabs;
-	
 	boolean isClickCancled = false;
-	
 	private Bitmap[] buttonBitmaps = new Bitmap[3];
 	private int[] buttonColors = new int[3];
-	
 	private final int NORMAL_INDEX = 0;
 	private final int DOWN_INDEX = 1;
 	private final int UP_INDEX = 2;
@@ -112,16 +107,11 @@ public class SelectViewLayer extends Layer{
 		
 		int x = 0;
 		for(ButtonLayer layer : layers){
-//			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
 			layer.setX(x);
 			layer.setAnchorPoint(-0.55f, -0.15f);
-//			layer.setXscale(1.5f);
-//			layer.setYscale(1.5f);
-//			layer.setRotation(45);
-//			layer.setBackgroundColor(Color.RED);
 			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);layer.setFlag(TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 			addChild(layer);
-//			layer.setIsClipOutside(true);
+			
 			x += itemHeight;
 			layer.setOnLayerClickListener(new OnLayerClickListener() {
 				
@@ -159,9 +149,7 @@ public class SelectViewLayer extends Layer{
 			layer.setYscale(1.5f);
 			layer.setRotation(45);
 			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
 			addChild(layer);
-//			layer.setIsClipOutside(true);
 			y += itemHeight;
 			layer.setOnLayerClickListener(new OnLayerClickListener() {
 				
@@ -182,11 +170,6 @@ public class SelectViewLayer extends Layer{
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);
-//		Paint mPaint = new Paint();
-//		mPaint.setColor(Color.BLUE);
-//		for(ILayer layer : mlayers){
-//			canvas.drawRect(layer.getFrame(), mPaint);
-//		}
 	}
 	
 	@Override

@@ -1,55 +1,39 @@
 package com.example.ggamedirdev.listview;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.example.ggamedirdev.BitmapUtil;
 import com.example.try_gameengine.framework.ALayer;
-import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.Layer;
-import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.stage.StageManager;
 
-public class ScrollViewLayer extends Layer{
+public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 	public static final int SCROLL_LIMIT_DEFAULT = 0;
 	public static final int SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP = 1;
 	public static final int SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM = 2;
 	public static final int SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT = 4;
 //	private List<? extends ILayer> mlayers;
-	private float itemHeight;
+//	private float itemHeight;
 	
 //	GestureDetector gestureDetector;
-	SingleFingerGesture gestureDetector;
+	protected SingleFingerGesture gestureDetector;
 	
-	List<ILayer> tabs;
-	
-	boolean isClickCancled = false;
-	
-	private Bitmap[] buttonBitmaps = new Bitmap[3];
-	private int[] buttonColors = new int[3];
-	private boolean hasButtonColors;
-	
-	private final int NORMAL_INDEX = 0;
-	private final int DOWN_INDEX = 1;
-	private final int UP_INDEX = 2;
+//	List<ILayer> tabs;
+
 	protected int scrollFlag = SCROLL_LIMIT_DEFAULT;
 	protected float topY = 0;
 	protected float bottomY = 0;
+	protected boolean isInvalidate = false;
+	protected boolean isAutoRefresh = false;
 	
 	public ScrollViewLayer() {
-		// TODO Auto-generated constructor stub
 		
 //		initButtons();
 //		initSprites();
-		initClipSpritess();
+//		initClipSpritess();
 		
 		gestureDetector = new SingleFingerGesture(StageManager.getCurrentStage(), new SingleFingerGesture.OnGestureListener() {
 			boolean startScroll;
@@ -69,9 +53,9 @@ public class ScrollViewLayer extends Layer{
 			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 					float distanceY) {
 				// TODO Auto-generated method stub
-				if(listViewLayerListener.numberOfSections()==0 && listViewLayerListener.numberOfItemsInSection(0)==0)
-					return false;
 				
+				if(!checkScrollable(e1, e2, distanceX, distanceY))
+					return false;
 //				ALayer firstContentLayer = contentLayers.get(0);
 //				if(-distanceY + firstContentLayer.getTop() > 0 
 //						&& (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
@@ -234,6 +218,8 @@ public class ScrollViewLayer extends Layer{
 				
 				topY = topY - distanceY;
 				bottomY = bottomY - distanceY;
+				
+				invalidate();
 					
 				return true;
 			}
@@ -261,14 +247,26 @@ public class ScrollViewLayer extends Layer{
 		gestureDetector.setIsLongpressEnabled(false);
 	}
 	
-	protected void scrollContents(MotionEvent e1, MotionEvent e2, float distanceX,
+	protected boolean checkScrollable(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
-		
+		return true;
 	}
 	
 	protected void willStartScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
+		MotionEvent cancelEvent = MotionEvent.obtain(e2);
+		cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
 		
+		for(ILayer layer : getLayers()){
+			layer.onTouchEvent(cancelEvent);
+		}
+	}
+	
+	protected void scrollContents(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		for(ILayer layer : getLayers()){
+			layer.setY(layer.getY() - distanceY);
+		}
 	}
 	
 //	private void initClipSpritess(){
@@ -344,19 +342,62 @@ public class ScrollViewLayer extends Layer{
 //		}
 //	}
 	
-	public void setSeleteView(){
-		
+	@Override
+	public void addChild(ILayer layer) {
+		// TODO Auto-generated method stub
+		super.addChild(layer);
+		invalidate();
 	}
 	
 	@Override
-	public void drawSelf(Canvas canvas, Paint paint) {
+	public void frameTrig() {
 		// TODO Auto-generated method stub
+		if(isAutoRefresh() || isInvalidate){
+			refresh();
+			isInvalidate = false;
+		}
+		super.frameTrig();
+	}
+	
+	public void refresh(){
+		for(ILayer layer : getLayers()){
+			float childTop = this.locationInLayer(0, layer.getFrameInScene().top).y;
+			topY = childTop < topY ? childTop : topY;
+			float childBottom = this.locationInLayer(0, layer.getFrameInScene().bottom).y;
+			bottomY = childBottom > bottomY ? childBottom : bottomY;
+		}
+	}
+	
+	public void invalidate(){
+		isInvalidate = true;
+	}
+	
+	public boolean isAutoRefresh() {
+		return isAutoRefresh;
+	}
+	
+	public void setTopChildren(){
+		if(getLayers().size()>0){
+			topY = this.locationInLayer(0, getLayers().get(0).getFrameInScene().top).y;
+			bottomY = this.locationInLayer(0, getLayers().get(getLayers().size()-1).getFrameInScene().bottom).y;
+		}
+	}
+
+	/**
+	 * set auto refresh, if true, it refresh by each game loop process. It infect performance.
+	 * @param isAutoRefresh
+	 */
+	public void setAutoRefresh(boolean isAutoRefresh) {
+		this.isAutoRefresh = isAutoRefresh;
+	}
+
+	@Override
+	public void drawSelf(Canvas canvas, Paint paint) {
 		super.drawSelf(canvas, paint);
 	}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
 		int savedFlag = getFlag();
 		if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_UP 
 				|| (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP){
@@ -391,37 +432,194 @@ public class ScrollViewLayer extends Layer{
 		return false;
 	}
 
+//	@Override
+//	protected void onTouched(MotionEvent event) {
+//		
+//		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
+//			if(hasButtonColors)
+//				setBackgroundColor(buttonColors[DOWN_INDEX]);
+//			if(buttonBitmaps[DOWN_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[DOWN_INDEX];
+//			}
+//			isClickCancled = false;
+//		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && isPressed()){
+//
+//		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && !isPressed()){
+//			if(hasButtonColors)
+//				setBackgroundColor(buttonColors[NORMAL_INDEX]);
+//			if(buttonBitmaps[NORMAL_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[NORMAL_INDEX];
+//			}
+//			isClickCancled = true;
+//		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
+//			if(hasButtonColors)	
+//				setBackgroundColor(buttonColors[UP_INDEX]);
+//			if(buttonBitmaps[UP_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[UP_INDEX];
+//			}
+//		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed() && !isClickCancled){
+//			if(hasButtonColors)
+//				setBackgroundColor(buttonColors[UP_INDEX]);
+//			if(buttonBitmaps[UP_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[UP_INDEX];
+//			}
+//		}
+//	}
+	
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
+		// TODO Auto-generated method stub
+//		super.onTouched(event);
+		touchStatusListener.onTouched(event);
+	}
+	
+	public void setBitmap(Bitmap bitmap) {
+		super.setBitmap(bitmap);
+	}
+	
+	protected ITouchStatusListener touchStatusListener = new DefaultTouchStatusListener(this);
+	
+	public void setTouchStatusListener(ITouchStatusListener touchStatusListener){
+		this.touchStatusListener = touchStatusListener;
+	}
+	
+	public abstract class TouchStatusListener implements ITouchStatusListener{
+		protected boolean isClickCancled = false;
 		
-		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
-			if(hasButtonColors)
-				setBackgroundColor(buttonColors[DOWN_INDEX]);
-			if(buttonBitmaps[DOWN_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_INDEX];
+		public void onTouched(MotionEvent event) {
+			if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
+				onTouchDown(event);
+			}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && isPressed()){
+				onTouchMoveInRange(event);
+			}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && !isPressed()){
+				onTouchMoveOutRange(event);
+			}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
+				onTouchUpWithOutPress(event);
+			}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed() && !isClickCancled){
+				onTouchUpWithPress(event);
+			}
+		}
+		
+		public abstract void onTouchDown(MotionEvent event);
+		public abstract void onTouchMoveInRange(MotionEvent event);
+		public abstract void onTouchMoveOutRange(MotionEvent event);
+		public abstract void onTouchUpWithOutPress(MotionEvent event);
+		public abstract void onTouchUpWithPress(MotionEvent event);
+	}
+	
+	public class DefaultTouchStatusListener extends TouchStatusListener{
+		protected final int NORMAL_INDEX = 0;
+		protected final int DOWN_INDEX = 1;
+		protected final int UP_INDEX = 2;
+		protected final int INDEX_SIZE = 3;
+		
+		protected Bitmap[] touchedBitmaps = new Bitmap[INDEX_SIZE];
+		protected int[] touchedColors = new int[INDEX_SIZE];
+		protected boolean hasTouchedColors;
+		private ALayer layer;
+		
+		public DefaultTouchStatusListener(ALayer layer) {
+			this.layer = layer;
+		}
+		
+		@Override
+		public void onTouchDown(MotionEvent event) {
+			// TODO Auto-generated method stub
+			if(hasTouchedColors)
+				layer.setBackgroundColor(touchedColors[DOWN_INDEX]);
+			if(touchedBitmaps[DOWN_INDEX]!=null){
+				layer.setBitmap(touchedBitmaps[DOWN_INDEX]);
 			}
 			isClickCancled = false;
-		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && isPressed()){
+		}
 
-		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && !isPressed()){
-			if(hasButtonColors)
-				setBackgroundColor(buttonColors[NORMAL_INDEX]);
-			if(buttonBitmaps[NORMAL_INDEX]!=null){
-				this.bitmap = buttonBitmaps[NORMAL_INDEX];
+		@Override
+		public void onTouchMoveInRange(MotionEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTouchMoveOutRange(MotionEvent event) {
+			// TODO Auto-generated method stub
+			if(hasTouchedColors)
+				layer.setBackgroundColor(touchedColors[NORMAL_INDEX]);
+			if(touchedBitmaps[NORMAL_INDEX]!=null){
+				layer.setBitmap( touchedBitmaps[NORMAL_INDEX]);
 			}
 			isClickCancled = true;
-		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
-			if(hasButtonColors)	
-				setBackgroundColor(buttonColors[UP_INDEX]);
-			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+		}
+
+		@Override
+		public void onTouchUpWithOutPress(MotionEvent event) {
+			// TODO Auto-generated method stub
+			if(hasTouchedColors)	
+				layer.setBackgroundColor(touchedColors[UP_INDEX]);
+			if(touchedBitmaps[UP_INDEX]!=null){
+				layer.setBitmap( touchedBitmaps[UP_INDEX]);
 			}
-		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed() && !isClickCancled){
-			if(hasButtonColors)
-				setBackgroundColor(buttonColors[UP_INDEX]);
-			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+		}
+
+		@Override
+		public void onTouchUpWithPress(MotionEvent event) {
+			// TODO Auto-generated method stub
+			if(hasTouchedColors)
+				layer.setBackgroundColor(touchedColors[UP_INDEX]);
+			if(touchedBitmaps[UP_INDEX]!=null){
+				layer.setBitmap(touchedBitmaps[UP_INDEX]);
 			}
+		}
+		
+		/**
+		 * set touched bitmaps.
+		 * @param bitmaps with Bitmap normal, Bitmap down , Bitmap up.
+		 */
+		@Override
+		public void setTouchedBitmaps(Bitmap[] bitmaps){
+			this.touchedBitmaps[NORMAL_INDEX] = bitmaps[NORMAL_INDEX];
+			this.touchedBitmaps[DOWN_INDEX] = bitmaps[DOWN_INDEX];
+			this.touchedBitmaps[UP_INDEX] = bitmaps[UP_INDEX];
+		}
+		
+		
+		/**
+		 * set array reference to touched bitmaps. 
+		 * @param bitmaps bitmaps array.
+		 */
+		@Override
+		public void setTouchedBitmapsArrayReference(Bitmap[] bitmaps){
+			this.touchedBitmaps = bitmaps;
+		}
+		
+		/**
+		 * set touched colors.
+		 * @param colors with int normal, int down , int up.
+		 */
+		@Override
+		public void setTouchedColors(int[] colors){
+//			setBackgroundColor(normal);
+			touchedColors[NORMAL_INDEX] = colors[NORMAL_INDEX];
+			touchedColors[DOWN_INDEX] = colors[DOWN_INDEX];
+			touchedColors[UP_INDEX] = colors[UP_INDEX];
+			hasTouchedColors = true;
+		}
+		
+		/**
+		 * set array reference to touched colors. 
+		 * @param colors colors array.
+		 */
+		@Override
+		public void setTouchedColorsArrayReference(int[] colors){
+			this.touchedColors = colors;
+		}
+		
+		@Override
+		public void setTouchedColorsNone(){
+//			setBackgroundColorNone();
+			touchedColors[NORMAL_INDEX] = NONE_COLOR;
+			touchedColors[DOWN_INDEX] = NONE_COLOR;
+			touchedColors[UP_INDEX] = NONE_COLOR;
+			hasTouchedColors = false;
 		}
 	}
 
@@ -439,5 +637,35 @@ public class ScrollViewLayer extends Layer{
 
 	public void removeScrollFlag(int scrollFlag) {
 		this.scrollFlag &= ~scrollFlag;
+	}
+
+	@Override
+	public void setTouchedBitmaps(Bitmap[] bitmaps) {
+		// TODO Auto-generated method stub
+		touchStatusListener.setTouchedBitmaps(bitmaps);
+	}
+
+	@Override
+	public void setTouchedBitmapsArrayReference(Bitmap[] bitmaps) {
+		// TODO Auto-generated method stub
+		touchStatusListener.setTouchedBitmapsArrayReference(bitmaps);
+	}
+
+	@Override
+	public void setTouchedColors(int[] colors) {
+		// TODO Auto-generated method stub
+		touchStatusListener.setTouchedColors(colors);
+	}
+
+	@Override
+	public void setTouchedColorsArrayReference(int[] colors) {
+		// TODO Auto-generated method stub
+		touchStatusListener.setTouchedColorsArrayReference(colors);
+	}
+
+	@Override
+	public void setTouchedColorsNone() {
+		// TODO Auto-generated method stub
+		touchStatusListener.setTouchedColorsNone();
 	}
 }

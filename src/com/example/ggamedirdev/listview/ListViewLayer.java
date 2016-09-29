@@ -6,17 +6,13 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Pair;
 import android.view.MotionEvent;
 
 import com.example.ggamedirdev.BitmapUtil;
-import com.example.ggamedirdev.listview.ListViewLayer.IndexPath;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
-import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.Sprite;
-import com.example.try_gameengine.stage.StageManager;
 
 public class ListViewLayer extends ScrollViewLayer{
 	private List<ALayer> sectionContentLayers = new ArrayList<ALayer>();
@@ -25,27 +21,18 @@ public class ListViewLayer extends ScrollViewLayer{
 	private List<? extends ALayer> itemLayers;
 	private List<Integer> nullSectionsPosition = new ArrayList<Integer>();
 	private List<Integer> nullItemsPosition = new ArrayList<Integer>();
-	
-	private float itemHeight;
-	
-	
+	private int sectionContentLayerHeight = 60; //default 60
+	private int itemContentLayerHeight = 60; //default 60
+	private int heightForSectionHeaderSpace = 50; //default 50
+	private int heightForSectionFooterSpace = 50; //default 50
 	
 	private ListViewLayerListener listViewLayerListener = new DefaultListViewLayerListener() {
-
 		@Override
 		public int numberOfItemsInSection(int section) {
 			// TODO Auto-generated method stub
 			return contentLayers.size();
 		}
 	};
-	
-	private ALayer getItemAtIndexPath(IndexPath indexPath){
-		return contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition());
-	}
-	
-	private ALayer getSectionAtIndexPath(IndexPath indexPath){
-		return sectionContentLayers.get(indexPath.getSection());
-	}
 	
 	public abstract class DefaultListViewLayerListener implements ListViewLayerListener{
 		@Override
@@ -63,19 +50,21 @@ public class ListViewLayer extends ScrollViewLayer{
 		}
 		@Override
 		public int heightForItemAtIndexPath(IndexPath indexPath){
-			return itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath).getHeight();
+//			return itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath).getHeight();
+			return itemContentLayerHeight;
 		}
 		@Override
 		public int heightForSectionAtIndexPath(IndexPath indexPath){
-			return sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath).getHeight();
+//			return sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath).getHeight();
+			return sectionContentLayerHeight;
 		}
 		@Override
 		public int heightForSectionHeaderSpaceAtIndexPath(IndexPath indexPath){
-			return 50;
+			return heightForSectionHeaderSpace;
 		}
 		@Override
 		public int heightForSectionFooterSpaceAtIndexPath(IndexPath indexPath){
-			return 50;
+			return heightForSectionFooterSpace;
 		}
 		@Override
 		public void didSelected(IndexPath indexPath) {
@@ -155,19 +144,17 @@ public class ListViewLayer extends ScrollViewLayer{
 	
 	public ListViewLayer() {
 		// TODO Auto-generated constructor stub
-		setPosition(70, 70);
-		setBackgroundColor(Color.BLUE);
 		addFlag(TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN);
-		
-		itemHeight = 60;
-		
-		
 		
 		initButtons();
 //		initSprites();
 //		initClipSprites();
-		
-
+	}
+	
+	@Override
+	protected boolean checkScrollable(MotionEvent e1, MotionEvent e2,
+			float distanceX, float distanceY) {
+		return listViewLayerListener.numberOfSections()!=0;
 	}
 	
 	@Override
@@ -196,9 +183,7 @@ public class ListViewLayer extends ScrollViewLayer{
 	}
 
 	@Override
-	public void frameTrig() {
-		// TODO Auto-generated method stub
-		super.frameTrig();
+	public void refresh() {
 		nullSectionsPosition.clear();
 		nullItemsPosition.clear();
 		
@@ -290,53 +275,53 @@ public class ListViewLayer extends ScrollViewLayer{
 	 */
 	public void setItems(List<? extends ALayer> layers){
 		removeItems();
+		itemLayers = layers;
+		
+		if(itemLayers==null){
+			return;
+		}
 		
 		if(sectionContentLayers.size()==0){
-//			ALayer defaultSectionLayer = new Layer();
-			ALayer sectionContentLayer = createSectionAndItemContentLayers(0, (int)itemHeight);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers(0, (int)sectionContentLayerHeight);
 			addChild(sectionContentLayer);
 			sectionContentLayers.add(sectionContentLayer);
 		}
 		
-		itemLayers = layers;
-		
-		if(itemLayers==null)
-			return;
-		
 		int y = 0;
 		for(ILayer layer : itemLayers){
-//			ALayer contentLayer = new Layer();
-//			contentLayer.setWidth(getWidth());
-//			contentLayer.setHeight((int)itemHeight);
-//			contentLayer.setY(y);
-			ALayer contentLayer = createSectionAndItemContentLayers(y, (int)itemHeight);
+			ALayer contentLayer = createSectionAndItemContentLayers(y, (int)itemContentLayerHeight);
 			contentLayers.add(contentLayer);
 			contentLayer.addChild(layer);
 			addChild(contentLayer);
 			if(isClipOutside())
 				contentLayer.setIsClipOutside(isClipOutside());
-			y += (int)itemHeight;
+			y += (int)itemContentLayerHeight;
 		}
+		
+		invalidate();
 	}
 	
 	public void setSections(List<? extends ALayer> layers){
 		removeSections();
 		
 		sectionLayers = layers;
+		
+		if(sectionLayers==null){
+			return;
+		}
+		
 		int y = 0;
 		for(ILayer layer : sectionLayers){
-//			ALayer sectionContentLayer = new Layer();
-//			sectionContentLayer.setWidth(getWidth());
-//			sectionContentLayer.setHeight((int)itemHeight);
-//			sectionContentLayer.setY(y);
-			ALayer sectionContentLayer = createSectionAndItemContentLayers(y, (int)itemHeight);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers(y, (int)sectionContentLayerHeight);
 			sectionContentLayers.add(sectionContentLayer);
 			sectionContentLayer.addChild(layer);
 			addChild(sectionContentLayer);
 			if(isClipOutside())
 				sectionContentLayer.setIsClipOutside(isClipOutside());
-			y += (int)itemHeight;
+			y += (int)sectionContentLayerHeight;
 		}
+		
+		invalidate();
 	}
 	
 	/**
@@ -350,14 +335,18 @@ public class ListViewLayer extends ScrollViewLayer{
 		contentLayers.clear();
 		nullItemsPosition.clear();
 		
-		if(itemLayers==null)
+		if(itemLayers==null){
+			invalidate();
 			return;
+		}
 		
 		for(ILayer layer : itemLayers){
 			layer.removeFromParent();
 		}
 		
 		itemLayers.clear();
+		
+		invalidate();
 	}
 	
 	public void removeSections(){
@@ -368,14 +357,50 @@ public class ListViewLayer extends ScrollViewLayer{
 		sectionContentLayers.clear();
 		nullSectionsPosition.clear();
 		
-		if(sectionLayers==null)
+		if(sectionLayers==null){
+			invalidate();
 			return;
+		}
 		
 		for(ILayer layer : sectionLayers){
 			layer.removeFromParent();
 		}
 		
 		sectionLayers.clear();
+		
+		invalidate();
+	}
+	
+	public void setSectionContentLayerHeight(int sectionContentLayerHeight){
+		this.sectionContentLayerHeight = sectionContentLayerHeight;
+	}
+	
+	public void setItemContentLayerHeight(int itemContentLayerHeight){
+		this.itemContentLayerHeight = itemContentLayerHeight;
+	}
+	
+	public void setHeightForSectionHeaderSpace(int heightForSectionHeaderSpace){
+		this.heightForSectionHeaderSpace = heightForSectionHeaderSpace;
+	}
+	
+	public void setHeightForSectionFooterSpace(int heightForSectionFooterSpace){
+		this.heightForSectionFooterSpace = heightForSectionFooterSpace;
+	}
+	
+	public int getSectionContentLayerHeight(IndexPath indexPath){
+		return listViewLayerListener.heightForSectionAtIndexPath(indexPath);
+	}
+	
+	public int getItemContentLayerHeight(IndexPath indexPath){
+		return listViewLayerListener.heightForItemAtIndexPath(indexPath);
+	}
+	
+	public ALayer getItemAtIndexPath(IndexPath indexPath){
+		return contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition());
+	}
+	
+	public ALayer getSectionAtIndexPath(IndexPath indexPath){
+		return sectionContentLayers.get(indexPath.getSection());
 	}
 	
 	@Override
@@ -447,16 +472,16 @@ public class ListViewLayer extends ScrollViewLayer{
 	private void initClipSprites(){
 		List<Sprite> layers = new ArrayList<Sprite>();
 //		itemLayers = layers;
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemContentLayerHeight, false));
 		
 		setIsClipOutside(true);
 		
@@ -492,16 +517,16 @@ public class ListViewLayer extends ScrollViewLayer{
 	private void initSprites(){
 		List<Sprite> layers = new ArrayList<Sprite>();
 		itemLayers = layers;
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
+		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemContentLayerHeight, false));
 		
 		setIsClipOutside(true);
 		
@@ -516,7 +541,7 @@ public class ListViewLayer extends ScrollViewLayer{
 //			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
 			addChild(layer);
 //			layer.setIsClipOutside(true);
-			y += itemHeight;
+			y += itemContentLayerHeight;
 			layer.setOnLayerClickListener(new OnLayerClickListener() {
 				
 				@Override
@@ -531,16 +556,16 @@ public class ListViewLayer extends ScrollViewLayer{
 	private void initButtons(){
 		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
 //		itemLayers = layers;
-		layers.add(new ButtonLayer("1", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("2", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("3", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("4", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("5", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("6", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("7", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("8", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("9", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("100", 100, (int) itemHeight, false));
+		layers.add(new ButtonLayer("1", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("2", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("3", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("4", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("5", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("6", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("7", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("8", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("9", 100, (int) itemContentLayerHeight, false));
+		layers.add(new ButtonLayer("100", 100, (int) itemContentLayerHeight, false));
 		
 		setIsClipOutside(true);
 		

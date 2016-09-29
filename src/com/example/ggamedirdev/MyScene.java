@@ -1,5 +1,6 @@
 package com.example.ggamedirdev;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -16,21 +17,27 @@ import android.view.SurfaceHolder;
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.CheckboxLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
+import com.example.ggamedirdev.listview.ITouchStatusListener;
 import com.example.ggamedirdev.listview.ListViewLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
+import com.example.ggamedirdev.listview.TabViewLayer;
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.avg.SelectView;
+import com.example.try_gameengine.framework.ALayer;
+import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LabelLayer;
+import com.example.try_gameengine.framework.ALayer.OnLayerClickListener;
 import com.example.try_gameengine.framework.LabelLayer.LabelBaseLine;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
-import com.example.try_gameengine.remotecontroller.custome.Custome4D2FCommandType;
-import com.example.try_gameengine.remotecontroller.custome.Custome4D2FRemoteController;
+import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
+import com.example.try_gameengine.remotecontroller.custome.Custom4D2FRemoteController;
 import com.example.try_gameengine.scene.EasyScene;
 import com.example.try_gameengine.utils.DetectArea;
 import com.example.try_gameengine.utils.DetectAreaPoint;
@@ -70,6 +77,7 @@ public class MyScene extends EasyScene{
 	private CheckboxLayer checkboxLayer;
 	private EditTextLayer editTextLayer;
 	private AchievementSystemLayer achievementSystemLayer;
+	private TabViewLayer tabViewLayer;
 	
 	private void setDectecAreas(){
 		userRectDetectArea = new DetectAreaRect(userRectF);
@@ -122,12 +130,12 @@ public class MyScene extends EasyScene{
 		super(context, id, level, mode);
 		// TODO Auto-generated constructor stub
 		isEnableRemoteController(true);
-		Custome4D2FRemoteController remoteController = Custome4D2FRemoteController.createRemoteController();
+		Custom4D2FRemoteController remoteController = Custom4D2FRemoteController.createRemoteController();
 		setRemoteController(remoteController);
-		custom4d2fRemoteContollerListener.setCustom4D2FRemoteContollerListener(new Custome4D2FRemoteController.RemoteContollerListener() {
+		custom4d2fRemoteContollerListener.setCustom4D2FRemoteContollerListener(new Custom4D2FRemoteController.RemoteContollerListener() {
 			
 			@Override
-			public void pressDown(List<Custome4D2FCommandType> commandTypes) {
+			public void pressDown(List<Custom4D2FCommandType> commandTypes) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -176,21 +184,56 @@ public class MyScene extends EasyScene{
 //		listViewLayer.setHeight(850);
 		listViewLayer.setHeight(500);
 		listViewLayer.setAutoAdd(true);
+		listViewLayer.setBackgroundColor(Color.CYAN);
+		listViewLayer.setPosition(70, 70);
+		
+		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
 		
 		selectViewLayer = new SelectViewLayer();
 		selectViewLayer.setWidth(200);
 		selectViewLayer.setHeight(1850);
+		selectViewLayer.setAutoAdd(true);
 		
-//		scaleGuestureViewLayer = new ScaleGuestureViewLayer();
-//		scaleGuestureViewLayer.setPosition(500, 200);
-//		scaleGuestureViewLayer.setWidth(200);
-//		scaleGuestureViewLayer.setHeight(250);
-//		scaleGuestureViewLayer.setAutoAdd(true);
+		scaleGuestureViewLayer = new ScaleGuestureViewLayer();
+		scaleGuestureViewLayer.setPosition(500, 200);
+		scaleGuestureViewLayer.setWidth(200);
+		scaleGuestureViewLayer.setHeight(250);
+		scaleGuestureViewLayer.setAutoAdd(true);
 		
 		scrollViewLayer = new ScrollViewLayer();
-		scrollViewLayer.setPosition(650, 300);
+		scrollViewLayer.setPosition(650, 200);
 		scrollViewLayer.setWidth(150);
 		scrollViewLayer.setHeight(350);
+		scrollViewLayer.setBackgroundColor(Color.CYAN);
+		((ITouchStatusListener)scrollViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
+
+		Sprite layer = new Sprite(BitmapUtil.hamster, 100, 100, false);
+//		ButtonLayer layer = new ButtonLayer(100, 100, false);
+		
+//		setIsClipOutside(true);
+		
+
+			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
+			layer.setY(y);
+			layer.setAnchorPoint(-0.55f, 0.15f);
+//			layer.setAnchorPoint(0.0f, 0.0f);
+			layer.setXscale(1.5f);
+			layer.setYscale(1.5f);
+			layer.setRotation(45);
+			layer.setBackgroundColor(Color.RED);
+//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+//			addChild(layer);
+//			layer.setIsClipOutside(true);
+			layer.setOnLayerClickListener(new OnLayerClickListener() {
+				
+				@Override
+				public void onClick(ILayer layer) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+		scrollViewLayer.addChild(layer);
 		scrollViewLayer.setAutoAdd(true);
 		
 		checkboxLayer = new CheckboxLayer();
@@ -199,6 +242,10 @@ public class MyScene extends EasyScene{
 		checkboxLayer.setHeight(350);
 		checkboxLayer.setAutoAdd(true);
 		
+		tabViewLayer = new TabViewLayer();
+		tabViewLayer.setWidth(200);
+		tabViewLayer.setHeight(600);
+		tabViewLayer.setAutoAdd(true);
 	}
 
 	GameView gameview;
@@ -221,6 +268,7 @@ public class MyScene extends EasyScene{
 	public void process() {
 		// TODO Auto-generated method stub
 		listViewLayer.frameTrig();
+		scrollViewLayer.frameTrig();
 		checkPlayerMoved();
 		checkDetectAreasCollision();
 		tickTime();
@@ -260,9 +308,6 @@ public class MyScene extends EasyScene{
 		// TODO Auto-generated method stub
 //		sprite.drawSelf(canvas, null);
 //		LayerManager.drawLayers(canvas, null);
-		
-		boolean isHW = canvas.isHardwareAccelerated();
-		
 //		LayerManager.drawSceneLayers(canvas, null, sceneLayerLevel);
 		
 		Paint paint = new Paint();
@@ -272,8 +317,6 @@ public class MyScene extends EasyScene{
 		canvas.drawText(gameTime+"", 300, 70, paint);
 		dirMsgLayer.drawSelf(canvas, paint);
 		collisionMsgLayer.drawSelf(canvas, paint);
-		
-
 		
 		canvas.drawRect(userRectF, paint);
 		canvas.drawRect(rectF, paint);
@@ -291,7 +334,7 @@ public class MyScene extends EasyScene{
 		
 		selectViewLayer.drawSelf(canvas, null);
 		
-//		scaleGuestureViewLayer.drawSelf(canvas, null);
+		scaleGuestureViewLayer.drawSelf(canvas, null);
 		
 		scrollViewLayer.drawSelf(canvas, null);
 		

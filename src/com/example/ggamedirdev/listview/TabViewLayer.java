@@ -26,7 +26,7 @@ public class TabViewLayer extends Layer{
 	
 	public TabViewLayer() {
 		// TODO Auto-generated constructor stub
-		setPosition(70, 70);
+		setPosition(70, 670);
 		setBackgroundColor(Color.BLUE);
 		
 		itemHeight = 100;

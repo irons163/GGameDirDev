@@ -7,10 +7,10 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.example.try_gameengine.remotecontroller.custome.Custome4D2FCommandType;
-import com.example.try_gameengine.remotecontroller.custome.Custome4D2FRemoteController;
+import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
+import com.example.try_gameengine.remotecontroller.custome.Custom4D2FRemoteController;
 
-public class Custom4D2FRemoteContollerListener implements Custome4D2FRemoteController.RemoteContollerListener{
+public class Custom4D2FRemoteContollerListener implements Custom4D2FRemoteController.RemoteContollerListener{
 	private LinkedHashSet<Integer> keySequence	= new LinkedHashSet<>();
 	public static final int NONE = 0;
 	public static final int LEFT = 1;
@@ -19,22 +19,22 @@ public class Custom4D2FRemoteContollerListener implements Custome4D2FRemoteContr
 	public static final int DOWN = 4;
 	private int move = NONE;
 	boolean isPressLeftMoveBtn, isPressRightMoveBtn, isPressUpMoveBtn, isPressDownMoveBtn;
-	private ArrayList<Custome4D2FCommandType> currentCommandType = new ArrayList<>();
+	private ArrayList<Custom4D2FCommandType> currentCommandType = new ArrayList<>();
 	
-	private Custome4D2FRemoteController.RemoteContollerListener custom4d2fRemoteContollerListener = new Custome4D2FRemoteController.RemoteContollerListener() {
+	private Custom4D2FRemoteController.RemoteContollerListener custom4d2fRemoteContollerListener = new Custom4D2FRemoteController.RemoteContollerListener() {
 		
 		@Override
-		public void pressDown(List<Custome4D2FCommandType> commandTypes) {
+		public void pressDown(List<Custom4D2FCommandType> commandTypes) {
 			// TODO Auto-generated method stub
 			
 		}
 	}; 
 	
-	public void setCustom4D2FRemoteContollerListener(Custome4D2FRemoteController.RemoteContollerListener custom4d2fRemoteContollerListener){
+	public void setCustom4D2FRemoteContollerListener(Custom4D2FRemoteController.RemoteContollerListener custom4d2fRemoteContollerListener){
 		this.custom4d2fRemoteContollerListener = custom4d2fRemoteContollerListener;
 	}
 	
-	public Custome4D2FRemoteController.RemoteContollerListener getCustom4D2FRemoteContollerListener(){
+	public Custom4D2FRemoteController.RemoteContollerListener getCustom4D2FRemoteContollerListener(){
 		return custom4d2fRemoteContollerListener;
 	}
 	
@@ -64,9 +64,9 @@ public class Custom4D2FRemoteContollerListener implements Custome4D2FRemoteContr
 	}
 	
 	@Override
-	public void pressDown(List<Custome4D2FCommandType> commandTypes) {
+	public void pressDown(List<Custom4D2FCommandType> commandTypes) {
 		// TODO Auto-generated method stub
-		for(Custome4D2FCommandType commandType : commandTypes){
+		for(Custom4D2FCommandType commandType : commandTypes){
 			switch (commandType) {
 			case RightKeyUpCommand:
 				isPressRightMoveBtn = false;
