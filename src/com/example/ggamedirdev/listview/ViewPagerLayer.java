@@ -353,21 +353,15 @@ public class ViewPagerLayer extends Layer{
         void onAdapterChanged(ViewPagerLayer viewPager,
         		ViewPagerAdapter oldAdapter,  ViewPagerAdapter newAdapter);
     }
-
+    
     /**
-     * Annotation which allows marking of views to be decoration views when added to a view
-     * pager.
-     *
-     * <p>Views marked with this annotation can be added to the view pager with a layout resource.
-     * An example being {@link PagerTitleStrip}.</p>
-     *
+     * Used internally to tag special types of child views that should be added as
+     * pager decorations by default.
+     * 
      * <p>You can also control whether a view is a decor view but setting
      * {@link LayoutParams#isDecor} on the child's layout params.</p>
      */
-//    @Retention(RetentionPolicy.RUNTIME)
-//    @Target(ElementType.TYPE)
-//    public @interface DecorView {
-//    }
+    interface Decor {}
     
     Context context;
 
@@ -427,6 +421,18 @@ public class ViewPagerLayer extends Layer{
         }
         dispatchOnScrollStateChanged(newState);
     }
+    
+    private void removeNonDecorViews() {
+        for (int i = 0; i < getChildCount(); i++) {
+            final ALayer child = (ALayer) getChildAt(i);
+            final LayerParam lp = (LayerParam) child.getLayerParam();
+            if (!lp.isDecor) {
+//                removeViewAt(i);
+            	removeAt(i);
+                i--;
+            }
+        }
+    }
 
     /**
      * Set a PagerAdapter that will supply views for this pager as needed.
@@ -444,7 +450,7 @@ public class ViewPagerLayer extends Layer{
             }
             mAdapter.finishUpdate(this);
             mItems.clear();
-//            removeNonDecorViews();
+            removeNonDecorViews();
             mCurItem = 0;
             scrollTo(0, 0);
         }
@@ -602,6 +608,24 @@ public class ViewPagerLayer extends Layer{
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
         final int scrollX = getScrollX();
+        
+        int decorCount = 0;
+
+        // First pass - decor views. We need to do this in two passes so that
+        // we have the proper offsets for non-decor views later.
+//        for (int i = 0; i < count; i++) {
+//            final ALayer child = (ALayer) getChildAt(i);
+//            final LayerParam lp = (LayerParam) child.getLayerParam();
+//            int childLeft = 0;
+//            int childTop = 0;
+//            if (lp.isDecor) {
+//                childLeft = paddingLeft;
+//                childTop = paddingTop;
+//                childLeft += scrollX;
+//                child.setPosition(childLeft, childTop);
+//                decorCount++;
+//            }
+//        }
         
         final int childWidth = width - paddingLeft - paddingRight;
         // Page views. Do this once we have the right padding offsets from above.
@@ -1505,9 +1529,8 @@ public class ViewPagerLayer extends Layer{
             final int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 final ALayer child = (ALayer) getChildAt(i);
-//                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-//
-//                if (lp.isDecor) continue;
+                final LayerParam lp = (LayerParam) child.getLayerParam();
+                if (lp.isDecor) continue;
                 final float transformPos = (float) (child.getLeft() - scrollX) / getClientWidth();
                 mPageTransformer.transformPage(child, transformPos);
             }
@@ -2358,7 +2381,8 @@ public class ViewPagerLayer extends Layer{
 //              Matrix matrix = new Matrix();
 //              matrix.postTranslate(getX() - sx, getY() - sy);
 //          	  canvas.concat(matrix);
-            	getLayerMatrix().setTranslate(getX() - sx, getY() - sy);
+//            	getLayerMatrix().setTranslate(getX() - sx, getY() - sy);
+            	getLayerMatrix().setTranslate(-sx, -sy);
             	canvas.concat(getLayerMatrix());
             }
             
@@ -2821,22 +2845,19 @@ public class ViewPagerLayer extends Layer{
     	}
     }
     
+    public void addChildDecor(ILayer layer){
+    	addChild(layer);
+    	final LayerParam lp = (LayerParam) layer.getLayerParam();
+//        lp.isDecor |= layer instanceof Decor;
+    	lp.isDecor = true;
+    }
+    
     protected ALayer.LayerParam generateDefaultLayoutParams() {
         return new LayerParam();
     }
 
     protected ALayer.LayerParam generateLayoutParams(ALayer.LayerParam p) {
-    	LayerParam layerParam = new LayerParam();
-    	layerParam.setBindPositionXY(p.getBindPositionX(), p.getBindPositionY());
-    	layerParam.setEnabledBindPositionXY(p.isEnabledBindPositionXY());
-    	layerParam.setEnabledPercentagePositionX(p.isEnabledPercentagePositionX());
-    	layerParam.setEnabledPercentagePositionY(p.isEnabledPercentagePositionY());
-    	layerParam.setEnabledPercentageSizeH(p.isEnabledPercentageSizeH());
-    	layerParam.setEnabledPercentageSizeW(p.isEnabledPercentageSizeW());
-    	layerParam.setPercentageH(p.getPercentageH());
-    	layerParam.setPercentageW(p.getPercentageW());
-    	layerParam.setPercentageX(p.getPercentageX());
-    	layerParam.setPercentageY(p.getPercentageY());
+    	LayerParam layerParam = new LayerParam(p);
         return layerParam;
     }
 
@@ -3007,12 +3028,8 @@ public class ViewPagerLayer extends Layer{
 //            super(FILL_PARENT, FILL_PARENT);
         }
 
-        public LayerParam(Context context, AttributeSet attrs) {
-//            super(context, attrs);
-
-            final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
-            gravity = a.getInteger(0, Gravity.TOP);
-            a.recycle();
+        public LayerParam(com.example.try_gameengine.framework.ALayer.LayerParam p) {
+            super(p);
         }
     }
 
