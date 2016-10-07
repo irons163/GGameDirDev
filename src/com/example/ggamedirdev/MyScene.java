@@ -23,6 +23,8 @@ import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
+import com.example.ggamedirdev.listview.ViewPagerAdapter;
+import com.example.ggamedirdev.listview.ViewPagerLayer;
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.avg.SelectView;
 import com.example.try_gameengine.framework.ALayer;
@@ -39,6 +41,8 @@ import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FRemoteController;
 import com.example.try_gameengine.scene.EasyScene;
+import com.example.try_gameengine.scene.SceneManager;
+import com.example.try_gameengine.stage.StageManager;
 import com.example.try_gameengine.utils.DetectArea;
 import com.example.try_gameengine.utils.DetectAreaPoint;
 import com.example.try_gameengine.utils.DetectAreaRect;
@@ -78,6 +82,7 @@ public class MyScene extends EasyScene{
 	private EditTextLayer editTextLayer;
 	private AchievementSystemLayer achievementSystemLayer;
 	private TabViewLayer tabViewLayer;
+	private ViewPagerLayer viewPagerLayer;
 	
 	private void setDectecAreas(){
 		userRectDetectArea = new DetectAreaRect(userRectF);
@@ -88,7 +93,7 @@ public class MyScene extends EasyScene{
 		DetectArea a = new DetectAreaSpriteRect(new RectF(), new DetectAreaSpriteRect.SpriteRectListener() {
 			
 			@Override
-			public RectF caculateSpriteRect() {
+			public RectF calculateSpriteRect() {
 				// TODO Auto-generated method stub
 				RectF rectF;
 				if(sprite.getLocationInScene()!=null)
@@ -99,7 +104,7 @@ public class MyScene extends EasyScene{
 			}
 			
 			@Override
-			public PointF caculateSpriteCenter() {
+			public PointF calculateSpriteCenter() {
 				// TODO Auto-generated method stub;
 				PointF pointF;
 				if(sprite.getLocationInScene()!=null)
@@ -242,10 +247,49 @@ public class MyScene extends EasyScene{
 		checkboxLayer.setHeight(350);
 		checkboxLayer.setAutoAdd(true);
 		
-		tabViewLayer = new TabViewLayer();
-		tabViewLayer.setWidth(200);
-		tabViewLayer.setHeight(600);
-		tabViewLayer.setAutoAdd(true);
+//		tabViewLayer = new TabViewLayer();
+//		tabViewLayer.setWidth(200);
+//		tabViewLayer.setHeight(600);
+//		tabViewLayer.setAutoAdd(true);
+		
+		final List<ALayer> pagers = new ArrayList<ALayer>();
+		pagers.add(new ButtonLayer("1", 100, (int) 100, false));
+		pagers.add(new ButtonLayer("2", 100, (int) 100, false));
+		pagers.add(new ButtonLayer("3", 100, (int) 100, false));
+		
+		viewPagerLayer = new ViewPagerLayer(StageManager.getCurrentStage());
+		viewPagerLayer.setWidth(200);
+		viewPagerLayer.setHeight(600);
+		viewPagerLayer.setBackgroundColor(Color.YELLOW);
+		viewPagerLayer.setAutoAdd(true);
+		viewPagerLayer.setAdapter(new ViewPagerAdapter() {
+			
+			@Override
+			public boolean isViewFromObject(ALayer view, Object object) {
+				// TODO Auto-generated method stub
+				return view == object;
+			}
+			
+			@Override
+			public int getCount() {
+				// TODO Auto-generated method stub
+				return 3;
+			}
+			
+			@Override
+			public Object instantiateItem(ALayer container, int position) {
+				// TODO Auto-generated method stub
+				container.addChild(pagers.get(position));
+				return pagers.get(position);
+			}
+			
+			@Override
+			public void destroyItem(ALayer container, int position,
+					Object object) {
+				// TODO Auto-generated method stub
+				container.remove(pagers.get(position));
+			}
+		});
 	}
 
 	GameView gameview;
@@ -269,6 +313,7 @@ public class MyScene extends EasyScene{
 		// TODO Auto-generated method stub
 		listViewLayer.frameTrig();
 		scrollViewLayer.frameTrig();
+		viewPagerLayer.frameTrig();
 		checkPlayerMoved();
 		checkDetectAreasCollision();
 		tickTime();
@@ -339,6 +384,8 @@ public class MyScene extends EasyScene{
 		scrollViewLayer.drawSelf(canvas, null);
 		
 		checkboxLayer.drawSelf(canvas, null);
+		
+//		tabViewLayer.drawSelf(canvas, null);
 	}
 
 	int count =0;
