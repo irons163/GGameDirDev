@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -22,6 +23,7 @@ import com.example.ggamedirdev.listview.ListViewLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
+import com.example.ggamedirdev.listview.SpinnerLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
 import com.example.ggamedirdev.listview.ViewPagerAdapter;
 import com.example.ggamedirdev.listview.ViewPagerLayer;
@@ -83,6 +85,7 @@ public class MyScene extends EasyScene{
 	private AchievementSystemLayer achievementSystemLayer;
 	private TabViewLayer tabViewLayer;
 	private ViewPagerLayer viewPagerLayer;
+	private SpinnerLayer spinnerLayer;
 	
 	private void setDectecAreas(){
 		userRectDetectArea = new DetectAreaRect(userRectF);
@@ -181,19 +184,6 @@ public class MyScene extends EasyScene{
 		circleMsgLayer.setPaint(paint);
 		pointMsgLayer.setPaint(paint);
 		
-		listViewLayer = new ListViewLayer();
-		listViewLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
-//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
-//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
-		listViewLayer.setWidth(200);
-//		listViewLayer.setHeight(850);
-		listViewLayer.setHeight(500);
-		listViewLayer.setAutoAdd(true);
-		listViewLayer.setBackgroundColor(Color.CYAN);
-		listViewLayer.setPosition(70, 70);
-		
-		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
-		
 		selectViewLayer = new SelectViewLayer();
 		selectViewLayer.setWidth(200);
 		selectViewLayer.setHeight(1850);
@@ -247,10 +237,7 @@ public class MyScene extends EasyScene{
 		checkboxLayer.setHeight(350);
 		checkboxLayer.setAutoAdd(true);
 		
-//		tabViewLayer = new TabViewLayer();
-//		tabViewLayer.setWidth(200);
-//		tabViewLayer.setHeight(600);
-//		tabViewLayer.setAutoAdd(true);
+
 		
 		final List<ALayer> pagers = new ArrayList<ALayer>();
 		pagers.add(new ButtonLayer("1", 100, (int) 100, false));
@@ -262,6 +249,14 @@ public class MyScene extends EasyScene{
 		viewPagerLayer.setHeight(600);
 		viewPagerLayer.setBackgroundColor(Color.YELLOW);
 		viewPagerLayer.setAutoAdd(true);
+		viewPagerLayer.setIsClipOutside(true);
+		
+		ALayer backgroundButtonLayer = new ButtonLayer();
+		backgroundButtonLayer.setWidth(600);
+		backgroundButtonLayer.setHeight(400);
+		backgroundButtonLayer.setBackgroundColor(Color.MAGENTA);
+		viewPagerLayer.addChild(backgroundButtonLayer);
+		
 		viewPagerLayer.setAdapter(new ViewPagerAdapter() {
 			
 			@Override
@@ -290,6 +285,39 @@ public class MyScene extends EasyScene{
 				container.remove(pagers.get(position));
 			}
 		});
+		
+
+		
+		ALayer viewPagerDecorLayer = new Sprite();
+		viewPagerDecorLayer.setBitmapAndAutoChangeWH(BitmapUtil.icon);
+		viewPagerDecorLayer.setPosition(viewPagerLayer.getFrame().right, viewPagerLayer.getFrame().bottom);
+		viewPagerDecorLayer.setAnchorPoint(1.0f, 1.0f);
+		viewPagerLayer.addChildDecor(viewPagerDecorLayer);
+		
+		listViewLayer = new ListViewLayer();
+		listViewLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
+		listViewLayer.setWidth(200);
+//		listViewLayer.setHeight(850);
+		listViewLayer.setHeight(500);
+		listViewLayer.setAutoAdd(true);
+		listViewLayer.setBackgroundColor(Color.CYAN);
+		listViewLayer.setPosition(70, 70);
+		
+		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
+		
+		tabViewLayer = new TabViewLayer();
+		tabViewLayer.setWidth(200);
+		tabViewLayer.setHeight(600);
+		tabViewLayer.setPosition(0, 650);
+		tabViewLayer.setAutoAdd(true);
+		
+		spinnerLayer = new SpinnerLayer();
+		spinnerLayer.setWidth(150);
+		spinnerLayer.setHeight(50);
+		spinnerLayer.setPosition(250, 600);
+		spinnerLayer.setAutoAdd(true);
 	}
 
 	GameView gameview;
@@ -314,6 +342,8 @@ public class MyScene extends EasyScene{
 		listViewLayer.frameTrig();
 		scrollViewLayer.frameTrig();
 		viewPagerLayer.frameTrig();
+		tabViewLayer.frameTrig();
+		spinnerLayer.frameTrig();
 		checkPlayerMoved();
 		checkDetectAreasCollision();
 		tickTime();
@@ -375,7 +405,7 @@ public class MyScene extends EasyScene{
 		
 		super.doDraw(canvas);
 		
-		listViewLayer.drawSelf(canvas, null);
+//		listViewLayer.drawSelf(canvas, null);
 		
 		selectViewLayer.drawSelf(canvas, null);
 		

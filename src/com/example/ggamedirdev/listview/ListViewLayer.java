@@ -7,8 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
+import android.widget.AdapterView;
 
 import com.example.ggamedirdev.BitmapUtil;
+import com.example.ggamedirdev.listview.SpinnerLayer.OnItemSelectedListener;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
@@ -25,6 +27,21 @@ public class ListViewLayer extends ScrollViewLayer{
 	private int itemContentLayerHeight = 60; //default 60
 	private int heightForSectionHeaderSpace = 50; //default 50
 	private int heightForSectionFooterSpace = 50; //default 50
+	
+	interface OnItemSelectedListener{
+		public void onItemSelected(ListViewLayer listViewLayer, ALayer seletedLayer, IndexPath indexPath, boolean isItem);
+		public void onNothingSelected(ListViewLayer listViewLayer);
+	}
+	
+	private OnItemSelectedListener onItemSelectedListener;
+	
+	public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener){
+		this.onItemSelectedListener = onItemSelectedListener;
+	}
+	
+	public void setListViewLayerListener(ListViewLayerListener listViewLayerListener){
+		this.listViewLayerListener = listViewLayerListener;
+	}
 	
 	private ListViewLayerListener listViewLayerListener = new DefaultListViewLayerListener() {
 		@Override
@@ -67,25 +84,27 @@ public class ListViewLayer extends ScrollViewLayer{
 			return heightForSectionFooterSpace;
 		}
 		@Override
-		public void didSelected(IndexPath indexPath) {
+		public void didSelected(ALayer selectedLayer, IndexPath indexPath, boolean isItem) {
 			// TODO Auto-generated method stub
-			
+			if(onItemSelectedListener!=null)
+				onItemSelectedListener.onItemSelected(ListViewLayer.this, selectedLayer, indexPath, isItem);
 		}
 		@Override
-		public void didUnSelected(IndexPath indexPath) {
+		public void didUnSelected(ALayer selectedLayer, IndexPath indexPath, boolean isItem) {
 			// TODO Auto-generated method stub
-			
+			if(onItemSelectedListener!=null)
+				onItemSelectedListener.onNothingSelected(ListViewLayer.this);
 		}
 	}
 	
 	public void scrollToItemPosition(IndexPath indexPath){
-		ALayer layer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);
+		ALayer layer = listViewLayerListener.itemForPositionAtIndexPath(getItemContentLayerAtIndexPath(indexPath), indexPath);
 		float dy = 0 - layer.getTop();
 		scroll(dy);
 	}
 	
 	public void scrollToSectionPosition(IndexPath indexPath){
-		ALayer layer = listViewLayerListener.sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath);
+		ALayer layer = listViewLayerListener.sectionForPostionAtIndexPath(getSectionContentLayerAtIndexPath(indexPath), indexPath);
 		float dy = 0 - layer.getTop();
 		scroll(dy);
 	}
@@ -118,8 +137,8 @@ public class ListViewLayer extends ScrollViewLayer{
 	}
 	
 	public interface OnSelectListener{
-		public void didSelected(IndexPath indexPath);
-		public void didUnSelected(IndexPath indexPath);
+		public void didSelected(ALayer selectedLayer, IndexPath indexPath, boolean isItem);
+		public void didUnSelected(ALayer selectedLayer, IndexPath indexPath, boolean isItem);
 	}
 	
 	public interface ListViewLayerListener extends OnSelectListener{
@@ -187,6 +206,14 @@ public class ListViewLayer extends ScrollViewLayer{
 		nullSectionsPosition.clear();
 		nullItemsPosition.clear();
 		
+		for(ALayer sectionContentLayer : sectionContentLayers){
+			sectionContentLayer.setHidden(true);
+		}
+		
+		for(ALayer contentLayer : contentLayers){
+			contentLayer.setHidden(true);
+		}
+		
 		IndexPath indexPath = new IndexPath();
 		int numberOfSections = listViewLayerListener.numberOfSections();
 		float newY = topY;
@@ -196,7 +223,10 @@ public class ListViewLayer extends ScrollViewLayer{
 			
 			int sectionHeaderHeight = listViewLayerListener.heightForSectionHeaderSpaceAtIndexPath(indexPath);
 			newY += sectionHeaderHeight;
-			ALayer sectionLayer = listViewLayerListener.sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath);
+			ALayer sectionContentLayer = getSectionContentLayerAtIndexPath(indexPath);
+			/*
+			sectionContentLayer.setHidden(false);
+			ALayer sectionLayer = listViewLayerListener.sectionForPostionAtIndexPath(sectionContentLayer, indexPath);
 			
 			boolean isSectionLayerNull = false;
 			if(sectionLayer!=null){
@@ -211,7 +241,41 @@ public class ListViewLayer extends ScrollViewLayer{
 				newY += sectionHeight;
 			}else{
 				isSectionLayerNull = true;
-				nullSectionsPosition.add(currentPosition);
+//				nullSectionsPosition.add(currentPosition);
+				nullSectionsPosition.add(iSec);
+			}
+			*/
+			
+			ALayer sectionLayer = null;
+			if(sectionContentLayer==null){
+				sectionContentLayer = createSectionAndItemContentLayers(0, (int)sectionContentLayerHeight);
+				sectionContentLayer.setHidden(true);
+				addChild(sectionContentLayer);
+				sectionContentLayers.add(iSec, sectionContentLayer);
+				sectionLayer = listViewLayerListener.sectionForPostionAtIndexPath(null, indexPath);
+				if(sectionLayer!=null)
+					sectionContentLayer.addChild(sectionLayer);
+			}else{
+				sectionLayer = listViewLayerListener.sectionForPostionAtIndexPath(getSectionAtIndexPath(indexPath), indexPath);
+			}
+			
+			boolean isSectionLayerNull = false;
+			if(sectionLayer!=null){
+				sectionContentLayer.setHidden(false);
+				
+				int sectionHeight = listViewLayerListener.heightForSectionAtIndexPath(indexPath);
+				
+				if(sectionContentLayer.getHeight() != sectionHeight){
+					sectionContentLayer.setHeight(sectionHeight);
+				}
+				if(sectionContentLayer.getY() != newY){
+					sectionContentLayer.setY(newY);
+				}
+				newY += sectionHeight;
+			}else{
+				isSectionLayerNull = true;
+//				nullSectionsPosition.add(currentPosition);
+				nullSectionsPosition.add(iSec);
 			}
 			
 			int numberOfItems = listViewLayerListener.numberOfItemsInSection(iSec);
@@ -224,7 +288,10 @@ public class ListViewLayer extends ScrollViewLayer{
 			for(int iItem = 0; iItem < numberOfItems; iItem++){
 				indexPath.setPosition(iItem);
 				
-				ALayer itemLayer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);
+				ALayer contentLayer = getItemContentLayerAtIndexPath(indexPath);
+				/*
+				contentLayer.setHidden(false);
+				ALayer itemLayer = listViewLayerListener.itemForPositionAtIndexPath(contentLayer, indexPath);
 				
 				if(itemLayer!=null){
 					int itemHeight = listViewLayerListener.heightForItemAtIndexPath(indexPath);
@@ -239,6 +306,35 @@ public class ListViewLayer extends ScrollViewLayer{
 				}else{
 					nullItemsPosition.add(currentPosition);
 				}
+				*/
+				
+				ALayer itemLayer = null;
+				if(contentLayer==null){
+					contentLayer = createSectionAndItemContentLayers(0, (int)itemContentLayerHeight);
+					contentLayer.setHidden(true);
+					addChild(contentLayer);
+					itemLayer = listViewLayerListener.itemForPositionAtIndexPath(null, indexPath);
+				}else{
+					itemLayer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);;
+				}
+				
+				
+				if(itemLayer!=null){
+					contentLayer.setHidden(false);
+					
+					int itemHeight = listViewLayerListener.heightForItemAtIndexPath(indexPath);
+					
+					if(contentLayer.getHeight() != itemHeight){
+						contentLayer.setHeight(itemHeight);
+					}
+					if(contentLayer.getY() != newY){
+						contentLayer.setY(newY);
+					}
+					newY += itemHeight;
+				}else{
+					nullItemsPosition.add(currentPosition);
+				}
+				
 				currentPosition++;
 			}
 			
@@ -263,7 +359,10 @@ public class ListViewLayer extends ScrollViewLayer{
 			@Override
 			public void onClick(ButtonLayer buttonLayer) {
 				// TODO Auto-generated method stub
-				listViewLayerListener.didSelected(getItemPosition(buttonLayer));
+				if(checkIsItemContenLayer(buttonLayer))
+					listViewLayerListener.didSelected(buttonLayer, getItemPosition(buttonLayer), true);
+				else
+					listViewLayerListener.didSelected(buttonLayer, getSctionPosition(buttonLayer), false);
 			}
 		});
 		return defaultSectionLayer;
@@ -395,12 +494,40 @@ public class ListViewLayer extends ScrollViewLayer{
 		return listViewLayerListener.heightForItemAtIndexPath(indexPath);
 	}
 	
+	public ALayer getItemContentLayerAtIndexPath(IndexPath indexPath){
+//		return contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition());
+		int index = (indexPath.getSection()+1) * indexPath.getPosition();
+		if(index >=0 && index < contentLayers.size())
+			return contentLayers.get(index);
+		else
+			return null;
+	}
+	
+	public ALayer getSectionContentLayerAtIndexPath(IndexPath indexPath){
+//		return sectionContentLayers.get(indexPath.getSection());
+		int index = indexPath.getSection();
+		if(index >=0 && index < sectionContentLayers.size())
+			return sectionContentLayers.get(index);
+		else
+			return null;
+	}
+	
 	public ALayer getItemAtIndexPath(IndexPath indexPath){
-		return contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition());
+//		return (ALayer) contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition()).getChildAt(0);
+		try {
+			return (ALayer) contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition()).getChildAt(0);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	public ALayer getSectionAtIndexPath(IndexPath indexPath){
-		return sectionContentLayers.get(indexPath.getSection());
+//		return (ALayer) sectionContentLayers.get(indexPath.getSection()).getChildAt(0);
+		try {
+			return (ALayer) sectionContentLayers.get(indexPath.getSection()).getChildAt(0);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	@Override
@@ -432,6 +559,30 @@ public class ListViewLayer extends ScrollViewLayer{
 //		
 //	}
 	
+	public boolean checkIsItemContenLayer(ALayer layer){
+		return contentLayers.indexOf(layer)!=-1;
+	}
+	
+	public IndexPath getSctionPosition(ALayer sectionContentLayer){
+		IndexPath indexPath = null;
+		int position = sectionContentLayers.indexOf(sectionContentLayer);
+		int sectionNum = listViewLayerListener.numberOfSections();
+		for(int iSec = 0; iSec < sectionNum; iSec++){
+			
+			if(nullSectionsPosition.contains(iSec)){
+				continue;
+			}
+			
+			if(position == iSec){
+				indexPath = new IndexPath();
+				indexPath.setSection(iSec);
+				indexPath.setPosition(0);
+				break;
+			}
+		}
+		return indexPath;
+	}
+	
 	public IndexPath getItemPosition(ALayer contentLayer){
 		IndexPath indexPath = null;
 		int position = contentLayers.indexOf(contentLayer);
@@ -447,7 +598,8 @@ public class ListViewLayer extends ScrollViewLayer{
 			
 			
 			for(int iItem = 0; iItem < numberOfItemsInSection; iItem++){
-				if(nullItemsPosition.contains(iItem)){
+//				if(nullItemsPosition.contains(iItem)){
+				if(nullItemsPosition.contains(currentPosition)){
 					currentPosition++;
 					continue;
 				}

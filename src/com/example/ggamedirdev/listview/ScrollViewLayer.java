@@ -240,7 +240,8 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 			public boolean onDown(MotionEvent e) {
 				// TODO Auto-generated method stub
 				startScroll = false;
-				return false;
+//				return false;
+				return true;
 			}
 		});
 		

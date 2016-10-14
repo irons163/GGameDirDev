@@ -613,19 +613,19 @@ public class ViewPagerLayer extends Layer{
 
         // First pass - decor views. We need to do this in two passes so that
         // we have the proper offsets for non-decor views later.
-//        for (int i = 0; i < count; i++) {
-//            final ALayer child = (ALayer) getChildAt(i);
-//            final LayerParam lp = (LayerParam) child.getLayerParam();
-//            int childLeft = 0;
-//            int childTop = 0;
-//            if (lp.isDecor) {
+        for (int i = 0; i < count; i++) {
+            final ALayer child = (ALayer) getChildAt(i);
+            final LayerParam lp = (LayerParam) child.getLayerParam();
+            int childLeft = 0;
+            int childTop = 0;
+            if (lp.isDecor) {
 //                childLeft = paddingLeft;
 //                childTop = paddingTop;
 //                childLeft += scrollX;
 //                child.setPosition(childLeft, childTop);
-//                decorCount++;
-//            }
-//        }
+                decorCount++;
+            }
+        }
         
         final int childWidth = width - paddingLeft - paddingRight;
         // Page views. Do this once we have the right padding offsets from above.
@@ -660,7 +660,7 @@ public class ViewPagerLayer extends Layer{
         }
         mTopPageBounds = paddingTop;
         mBottomPageBounds = height - paddingBottom;
-//        mDecorChildCount = decorCount;
+        mDecorChildCount = decorCount;
 
         if (mFirstLayout) {
             scrollToItem(mCurItem, false, 0, false);
@@ -1483,44 +1483,34 @@ public class ViewPagerLayer extends Layer{
 //    @CallSuper
     protected void onPageScrolled(int position, float offset, int offsetPixels) {
         // Offset any decor views if needed - keep them on-screen at all times.
-//        if (mDecorChildCount > 0) {
-//            final int scrollX = getScrollX();
-//            int paddingLeft = getPaddingLeft();
-//            int paddingRight = getPaddingRight();
-//            final int width = getWidth();
-//            final int childCount = getChildCount();
-//            for (int i = 0; i < childCount; i++) {
-//                final ALayer child = (ALayer) getChildAt(i);
-//                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-//                if (!lp.isDecor) continue;
-//
-//                final int hgrav = lp.gravity & Gravity.HORIZONTAL_GRAVITY_MASK;
-//                int childLeft = 0;
-//                switch (hgrav) {
-//                    default:
-//                        childLeft = paddingLeft;
-//                        break;
-//                    case Gravity.LEFT:
-//                        childLeft = paddingLeft;
-//                        paddingLeft += child.getWidth();
-//                        break;
-//                    case Gravity.CENTER_HORIZONTAL:
-//                        childLeft = Math.max((width - child.getMeasuredWidth()) / 2,
-//                                paddingLeft);
-//                        break;
-//                    case Gravity.RIGHT:
-//                        childLeft = width - paddingRight - child.getMeasuredWidth();
-//                        paddingRight += child.getMeasuredWidth();
-//                        break;
+        if (mDecorChildCount > 0) {
+            final int scrollX = getScrollX();
+            int paddingLeft = getPaddingLeft();
+            int paddingRight = getPaddingRight();
+            final int width = getWidth();
+            final int childCount = getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                final ALayer child = (ALayer) getChildAt(i);
+                final LayerParam lp = (LayerParam) child.getLayerParam();
+                if (!lp.isDecor) continue;
+
+                int childLeft = (int) (child.getX() - lp.scrollOffset);
+//                float childLeft = child.getX();
+                childLeft += paddingLeft;
+                childLeft += scrollX;
+
+                float f = childLeft + child.getX();
+                
+                final int childOffset = (int) (childLeft - child.getX());
+//                if (childOffset != 0) {
+//                    ((View) child).offsetLeftAndRight(childOffset);
 //                }
-//                childLeft += scrollX;
-//
-//                final int childOffset = (int) (childLeft - child.getLeft());
-////                if (childOffset != 0) {
-////                    ((View) child).offsetLeftAndRight(childOffset);
-////                }
-//            }
-//        }
+                if (childOffset != 0) {
+                	lp.scrollOffset += childOffset;
+                    ((ALayer) child).setX(child.getX()+childOffset);
+                }
+            }
+        }
 
         dispatchOnPageScrolled(position, offset, offsetPixels);
 
@@ -1864,6 +1854,8 @@ public class ViewPagerLayer extends Layer{
 
         final int action = ev.getAction();
         boolean needsInvalidate = false;
+        
+        boolean handled = false; 
 
         switch (action & MotionEventCompat.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN: {
@@ -1875,6 +1867,8 @@ public class ViewPagerLayer extends Layer{
                 mLastMotionX = mInitialMotionX = ev.getX();
                 mLastMotionY = mInitialMotionY = ev.getY();
                 mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+                
+                handled = true;
                 break;
             }
             case MotionEvent.ACTION_MOVE:
@@ -1970,7 +1964,7 @@ public class ViewPagerLayer extends Layer{
 //            ViewCompat.postInvalidateOnAnimation(this);
         	invalidate();
         }
-        return mIsBeingDragged;
+        return mIsBeingDragged | handled;
     }
 
     private boolean resetTouch() {
@@ -3023,6 +3017,8 @@ public class ViewPagerLayer extends Layer{
          * Current child index within the ViewPager that this view occupies
          */
         int childIndex;
+        
+        public int scrollOffset;
 
         public LayerParam() {
 //            super(FILL_PARENT, FILL_PARENT);

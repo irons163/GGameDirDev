@@ -24,6 +24,8 @@ public class TabViewLayer extends Layer{
 	
 	List<ILayer> tabs;
 	
+	ALayer contentLayer = new Layer();
+	
 	public TabViewLayer() {
 		// TODO Auto-generated constructor stub
 		setPosition(70, 670);
@@ -36,11 +38,8 @@ public class TabViewLayer extends Layer{
 		initClipSprites();
 		
 		tabs = new ArrayList<>();
-		
 		tabs.add(new Layer());
-		
 		tabs.add(new Layer());
-		
 		tabs.add(new Layer());
 		
 		final Layer layer = new Layer();
@@ -95,6 +94,16 @@ public class TabViewLayer extends Layer{
 				return false;
 			}
 		});
+		
+		contentLayer.addChild(buttonLayer);
+	}
+	
+	public interface OnTabSelectedListener{
+		public void onTabSelected();
+	}
+	
+	public void addToContentLayer(){
+		
 	}
 	
 	private void initClipSprites(){
