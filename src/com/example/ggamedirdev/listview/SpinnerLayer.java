@@ -99,9 +99,6 @@ public class SpinnerLayer extends ButtonLayer{
 					
 					listViewLayer.setBackgroundColor(Color.CYAN);
 					
-					listViewLayer.setItems(layers);
-					
-					
 					class MyListViewLayerListene extends ListViewLayer.DefaultListViewLayerListener{
 						public MyListViewLayerListene() {
 							// TODO Auto-generated constructor stub
@@ -111,11 +108,14 @@ public class SpinnerLayer extends ButtonLayer{
 						@Override
 						public int numberOfItemsInSection(int section) {
 							// TODO Auto-generated method stub
-							return 0;
+							return 2;
 						}
 					}
 					
 					listViewLayer.setListViewLayerListener(new MyListViewLayerListene());
+					
+					listViewLayer.setItems(layers);
+					
 					
 					listViewLayer.refresh();
 					
@@ -142,8 +142,12 @@ public class SpinnerLayer extends ButtonLayer{
 						public void onItemSelected(ListViewLayer listViewLayer,
 								ALayer seletedLayer, IndexPath indexPath, boolean isItem) {
 							// TODO Auto-generated method stub
-							String s = ((ButtonLayer)seletedLayer.getChildAt(0)).getText();
-							SpinnerLayer.this.setText(s);
+//							String s = ((ButtonLayer)seletedLayer.getChildAt(0)).getText();
+							if(seletedLayer!=null){
+								String s = ((ButtonLayer)seletedLayer).getText();
+								SpinnerLayer.this.setText(s);
+							}
+							
 						}
 					});
 					

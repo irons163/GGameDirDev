@@ -260,6 +260,7 @@ public class ListViewLayer extends ScrollViewLayer{
 			}
 			
 			boolean isSectionLayerNull = false;
+			/*
 			if(sectionLayer!=null){
 				sectionContentLayer.setHidden(false);
 				
@@ -274,16 +275,36 @@ public class ListViewLayer extends ScrollViewLayer{
 				newY += sectionHeight;
 			}else{
 				isSectionLayerNull = true;
-//				nullSectionsPosition.add(currentPosition);
 				nullSectionsPosition.add(iSec);
+			}*/
+			
+			if(sectionLayer!=null){
+				
+			}else{
+//				isSectionLayerNull = true;
+				ALayer sectionLayerInSctionContent = getSectionAtIndexPath(indexPath);
+				if(sectionLayerInSctionContent!=null)
+					sectionLayerInSctionContent.removeFromParent();
 			}
+			
+			sectionContentLayer.setHidden(false);
+			
+			int sectionHeight = listViewLayerListener.heightForSectionAtIndexPath(indexPath);
+			
+			if(sectionContentLayer.getHeight() != sectionHeight){
+				sectionContentLayer.setHeight(sectionHeight);
+			}
+			if(sectionContentLayer.getY() != newY){
+				sectionContentLayer.setY(newY);
+			}
+			newY += sectionHeight;
 			
 			int numberOfItems = listViewLayerListener.numberOfItemsInSection(iSec);
 			
-			if(isSectionLayerNull){
-				currentPosition += numberOfItems;
-				continue;
-			}
+//			if(isSectionLayerNull){
+//				currentPosition += numberOfItems;
+//				continue;
+//			}
 			
 			for(int iItem = 0; iItem < numberOfItems; iItem++){
 				indexPath.setPosition(iItem);
@@ -318,7 +339,7 @@ public class ListViewLayer extends ScrollViewLayer{
 					itemLayer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);;
 				}
 				
-				
+				/*
 				if(itemLayer!=null){
 					contentLayer.setHidden(false);
 					
@@ -333,7 +354,28 @@ public class ListViewLayer extends ScrollViewLayer{
 					newY += itemHeight;
 				}else{
 					nullItemsPosition.add(currentPosition);
+				}*/
+				
+				if(itemLayer!=null){
+					
+				}else{
+//					isSectionLayerNull = true;
+					ALayer itemLayerInItemContent = getItemAtIndexPath(indexPath);
+					if(itemLayerInItemContent!=null)
+						itemLayerInItemContent.removeFromParent();
 				}
+				
+				contentLayer.setHidden(false);
+				
+				int itemHeight = listViewLayerListener.heightForItemAtIndexPath(indexPath);
+				
+				if(contentLayer.getHeight() != itemHeight){
+					contentLayer.setHeight(itemHeight);
+				}
+				if(contentLayer.getY() != newY){
+					contentLayer.setY(newY);
+				}
+				newY += itemHeight;
 				
 				currentPosition++;
 			}
@@ -359,10 +401,16 @@ public class ListViewLayer extends ScrollViewLayer{
 			@Override
 			public void onClick(ButtonLayer buttonLayer) {
 				// TODO Auto-generated method stub
+				ALayer layer = null;
+				try {
+					layer = (ALayer) buttonLayer.getChildAt(0);
+				} catch (IndexOutOfBoundsException e) {
+					// TODO: handle exception
+				}
 				if(checkIsItemContenLayer(buttonLayer))
-					listViewLayerListener.didSelected(buttonLayer, getItemPosition(buttonLayer), true);
+					listViewLayerListener.didSelected(layer, getItemPosition(buttonLayer), true);
 				else
-					listViewLayerListener.didSelected(buttonLayer, getSctionPosition(buttonLayer), false);
+					listViewLayerListener.didSelected(layer, getSctionPosition(buttonLayer), false);
 			}
 		});
 		return defaultSectionLayer;
@@ -516,7 +564,7 @@ public class ListViewLayer extends ScrollViewLayer{
 //		return (ALayer) contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition()).getChildAt(0);
 		try {
 			return (ALayer) contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition()).getChildAt(0);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -525,7 +573,7 @@ public class ListViewLayer extends ScrollViewLayer{
 //		return (ALayer) sectionContentLayers.get(indexPath.getSection()).getChildAt(0);
 		try {
 			return (ALayer) sectionContentLayers.get(indexPath.getSection()).getChildAt(0);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
