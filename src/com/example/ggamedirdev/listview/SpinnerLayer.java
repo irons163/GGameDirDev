@@ -16,15 +16,17 @@ import com.example.ggamedirdev.listview.ListViewLayer.IndexPath;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
+import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.framework.ButtonLayer.OnClickListener;
 
 public class SpinnerLayer extends ButtonLayer{
 	private List<? extends ILayer> mlayers;
-	private float itemHeight;
+//	private float itemHeight;
 	private boolean isChecked;
 	ListViewLayer listViewLayer;
+	private LayerAdapter adapter;
 	
 	public interface OnCheckStatusChangedListener{
 		public void onChanged(ButtonLayer buttonLayer, boolean isChecked);
@@ -43,10 +45,10 @@ public class SpinnerLayer extends ButtonLayer{
 	
 	public SpinnerLayer() {super(0, 0, false);
 		// TODO Auto-generated constructor stub
-		setPosition(70, 70);
-		setBackgroundColor(Color.YELLOW);
+//		setPosition(70, 70);
+//		setBackgroundColor(Color.YELLOW);
 		
-		itemHeight = 100;
+//		itemHeight = 100;
 		
 //		initButtons();
 //		initSprites();
@@ -86,6 +88,83 @@ public class SpinnerLayer extends ButtonLayer{
 			@Override
 			public void onClick(ButtonLayer buttonLayer) {
 				// TODO Auto-generated method stub
+				if(adapter!=null){
+					listViewLayer = new ListViewLayer();
+					listViewLayer.setY(SpinnerLayer.this.getHeight());
+					listViewLayer.setWidth(getWidth());
+					
+					
+					listViewLayer.setBackgroundColor(Color.CYAN);
+					
+					class MyListViewLayerListene extends ListViewLayer.DefaultListViewLayerListener{
+						public MyListViewLayerListene() {
+							// TODO Auto-generated constructor stub
+							listViewLayer.super();
+						}
+
+						@Override
+						public int numberOfItemsInSection(int section) {
+							// TODO Auto-generated method stub
+							return adapter.getCount();
+						}
+						
+						@Override
+						public int numberOfSections() {
+							return 1;
+						}
+						
+						@Override
+						public ALayer itemForPositionAtIndexPath(ALayer contentLayer, IndexPath indexPath) {
+							return adapter.getLayer((indexPath.getSection()+1) * indexPath.getPosition(), contentLayer, listViewLayer);
+						}
+						
+						@Override
+						public ALayer sectionForPostionAtIndexPath(ALayer sectionContentLayer, IndexPath indexPath) {
+							return null;
+						}
+					}
+					
+					listViewLayer.setListViewLayerListener(new MyListViewLayerListene());
+					
+//					listViewLayer.setItems(layers);
+					
+					
+					listViewLayer.refresh();
+					
+					int height;
+					if(minDropHeight>0)
+						height = listViewLayer.getHeight()<minDropHeight ? minDropHeight:listViewLayer.getHeight();
+					else
+						height = (int) (listViewLayer.bottomY - listViewLayer.topY);
+					
+					if(maxDropHeight>0)
+						height = height>maxDropHeight ? maxDropHeight:height;
+					
+					listViewLayer.setHeight(height);
+					
+					listViewLayer.setOnItemSelectedListener(new ListViewLayer.OnItemSelectedListener() {
+						
+						@Override
+						public void onNothingSelected(ListViewLayer listViewLayer) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void onItemSelected(ListViewLayer listViewLayer,
+								ALayer seletedLayer, IndexPath indexPath, boolean isItem) {
+							// TODO Auto-generated method stub
+//							String s = ((ButtonLayer)seletedLayer.getChildAt(0)).getText();
+							if(seletedLayer!=null){
+								String s = ((LabelLayer)seletedLayer).getText();
+								SpinnerLayer.this.setText(s);
+							}
+							
+						}
+					});
+					
+					addChild(listViewLayer);
+				}else
 				if(listViewLayer==null){
 					listViewLayer = new ListViewLayer();
 					listViewLayer.setY(SpinnerLayer.this.getHeight());
@@ -93,7 +172,7 @@ public class SpinnerLayer extends ButtonLayer{
 					List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
 					ButtonLayer spinnerSelectionLayer = new ButtonLayer();
 					spinnerSelectionLayer.setWidth(100);
-					spinnerSelectionLayer.setHeight(100);
+					spinnerSelectionLayer.setHeight(listViewLayer.getItemContentLayerHeight());
 					spinnerSelectionLayer.setText("123");
 					layers.add(spinnerSelectionLayer);
 					
@@ -187,6 +266,10 @@ public class SpinnerLayer extends ButtonLayer{
 		this.maxDropHeight = maxDropHeight;
 	}
 	
+	public void setAdapter(LayerAdapter adapter){
+		this.adapter = adapter;
+	}
+	
 	interface OnItemSelectedListener{
 		public void onItemSelected();
 		public void onNothingSelected();
@@ -194,112 +277,6 @@ public class SpinnerLayer extends ButtonLayer{
 	
 	private OnItemSelectedListener onItemSelectedListener;
 	
-	private void initClipSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		
-//		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){
-			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
-			layer.setY(y);
-			layer.setAnchorPoint(-0.55f, -0.15f);
-			layer.setXscale(1.5f);
-			layer.setYscale(1.5f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){			
-			layer.setY(y);
-			layer.setAnchorPoint(-0.65f, -0.15f);
-			layer.setXscale(2.0f);
-			layer.setYscale(2.0f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initButtons(){
-		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-		mlayers = layers;
-		layers.add(new ButtonLayer("1", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("2", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("3", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("4", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("5", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("6", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("7", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("8", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("9", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("100", 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(ButtonLayer layer : layers){
-			layer.setY(y);
-			layer.setBackgroundColor(Color.RED);
-			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
-				
-				@Override
-				public void onClick(ButtonLayer buttonLayer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
 	
 //	public void setStrings
 	

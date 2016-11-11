@@ -35,7 +35,6 @@ import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
-import com.example.try_gameengine.framework.LabelLayer.LabelBaseLine;
 import com.example.try_gameengine.framework.Sprite.MoveRageType;
 import com.example.try_gameengine.remotecontroller.IRemoteController;
 import com.example.try_gameengine.remotecontroller.RemoteController;
