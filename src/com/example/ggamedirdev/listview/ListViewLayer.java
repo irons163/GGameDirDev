@@ -249,7 +249,7 @@ public class ListViewLayer extends ScrollViewLayer{
 			
 			ALayer sectionLayer = null;
 			if(sectionContentLayer==null){
-				sectionContentLayer = createSectionAndItemContentLayers(0, (int)sectionContentLayerHeight);
+				sectionContentLayer = createSectionAndItemContentLayers((int)sectionContentLayerHeight);
 				sectionContentLayer.setHidden(true);
 				addChild(sectionContentLayer);
 				sectionContentLayers.add(iSec, sectionContentLayer);
@@ -332,7 +332,7 @@ public class ListViewLayer extends ScrollViewLayer{
 				
 				ALayer itemLayer = null;
 				if(contentLayer==null){
-					contentLayer = createSectionAndItemContentLayers(0, (int)itemContentLayerHeight);
+					contentLayer = createSectionAndItemContentLayers((int)itemContentLayerHeight);
 					contentLayers.add(iItem, contentLayer);
 					contentLayer.setHidden(true);
 					addChild(contentLayer);
@@ -393,7 +393,7 @@ public class ListViewLayer extends ScrollViewLayer{
 		bottomY = newY;
 	}
 	
-	private ALayer createSectionAndItemContentLayers(float positionY, int height){
+	private ALayer createSectionAndItemContentLayers(int height){
 		ButtonLayer defaultSectionLayer = new ButtonLayer();
 		defaultSectionLayer.setHeight(height);
 //		defaultSectionLayer.setWidth(width);
@@ -434,14 +434,14 @@ public class ListViewLayer extends ScrollViewLayer{
 		}
 		
 		if(sectionContentLayers.size()==0){
-			ALayer sectionContentLayer = createSectionAndItemContentLayers(0, (int)sectionContentLayerHeight);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers((int)sectionContentLayerHeight);
 			addChild(sectionContentLayer);
 			sectionContentLayers.add(sectionContentLayer);
 		}
 		
 		int y = 0;
 		for(ILayer layer : itemLayers){
-			ALayer contentLayer = createSectionAndItemContentLayers(y, (int)itemContentLayerHeight);
+			ALayer contentLayer = createSectionAndItemContentLayers((int)itemContentLayerHeight);
 			contentLayers.add(contentLayer);
 			contentLayer.addChild(layer);
 			addChild(contentLayer);
@@ -464,7 +464,7 @@ public class ListViewLayer extends ScrollViewLayer{
 		
 		int y = 0;
 		for(ILayer layer : sectionLayers){
-			ALayer sectionContentLayer = createSectionAndItemContentLayers(y, (int)sectionContentLayerHeight);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers((int)sectionContentLayerHeight);
 			sectionContentLayers.add(sectionContentLayer);
 			sectionContentLayer.addChild(layer);
 			addChild(sectionContentLayer);

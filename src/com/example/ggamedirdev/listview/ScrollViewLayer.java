@@ -403,17 +403,17 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 		if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_UP 
 				|| (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP){
 			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-			super.onTouchEvent(event);
+			super.onTouchEvent(event, TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS|TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS);
 //			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
 			setFlag(savedFlag);
 			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-			super.onTouchEvent(event);
+			super.onTouchEvent(event, TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS|TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS);
 //			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
 			setFlag(savedFlag);
 			return gestureDetector.onTouchEvent(event);
 		}else{
 			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
-			if(super.onTouchEvent(event)){
+			if(super.onTouchEvent(event, TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS|TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS)){
 //				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
 				setFlag(savedFlag);
 				return gestureDetector.onTouchEvent(event);
@@ -421,7 +421,45 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 //				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
 				setFlag(savedFlag);
 				addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
-				if(super.onTouchEvent(event)){
+				if(super.onTouchEvent(event, TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS|TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS)){
+//					removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+					setFlag(savedFlag);
+					return gestureDetector.onTouchEvent(event);
+				}
+//				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+				setFlag(savedFlag);
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event, int touchEventFlag) {
+		// TODO Auto-generated method stub
+		touchEventFlag |= (TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS|TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS);
+		int savedFlag = getFlag();
+		if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_UP 
+				|| (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP){
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+			super.onTouchEvent(event, touchEventFlag);
+//			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+			setFlag(savedFlag);
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+			super.onTouchEvent(event, touchEventFlag);
+//			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+			setFlag(savedFlag);
+			return gestureDetector.onTouchEvent(event);
+		}else{
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+			if(super.onTouchEvent(event, touchEventFlag)){
+//				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+				setFlag(savedFlag);
+				return gestureDetector.onTouchEvent(event);
+			}else{
+//				removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+				setFlag(savedFlag);
+				addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+				if(super.onTouchEvent(event, touchEventFlag)){
 //					removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
 					setFlag(savedFlag);
 					return gestureDetector.onTouchEvent(event);
@@ -668,5 +706,11 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 	public void setTouchedColorsNone() {
 		// TODO Auto-generated method stub
 		touchStatusListener.setTouchedColorsNone();
+	}
+	
+	@Override
+	protected boolean isInert() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

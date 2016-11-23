@@ -220,14 +220,14 @@ public class MyScene extends EasyScene{
 //			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
 //			addChild(layer);
 //			layer.setIsClipOutside(true);
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
+//			layer.setOnLayerClickListener(new OnLayerClickListener() {
+//				
+//				@Override
+//				public void onClick(ILayer layer) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
 			
 		scrollViewLayer.addChild(layer);
 		scrollViewLayer.setAutoAdd(true);
@@ -295,58 +295,58 @@ public class MyScene extends EasyScene{
 		viewPagerDecorLayer.setAnchorPoint(1.0f, 1.0f);
 		viewPagerLayer.addChildDecor(viewPagerDecorLayer);
 		
-//		listViewLayer = new ListViewLayer();
-//		listViewLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
-////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
-////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
-//		listViewLayer.setWidth(200);
-////		listViewLayer.setHeight(850);
-//		listViewLayer.setHeight(500);
-//		listViewLayer.setAutoAdd(true);
-//		listViewLayer.setBackgroundColor(Color.CYAN);
-//		listViewLayer.setPosition(70, 70);
-//		
-//		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-////		itemLayers = layers;
-//		layers.add(new ButtonLayer("1", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("2", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("3", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("4", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("5", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("6", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("7", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("8", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("9", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("100", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
-//		
-//		int y = 0;
-//		for(ButtonLayer itemlayer : layers){
-//			itemlayer.setY(y);
-//			itemlayer.setBackgroundColor(Color.RED);
-//			itemlayer.setTextColor(Color.WHITE);
-//			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-////			addChild(layer);
-////			layer.setIsClipOutside(true);
-////			y += itemHeight;
-//			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(ButtonLayer buttonLayer) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			});
-//		}
-//		
-//		listViewLayer.setItems(layers);
-//		
-//		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
+		listViewLayer = new ListViewLayer();
+		listViewLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
+		listViewLayer.setWidth(200);
+//		listViewLayer.setHeight(850);
+		listViewLayer.setHeight(500);
+		listViewLayer.setAutoAdd(true);
+		listViewLayer.setBackgroundColor(Color.CYAN);
+		listViewLayer.setPosition(70, 70);
+		
+		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
+//		itemLayers = layers;
+		layers.add(new ButtonLayer("1", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("2", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("3", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("4", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("5", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("6", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("7", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("8", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("9", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("100", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		
+		int y = 0;
+		for(ButtonLayer itemlayer : layers){
+			itemlayer.setY(y);
+			itemlayer.setBackgroundColor(Color.RED);
+			itemlayer.setTextColor(Color.WHITE);
+			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+//			addChild(layer);
+//			layer.setIsClipOutside(true);
+//			y += itemHeight;
+			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
+				
+				@Override
+				public void onClick(ButtonLayer buttonLayer) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
+		
+		listViewLayer.setItems(layers);
+		
+		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
 		
 		tabViewLayer = new TabViewLayer();
 		tabViewLayer.setWidth(200);
 		tabViewLayer.setHeight(600);
 		tabViewLayer.setPosition(0, 650);
-		tabViewLayer.setAutoAdd(true);
+//		tabViewLayer.setAutoAdd(true);
 		
 		spinnerLayer = new SpinnerLayer();
 		spinnerLayer.setWidth(150);
@@ -364,6 +364,7 @@ public class MyScene extends EasyScene{
 					spinnerSelectionLayer.setWidth(100);
 					spinnerSelectionLayer.setHeight(60);
 					spinnerSelectionLayer.setText((String)getItem(position));
+					spinnerSelectionLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_CENTER);
 				}else{
 					spinnerSelectionLayer = (LabelLayer) layer;
 //					spinnerSelectionLayer.setText((String)getItem(position));
@@ -411,7 +412,7 @@ public class MyScene extends EasyScene{
 	@Override
 	public void process() {
 		// TODO Auto-generated method stub
-//		listViewLayer.frameTrig();
+		listViewLayer.frameTrig();
 		scrollViewLayer.frameTrig();
 		viewPagerLayer.frameTrig();
 		tabViewLayer.frameTrig();
