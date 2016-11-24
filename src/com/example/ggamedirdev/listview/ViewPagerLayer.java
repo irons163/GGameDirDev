@@ -506,7 +506,7 @@ public class ViewPagerLayer extends Layer{
      */
     public void addOnAdapterChangeListener(OnAdapterChangeListener listener) {
         if (mAdapterChangeListeners == null) {
-            mAdapterChangeListeners = new ArrayList<>();
+            mAdapterChangeListeners = new ArrayList<OnAdapterChangeListener>();
         }
         mAdapterChangeListeners.add(listener);
     }
@@ -718,7 +718,7 @@ public class ViewPagerLayer extends Layer{
      */
     public void addOnPageChangeListener(OnPageChangeListener listener) {
         if (mOnPageChangeListeners == null) {
-            mOnPageChangeListeners = new ArrayList<>();
+            mOnPageChangeListeners = new ArrayList<OnPageChangeListener>();
         }
         mOnPageChangeListeners.add(listener);
     }
@@ -2347,7 +2347,7 @@ public class ViewPagerLayer extends Layer{
         boolean scalingRequired = false;
         boolean caching;
 
-        final boolean hardwareAccelerated = canvas.isHardwareAccelerated();
+//        final boolean hardwareAccelerated = canvas.isHardwareAccelerated();
 
 
 

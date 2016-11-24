@@ -37,7 +37,7 @@ public class TabViewLayer extends Layer{
 //		initSprites();
 		initClipSprites();
 		
-		tabs = new ArrayList<>();
+		tabs = new ArrayList<ILayer>();
 		tabs.add(new Layer());
 		tabs.add(new Layer());
 		tabs.add(new Layer());

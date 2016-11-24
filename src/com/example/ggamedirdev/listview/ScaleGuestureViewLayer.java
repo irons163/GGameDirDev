@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.view.ScaleGestureDetectorCompat;
 import android.transition.Scene;
 import android.view.GestureDetector;
 import android.view.MotionEvent;

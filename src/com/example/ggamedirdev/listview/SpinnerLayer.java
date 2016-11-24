@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.provider.LiveFolders;
-import android.support.v7.internal.view.menu.ListMenuItemView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 

@@ -35,7 +35,7 @@ public class GameLevelLayer extends Layer{
 //		initSprites();
 		initClipSprites();
 		
-		tabs = new ArrayList<>();
+		tabs = new ArrayList<ILayer>();
 		
 		tabs.add(new Layer());
 		

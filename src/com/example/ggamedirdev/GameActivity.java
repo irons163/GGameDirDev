@@ -33,7 +33,7 @@ public class GameActivity extends Stage{
 		setContentView(R.layout.activity_main);
 		
 		ListView listView = (ListView) findViewById(R.id.listView1);
-		listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strs));
+		listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strs));
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override

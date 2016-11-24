@@ -11,7 +11,7 @@ import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FRemoteController;
 
 public class Custom4D2FRemoteContollerListener implements Custom4D2FRemoteController.RemoteContollerListener{
-	private LinkedHashSet<Integer> keySequence	= new LinkedHashSet<>();
+	private LinkedHashSet<Integer> keySequence	= new LinkedHashSet<Integer>();
 	public static final int NONE = 0;
 	public static final int LEFT = 1;
 	public static final int RIGHT = 2;
@@ -19,7 +19,7 @@ public class Custom4D2FRemoteContollerListener implements Custom4D2FRemoteContro
 	public static final int DOWN = 4;
 	private int move = NONE;
 	boolean isPressLeftMoveBtn, isPressRightMoveBtn, isPressUpMoveBtn, isPressDownMoveBtn;
-	private ArrayList<Custom4D2FCommandType> currentCommandType = new ArrayList<>();
+	private ArrayList<Custom4D2FCommandType> currentCommandType = new ArrayList<Custom4D2FCommandType>();
 	
 	private Custom4D2FRemoteController.RemoteContollerListener custom4d2fRemoteContollerListener = new Custom4D2FRemoteController.RemoteContollerListener() {
 		
