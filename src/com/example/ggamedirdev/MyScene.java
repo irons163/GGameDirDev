@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
+import com.example.ggamedirdev.listview.BaseLayerAdapter;
 import com.example.ggamedirdev.listview.CheckboxLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
 import com.example.ggamedirdev.listview.ITouchStatusListener;
@@ -37,7 +38,7 @@ import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.ALayer.OnLayerClickListener;
-import com.example.try_gameengine.framework.LabelLayer.LabelBaseLine;
+import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
@@ -76,7 +77,7 @@ public class MyScene extends EasyScene{
 	private DetectArea rectDetectArea;
 	private DetectArea circleDetectArea;
 	private DetectArea pointDetectArea;
-	private ScrollViewLayer listViewLayer;
+	private ListViewLayer listViewLayer;
 	private SelectViewLayer selectViewLayer;
 	private ScaleGuestureViewLayer scaleGuestureViewLayer;
 	private ScrollViewLayer scrollViewLayer;
@@ -161,10 +162,10 @@ public class MyScene extends EasyScene{
 //		circleMsgLayer.setAnchorPoint(0.5f, 0.0f);
 //		pointMsgLayer.setAnchorPoint(0.5f, 0.0f);
 		
-		userRectMsgLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
-		rectMsgLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
-		circleMsgLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
-		pointMsgLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
+		userRectMsgLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_TOP);
+		rectMsgLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_TOP);
+		circleMsgLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_TOP);
+		pointMsgLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_TOP);
 		
 		userRectMsgLayer.setText("USER RECTj");
 		rectMsgLayer.setText("RECTj");
@@ -219,14 +220,14 @@ public class MyScene extends EasyScene{
 //			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
 //			addChild(layer);
 //			layer.setIsClipOutside(true);
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
+//			layer.setOnLayerClickListener(new OnLayerClickListener() {
+//				
+//				@Override
+//				public void onClick(ILayer layer) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
 			
 		scrollViewLayer.addChild(layer);
 		scrollViewLayer.setAutoAdd(true);
@@ -305,19 +306,91 @@ public class MyScene extends EasyScene{
 		listViewLayer.setBackgroundColor(Color.CYAN);
 		listViewLayer.setPosition(70, 70);
 		
+		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
+//		itemLayers = layers;
+		layers.add(new ButtonLayer("1", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("2", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("3", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("4", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("5", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("6", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("7", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("8", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("9", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("100", 100, (int) listViewLayer.getItemContentLayerHeight(), false));
+		
+		int y = 0;
+		for(ButtonLayer itemlayer : layers){
+			itemlayer.setY(y);
+			itemlayer.setBackgroundColor(Color.RED);
+			itemlayer.setTextColor(Color.WHITE);
+			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+//			addChild(layer);
+//			layer.setIsClipOutside(true);
+//			y += itemHeight;
+			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
+				
+				@Override
+				public void onClick(ButtonLayer buttonLayer) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
+		
+		listViewLayer.setItems(layers);
+		
 		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
 		
 		tabViewLayer = new TabViewLayer();
 		tabViewLayer.setWidth(200);
 		tabViewLayer.setHeight(600);
 		tabViewLayer.setPosition(0, 650);
-		tabViewLayer.setAutoAdd(true);
+//		tabViewLayer.setAutoAdd(true);
 		
 		spinnerLayer = new SpinnerLayer();
 		spinnerLayer.setWidth(150);
 		spinnerLayer.setHeight(50);
 		spinnerLayer.setPosition(250, 600);
 		spinnerLayer.setAutoAdd(true);
+		spinnerLayer.setAdapter(new BaseLayerAdapter() {
+			String[] strs = new String[]{"223","323","423"};
+			@Override
+			public ALayer getLayer(int position, ALayer layer, ALayer parent) {
+				// TODO Auto-generated method stub
+				LabelLayer spinnerSelectionLayer = null;
+				if(layer==null){
+					spinnerSelectionLayer = new LabelLayer(0,0,false);
+					spinnerSelectionLayer.setWidth(100);
+					spinnerSelectionLayer.setHeight(60);
+					spinnerSelectionLayer.setText((String)getItem(position));
+					spinnerSelectionLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_CENTER);
+				}else{
+					spinnerSelectionLayer = (LabelLayer) layer;
+//					spinnerSelectionLayer.setText((String)getItem(position));
+				}
+				
+				return spinnerSelectionLayer;
+			}
+			
+			@Override
+			public long getItemId(int position) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public Object getItem(int position) {
+				// TODO Auto-generated method stub
+				return strs[position];
+			}
+
+			@Override
+			public int getCount() {
+				// TODO Auto-generated method stub
+				return strs.length;
+			}
+		});
 	}
 
 	GameView gameview;

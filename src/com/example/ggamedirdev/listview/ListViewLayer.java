@@ -165,7 +165,8 @@ public class ListViewLayer extends ScrollViewLayer{
 		// TODO Auto-generated constructor stub
 		addFlag(TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN);
 		
-		initButtons();
+		setIsClipOutside(true);
+//		initButtons();
 //		initSprites();
 //		initClipSprites();
 	}
@@ -248,7 +249,7 @@ public class ListViewLayer extends ScrollViewLayer{
 			
 			ALayer sectionLayer = null;
 			if(sectionContentLayer==null){
-				sectionContentLayer = createSectionAndItemContentLayers(0, (int)sectionContentLayerHeight);
+				sectionContentLayer = createSectionAndItemContentLayers((int)sectionContentLayerHeight);
 				sectionContentLayer.setHidden(true);
 				addChild(sectionContentLayer);
 				sectionContentLayers.add(iSec, sectionContentLayer);
@@ -260,6 +261,7 @@ public class ListViewLayer extends ScrollViewLayer{
 			}
 			
 			boolean isSectionLayerNull = false;
+			/*
 			if(sectionLayer!=null){
 				sectionContentLayer.setHidden(false);
 				
@@ -274,16 +276,36 @@ public class ListViewLayer extends ScrollViewLayer{
 				newY += sectionHeight;
 			}else{
 				isSectionLayerNull = true;
-//				nullSectionsPosition.add(currentPosition);
 				nullSectionsPosition.add(iSec);
+			}*/
+			
+			if(sectionLayer!=null){
+				
+			}else{
+//				isSectionLayerNull = true;
+				ALayer sectionLayerInSctionContent = getSectionAtIndexPath(indexPath);
+				if(sectionLayerInSctionContent!=null)
+					sectionLayerInSctionContent.removeFromParent();
 			}
+			
+			sectionContentLayer.setHidden(false);
+			
+			int sectionHeight = listViewLayerListener.heightForSectionAtIndexPath(indexPath);
+			
+			if(sectionContentLayer.getHeight() != sectionHeight){
+				sectionContentLayer.setHeight(sectionHeight);
+			}
+			if(sectionContentLayer.getY() != newY){
+				sectionContentLayer.setY(newY);
+			}
+			newY += sectionHeight;
 			
 			int numberOfItems = listViewLayerListener.numberOfItemsInSection(iSec);
 			
-			if(isSectionLayerNull){
-				currentPosition += numberOfItems;
-				continue;
-			}
+//			if(isSectionLayerNull){
+//				currentPosition += numberOfItems;
+//				continue;
+//			}
 			
 			for(int iItem = 0; iItem < numberOfItems; iItem++){
 				indexPath.setPosition(iItem);
@@ -310,7 +332,8 @@ public class ListViewLayer extends ScrollViewLayer{
 				
 				ALayer itemLayer = null;
 				if(contentLayer==null){
-					contentLayer = createSectionAndItemContentLayers(0, (int)itemContentLayerHeight);
+					contentLayer = createSectionAndItemContentLayers((int)itemContentLayerHeight);
+					contentLayers.add(iItem, contentLayer);
 					contentLayer.setHidden(true);
 					addChild(contentLayer);
 					itemLayer = listViewLayerListener.itemForPositionAtIndexPath(null, indexPath);
@@ -318,7 +341,7 @@ public class ListViewLayer extends ScrollViewLayer{
 					itemLayer = listViewLayerListener.itemForPositionAtIndexPath(getItemAtIndexPath(indexPath), indexPath);;
 				}
 				
-				
+				/*
 				if(itemLayer!=null){
 					contentLayer.setHidden(false);
 					
@@ -333,7 +356,31 @@ public class ListViewLayer extends ScrollViewLayer{
 					newY += itemHeight;
 				}else{
 					nullItemsPosition.add(currentPosition);
+				}*/
+				
+				if(itemLayer!=null){
+					if(!contentLayer.getLayers().contains(itemLayer)){
+						contentLayer.removeAllChildren();
+						contentLayer.addChild(itemLayer);
+					}
+				}else{
+//					isSectionLayerNull = true;
+					ALayer itemLayerInItemContent = getItemAtIndexPath(indexPath);
+					if(itemLayerInItemContent!=null)
+						itemLayerInItemContent.removeFromParent();
 				}
+				
+				contentLayer.setHidden(false);
+				
+				int itemHeight = listViewLayerListener.heightForItemAtIndexPath(indexPath);
+				
+				if(contentLayer.getHeight() != itemHeight){
+					contentLayer.setHeight(itemHeight);
+				}
+				if(contentLayer.getY() != newY){
+					contentLayer.setY(newY);
+				}
+				newY += itemHeight;
 				
 				currentPosition++;
 			}
@@ -346,7 +393,7 @@ public class ListViewLayer extends ScrollViewLayer{
 		bottomY = newY;
 	}
 	
-	private ALayer createSectionAndItemContentLayers(float positionY, int height){
+	private ALayer createSectionAndItemContentLayers(int height){
 		ButtonLayer defaultSectionLayer = new ButtonLayer();
 		defaultSectionLayer.setHeight(height);
 //		defaultSectionLayer.setWidth(width);
@@ -359,10 +406,16 @@ public class ListViewLayer extends ScrollViewLayer{
 			@Override
 			public void onClick(ButtonLayer buttonLayer) {
 				// TODO Auto-generated method stub
+				ALayer layer = null;
+				try {
+					layer = (ALayer) buttonLayer.getChildAt(0);
+				} catch (IndexOutOfBoundsException e) {
+					// TODO: handle exception
+				}
 				if(checkIsItemContenLayer(buttonLayer))
-					listViewLayerListener.didSelected(buttonLayer, getItemPosition(buttonLayer), true);
+					listViewLayerListener.didSelected(layer, getItemPosition(buttonLayer), true);
 				else
-					listViewLayerListener.didSelected(buttonLayer, getSctionPosition(buttonLayer), false);
+					listViewLayerListener.didSelected(layer, getSctionPosition(buttonLayer), false);
 			}
 		});
 		return defaultSectionLayer;
@@ -381,14 +434,14 @@ public class ListViewLayer extends ScrollViewLayer{
 		}
 		
 		if(sectionContentLayers.size()==0){
-			ALayer sectionContentLayer = createSectionAndItemContentLayers(0, (int)sectionContentLayerHeight);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers((int)sectionContentLayerHeight);
 			addChild(sectionContentLayer);
 			sectionContentLayers.add(sectionContentLayer);
 		}
 		
 		int y = 0;
 		for(ILayer layer : itemLayers){
-			ALayer contentLayer = createSectionAndItemContentLayers(y, (int)itemContentLayerHeight);
+			ALayer contentLayer = createSectionAndItemContentLayers((int)itemContentLayerHeight);
 			contentLayers.add(contentLayer);
 			contentLayer.addChild(layer);
 			addChild(contentLayer);
@@ -411,7 +464,7 @@ public class ListViewLayer extends ScrollViewLayer{
 		
 		int y = 0;
 		for(ILayer layer : sectionLayers){
-			ALayer sectionContentLayer = createSectionAndItemContentLayers(y, (int)sectionContentLayerHeight);
+			ALayer sectionContentLayer = createSectionAndItemContentLayers((int)sectionContentLayerHeight);
 			sectionContentLayers.add(sectionContentLayer);
 			sectionContentLayer.addChild(layer);
 			addChild(sectionContentLayer);
@@ -486,6 +539,22 @@ public class ListViewLayer extends ScrollViewLayer{
 		this.heightForSectionFooterSpace = heightForSectionFooterSpace;
 	}
 	
+	public int getSectionContentLayerHeight(){
+		return this.sectionContentLayerHeight;
+	}
+	
+	public int getItemContentLayerHeight(){
+		return this.itemContentLayerHeight;
+	}
+	
+	public int getHeightForSectionHeaderSpace(){
+		return this.heightForSectionHeaderSpace;
+	}
+	
+	public int getHeightForSectionFooterSpace(){
+		return this.heightForSectionFooterSpace;
+	}
+	
 	public int getSectionContentLayerHeight(IndexPath indexPath){
 		return listViewLayerListener.heightForSectionAtIndexPath(indexPath);
 	}
@@ -516,7 +585,7 @@ public class ListViewLayer extends ScrollViewLayer{
 //		return (ALayer) contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition()).getChildAt(0);
 		try {
 			return (ALayer) contentLayers.get((indexPath.getSection()+1) * indexPath.getPosition()).getChildAt(0);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -525,7 +594,7 @@ public class ListViewLayer extends ScrollViewLayer{
 //		return (ALayer) sectionContentLayers.get(indexPath.getSection()).getChildAt(0);
 		try {
 			return (ALayer) sectionContentLayers.get(indexPath.getSection()).getChildAt(0);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
 	}
@@ -705,43 +774,43 @@ public class ListViewLayer extends ScrollViewLayer{
 		}
 	}
 	
-	private void initButtons(){
-		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-//		itemLayers = layers;
-		layers.add(new ButtonLayer("1", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("2", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("3", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("4", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("5", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("6", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("7", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("8", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("9", 100, (int) itemContentLayerHeight, false));
-		layers.add(new ButtonLayer("100", 100, (int) itemContentLayerHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(ButtonLayer layer : layers){
-			layer.setY(y);
-			layer.setBackgroundColor(Color.RED);
-			layer.setTextColor(Color.WHITE);
-			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-//			addChild(layer);
-//			layer.setIsClipOutside(true);
-//			y += itemHeight;
-			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
-				
-				@Override
-				public void onClick(ButtonLayer buttonLayer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-		
-		setItems(layers);
-	}
+//	private void initButtons(){
+//		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
+////		itemLayers = layers;
+//		layers.add(new ButtonLayer("1", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("2", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("3", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("4", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("5", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("6", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("7", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("8", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("9", 100, (int) itemContentLayerHeight, false));
+//		layers.add(new ButtonLayer("100", 100, (int) itemContentLayerHeight, false));
+//		
+//		setIsClipOutside(true);
+//		
+//		int y = 0;
+//		for(ButtonLayer layer : layers){
+//			layer.setY(y);
+//			layer.setBackgroundColor(Color.RED);
+//			layer.setTextColor(Color.WHITE);
+//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+////			addChild(layer);
+////			layer.setIsClipOutside(true);
+////			y += itemHeight;
+//			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(ButtonLayer buttonLayer) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
+//		}
+//		
+//		setItems(layers);
+//	}
 	
 	
 	@Override
