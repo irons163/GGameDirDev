@@ -25,6 +25,7 @@ import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
 import com.example.ggamedirdev.listview.SpinnerLayer;
+import com.example.ggamedirdev.listview.SwitchLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
 import com.example.ggamedirdev.listview.ViewPagerAdapter;
 import com.example.ggamedirdev.listview.ViewPagerLayer;
@@ -391,6 +392,9 @@ public class MyScene extends EasyScene{
 				return strs.length;
 			}
 		});
+		
+		SwitchLayer switchLayer = new SwitchLayer();
+		addChild(switchLayer);
 	}
 
 	GameView gameview;
@@ -455,8 +459,8 @@ public class MyScene extends EasyScene{
 	public void doDraw(Canvas canvas) {
 		// TODO Auto-generated method stub
 //		sprite.drawSelf(canvas, null);
-//		LayerManager.drawLayers(canvas, null);
-//		LayerManager.drawSceneLayers(canvas, null, sceneLayerLevel);
+//		LayerManager.getInstance().drawLayers(canvas, null);
+//		LayerManager.getInstance().drawSceneLayers(canvas, null, sceneLayerLevel);
 		
 		Paint paint = new Paint();
 		paint.setTextSize(50);
