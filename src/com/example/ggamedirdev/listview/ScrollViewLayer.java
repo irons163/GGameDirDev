@@ -396,7 +396,7 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 	public void drawSelf(Canvas canvas, Paint paint) {
 		super.drawSelf(canvas, paint);
 	}
-	
+	/*
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int savedFlag = getFlag();
@@ -432,7 +432,7 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 		}
 		return false;
 	}
-	
+	*/
 	@Override
 	public boolean onTouchEvent(MotionEvent event, int touchEventFlag) {
 		// TODO Auto-generated method stub

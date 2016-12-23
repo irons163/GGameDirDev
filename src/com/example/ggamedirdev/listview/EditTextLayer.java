@@ -1,21 +1,25 @@
 package com.example.ggamedirdev.listview;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputConnection;
 
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.Layer;
 
-public class EditTextLayer extends Layer{
+public class EditTextLayer extends Layer implements OnKeyListener{
 	private List<? extends ILayer> mlayers;
-	private float itemHeight;
 	private boolean hasButtonColors;
 	private int[] buttonColors = new int[3];
 	private Bitmap[] buttonBitmaps = new Bitmap[3];
@@ -28,18 +32,14 @@ public class EditTextLayer extends Layer{
 	
 	GestureDetector gestureDetector;
 	
+	String text;
+	
 	List<ILayer> tabs;
 	
 	public EditTextLayer() {
 		// TODO Auto-generated constructor stub
 		setPosition(70, 70);
 		setBackgroundColor(Color.BLUE);
-		
-		itemHeight = 100;
-		
-//		initButtons();
-//		initSprites();
-//		initClipSprites();
 		
 		String text;
 		
@@ -66,13 +66,6 @@ public class EditTextLayer extends Layer{
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);
-			
-//		Paint mPaint = new Paint();
-//		mPaint.setColor(Color.BLUE);
-//		for(ILayer layer : mlayers){
-//			canvas.drawRect(layer.getFrame(), mPaint);
-//		}
-		
 	}
 	
 	@Override
@@ -115,4 +108,44 @@ public class EditTextLayer extends Layer{
 		}
 	}
 
+
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+//	@Override
+//	public boolean onKey(View v, int keyCode, KeyEvent event) {
+//		// TODO Auto-generated method stub
+//		 switch (event.getAction()) {
+//		case KeyEvent.ACTION_DOWN:
+//			
+//			break;
+//
+//		default:
+//			break;
+//		};
+//		 
+//		KeyEvent.keyCodeToString(keyCode);
+//		 text = KeyEvent.keyCode;
+//		return false;
+//		
+//		String key = KeyEvent.keyCodeToString(keyCode);
+//        // key will be something like "KEYCODE_A" - extract the "A"
+//
+//        // use pattern to convert int keycode to some character
+//        Matcher matcher = KEYCODE_PATTERN.matcher(key);
+//        if (matcher.matches()) {
+//            // append character to textview
+//            mTextView.append(matcher.group(1));
+//        }
+//        // let the default implementation handle the event
+//        return super.onKeyDown(keyCode, event);           
+//        
+//        InputConnection ic = getCurrentInputConnection();
+//	}
+	
+	
 }

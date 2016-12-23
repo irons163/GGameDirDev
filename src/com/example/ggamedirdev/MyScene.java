@@ -17,10 +17,12 @@ import android.view.SurfaceHolder;
 
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
+import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
 import com.example.ggamedirdev.listview.ITouchStatusListener;
 import com.example.ggamedirdev.listview.ListViewLayer;
+import com.example.ggamedirdev.listview.ProgressLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
@@ -233,14 +235,6 @@ public class MyScene extends EasyScene{
 		scrollViewLayer.addChild(layer);
 		scrollViewLayer.setAutoAdd(true);
 		
-		checkboxLayer = new CheckboxLayer();
-		checkboxLayer.setPosition(650, 700);
-		checkboxLayer.setWidth(150);
-		checkboxLayer.setHeight(350);
-		checkboxLayer.setAutoAdd(true);
-		
-
-		
 		final List<ALayer> pagers = new ArrayList<ALayer>();
 		pagers.add(new ButtonLayer("1", 100, (int) 100, false));
 		pagers.add(new ButtonLayer("2", 100, (int) 100, false));
@@ -394,7 +388,32 @@ public class MyScene extends EasyScene{
 		});
 		
 		SwitchLayer switchLayer = new SwitchLayer();
+		switchLayer.setPosition(400, 800);
 		addChild(switchLayer);
+		
+		checkboxLayer = new CheckboxLayer();
+		checkboxLayer.setPosition(650, 700);
+		checkboxLayer.setWidth(150);
+		checkboxLayer.setHeight(350);
+		checkboxLayer.setAutoAdd(true);
+		
+		CheckboxLayer checkboxLayer = new CheckboxLayer();
+		checkboxLayer.setSize(150, 100);
+		checkboxLayer.setPosition(400, 400);
+		addChild(checkboxLayer);
+		
+		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
+		checkBoxGroup.setSize(150, 300);
+		checkBoxGroup.setPosition(400, 500);
+		
+//		CheckboxLayer checkboxLayer1 = new CheckboxLayer();
+//		checkboxLayer.setSize(150, 100);
+//		checkboxLayer.setPosition(0, 0);
+//		checkBoxGroup.addCheckBox(checkboxLayer1);
+//		addChild(checkBoxGroup);
+		
+//		ProgressLayer progressLayer = new ProgressLayer();
+//		progressLayer;
 	}
 
 	GameView gameview;
@@ -490,7 +509,7 @@ public class MyScene extends EasyScene{
 		
 		scrollViewLayer.drawSelf(canvas, null);
 		
-		checkboxLayer.drawSelf(canvas, null);
+//		checkboxLayer.drawSelf(canvas, null);
 		
 //		tabViewLayer.drawSelf(canvas, null);
 	}

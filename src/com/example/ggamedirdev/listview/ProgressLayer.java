@@ -6,6 +6,7 @@ import java.util.List;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -44,7 +45,9 @@ public class ProgressLayer extends ButtonLayer{
 		
 //		initButtons();
 //		initSprites();
-		initClipSprites();
+//		initClipSprites();
+		
+		Path path = new Path(); //betize
 		
 		setOnLayerClickListener(new ALayer.OnLayerClickListener() {
 			
@@ -68,113 +71,6 @@ public class ProgressLayer extends ButtonLayer{
 			}
 		});
 		
-	}
-	
-	private void initClipSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){
-			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
-			layer.setY(y);
-			layer.setAnchorPoint(-0.55f, -0.15f);
-			layer.setXscale(1.5f);
-			layer.setYscale(1.5f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){			
-			layer.setY(y);
-			layer.setAnchorPoint(-0.65f, -0.15f);
-			layer.setXscale(2.0f);
-			layer.setYscale(2.0f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initButtons(){
-		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-		mlayers = layers;
-		layers.add(new ButtonLayer("1", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("2", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("3", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("4", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("5", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("6", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("7", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("8", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("9", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("100", 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(ButtonLayer layer : layers){
-			layer.setY(y);
-			layer.setBackgroundColor(Color.RED);
-			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
-				
-				@Override
-				public void onClick(ButtonLayer buttonLayer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
 	}
 	
 	public void setChecked(boolean isChecked){
