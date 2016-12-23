@@ -412,8 +412,31 @@ public class MyScene extends EasyScene{
 //		checkBoxGroup.addCheckBox(checkboxLayer1);
 //		addChild(checkBoxGroup);
 		
-//		ProgressLayer progressLayer = new ProgressLayer();
-//		progressLayer;
+		
+		final ProgressLayer progressLayer = new ProgressLayer();
+		progressLayer.setSize(100, 100);
+		progressLayer.setPosition(500, 800);
+		addChild(progressLayer);
+		
+		Thread thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while (progressLayer.getCurrentProgress() < 100) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					progressLayer.setCurrentProgress(progressLayer.getCurrentProgress()+1);
+				}
+				
+			}
+		});
+		
+		thread.start();
 	}
 
 	GameView gameview;
