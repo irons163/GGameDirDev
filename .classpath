@@ -6,5 +6,12 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="/Try_GameEngine5"/>
+	<classpathentry exported="true" kind="lib" path="libs/cglib-nodep-3.2.4.jar"/>
+	<classpathentry kind="lib" path="libs/byte-buddy-android-1.5.10.jar"/>
+	<classpathentry kind="lib" path="libs/byte-buddy-dep-1.5.10.jar"/>
+	<classpathentry kind="lib" path="libs/byte-buddy-1.5.10.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/byte-buddy-1.5.11.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/byte-buddy-android-1.5.11.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

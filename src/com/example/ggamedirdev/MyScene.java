@@ -9,16 +9,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.widget.ImageView.ScaleType;
 
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
 import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
+import com.example.ggamedirdev.listview.CollectionLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
 import com.example.ggamedirdev.listview.ITouchStatusListener;
 import com.example.ggamedirdev.listview.ListViewLayer;
@@ -26,6 +29,8 @@ import com.example.ggamedirdev.listview.ProgressLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
+import com.example.ggamedirdev.listview.ShapeLayer;
+import com.example.ggamedirdev.listview.ShapeLayer.CircleShape;
 import com.example.ggamedirdev.listview.SpinnerLayer;
 import com.example.ggamedirdev.listview.SwitchLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
@@ -104,7 +109,7 @@ public class MyScene extends EasyScene{
 				// TODO Auto-generated method stub
 				RectF rectF;
 				if(sprite.getLocationInScene()!=null)
-					rectF = new RectF(sprite.getLocationInScene().x, sprite.getLocationInScene().y, sprite.getLocationInScene().x + sprite.w, sprite.getLocationInScene().y + sprite.h);
+					rectF = new RectF(sprite.getLocationInScene().x, sprite.getLocationInScene().y, sprite.getLocationInScene().x + sprite.getWidth(), sprite.getLocationInScene().y + sprite.getHeight());
 				else
 					rectF = sprite.getFrame();
 				return rectF;
@@ -115,7 +120,7 @@ public class MyScene extends EasyScene{
 				// TODO Auto-generated method stub;
 				PointF pointF;
 				if(sprite.getLocationInScene()!=null)
-					pointF = new PointF(sprite.getLocationInScene().x + sprite.w/2, sprite.getLocationInScene().y + sprite.h/2);
+					pointF = new PointF(sprite.getLocationInScene().x + sprite.getWidth()/2, sprite.getLocationInScene().y + sprite.getHeight()/2);
 				else
 					pointF = new PointF(sprite.getFrame().centerX(), sprite.getFrame().centerY());
 				return pointF;
@@ -342,6 +347,7 @@ public class MyScene extends EasyScene{
 		tabViewLayer.setHeight(600);
 		tabViewLayer.setPosition(0, 650);
 //		tabViewLayer.setAutoAdd(true);
+//		tabViewLayer.addp
 		
 		spinnerLayer = new SpinnerLayer();
 		spinnerLayer.setWidth(150);
@@ -402,15 +408,73 @@ public class MyScene extends EasyScene{
 		checkboxLayer.setPosition(400, 400);
 		addChild(checkboxLayer);
 		
-		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
-		checkBoxGroup.setSize(150, 300);
-		checkBoxGroup.setPosition(400, 500);
-		
+//		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
+//		checkBoxGroup.setSize(150, 300);
+//		checkBoxGroup.setPosition(400, 500);
+//		
 //		CheckboxLayer checkboxLayer1 = new CheckboxLayer();
 //		checkboxLayer.setSize(150, 100);
 //		checkboxLayer.setPosition(0, 0);
 //		checkBoxGroup.addCheckBox(checkboxLayer1);
 //		addChild(checkBoxGroup);
+//		
+		ShapeLayer shapeLayer = new ShapeLayer();
+		shapeLayer.setSize(100, 100);
+		shapeLayer.setPosition(550, 500);
+		CircleShape circleShape = new ShapeLayer.CircleShape();
+		circleShape.setCenter(50, 50, 30);
+		circleShape.getPaint().setColor(Color.RED);
+		circleShape.getPaint().setStyle(Style.FILL);
+		shapeLayer.setShape(circleShape);
+		shapeLayer.setBackgroundColor(Color.YELLOW);
+		addChild(shapeLayer);
+		
+//		CollectionLayer collectionLayer = new CollectionLayer();
+//		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
+////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
+////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
+//		collectionLayer.setWidth(200);
+////		listViewLayer.setHeight(850);
+//		collectionLayer.setHeight(500);
+//		collectionLayer.setAutoAdd(true);
+//		collectionLayer.setBackgroundColor(Color.CYAN);
+//		collectionLayer.setPosition(70, 70);
+//		
+//		layers = new ArrayList<ButtonLayer>();
+////		itemLayers = layers;
+//		layers.add(new ButtonLayer("1", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("2", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("3", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("4", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("5", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("6", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("7", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("8", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("9", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("100", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		
+//
+//		y = 0;
+//		for(ButtonLayer itemlayer : layers){
+//			itemlayer.setY(y);
+//			itemlayer.setBackgroundColor(Color.RED);
+//			itemlayer.setTextColor(Color.WHITE);
+//			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+////			addChild(layer);
+////			layer.setIsClipOutside(true);
+////			y += itemHeight;
+//			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(ButtonLayer buttonLayer) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
+//		}
+//		
+//		collectionLayer.setItems(layers);
+		
 		
 		
 		final ProgressLayer progressLayer = new ProgressLayer();

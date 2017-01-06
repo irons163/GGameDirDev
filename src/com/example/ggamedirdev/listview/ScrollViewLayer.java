@@ -26,8 +26,12 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 	protected int scrollFlag = SCROLL_LIMIT_DEFAULT;
 	protected float topY = 0;
 	protected float bottomY = 0;
+	protected float leftX = 0;
+	protected float rightX = 0;
 	protected boolean isInvalidate = false;
 	protected boolean isAutoRefresh = false;
+	private boolean isScrollableHorizan = false;
+	private boolean isScrollableVertical = true;
 	
 	public ScrollViewLayer() {
 		
@@ -79,21 +83,171 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 //				}
 				
 				boolean isAlginTopOrBottom = false;
+				if(isScrollableVertical()){
+					
+					do{
+						if(-distanceY + topY > 0 
+								&& (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
+	//						if(topY < 0){
+	//							distanceY = topY;
+	//							isAlginTopOrBottom = true;
+	//							break;
+	//						}else 
+							if(topY <= 0 && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
+								distanceY = topY;
+								isAlginTopOrBottom = true;
+								break;
+							}else if(topY < 0){
+								distanceY = topY;
+								isAlginTopOrBottom = true;
+								break;
+							}
+	//						else if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0
+	//								|| ((bottomY - topY > getHeight()) && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) != 0)){
+	////							if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0)
+	////								break;
+	////							else
+	////								distanceY = bottomY - getHeight();
+	//							return false;
+	//						}
+							else if(((bottomY - topY > getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0)){
+	//							if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0)
+	//								break;
+	//							else
+	//								distanceY = bottomY - getHeight();
+								return false;
+							} 
+							else if((scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
+	//							break;
+								return false;
+							}
+						}else{
+							if(-distanceY + topY < 0 && distanceY > 0 && (bottomY - topY <= getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0
+									&& (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM) == 0){
+								distanceY = topY;
+								isAlginTopOrBottom = true;
+								break;
+							}
+	//						else if( (bottomY - topY <= getHeight()) && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) != 0){
+	//							distanceY = topY;
+	//							isAlginTopOrBottom = true;
+	////							if(bottomY - topY > getHeight() && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0)
+	////								return false;
+	//							break;
+	//						}
+							
+							else if(-distanceY + topY > 0 && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
+								return false;
+							} 
+							else if(distanceY < 0){
+								break;
+							}
+						}
+						
+						if(-distanceY + bottomY < getHeight() 
+								&& (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM) == 0){
+							
+							if(bottomY >= getHeight() && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
+								distanceY = bottomY - getHeight();
+								isAlginTopOrBottom = true;
+								break;
+							}else 
+							if(bottomY > getHeight()){
+								distanceY = bottomY - getHeight();
+								isAlginTopOrBottom = true;
+								break;
+							}
+	//						else if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0
+	//								|| ((bottomY - topY > getHeight()) && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) != 0)){
+	////							if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0)
+	////								break;
+	////							else
+	////								distanceY = topY;
+	//							return false;
+	//						}
+							else if(((bottomY - topY > getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0)){
+	//							if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0)
+	//								break;
+	//							else
+	//								distanceY = topY;
+								return false;
+							}
+							else if((scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
+								return false;
+							}
+	//						else {
+	//							return false;
+	////							break;
+	//						}
+						}else{
+	//						if((bottomY - topY <= getHeight()) && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) != 0){
+	//							distanceY = bottomY - getHeight();
+	//							isAlginTopOrBottom = true;
+	////							if(bottomY - topY > getHeight())
+	////								return false;
+	//							break;
+	//						}
+							if(-distanceY + bottomY > getHeight() && distanceY < 0 && (bottomY - topY <= getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0){
+								distanceY = bottomY - getHeight();
+								isAlginTopOrBottom = true;
+	//							if(bottomY - topY > getHeight())
+	//								return false;
+								break;
+							}
+							
+	//						else if(-distanceY + bottomY < getHeight() && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
+	//							return false;
+	//						}
+	//						else{
+	//							return false;
+	//						}
+						}
+						
+	//					if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) != 0){
+	//						return false;
+	//					}
+					}while(false);
+	//				if((lastContentLayer.getTop() + lastContentLayer.getHeight() - firstContentLayer.getTop()) < getHeight() 
+	//						&& (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0){
+	//					return false;
+	//				}
+					
+					/*
+					if(!startScroll){
+						startScroll = true;
+						if(!isAlginTopOrBottom)
+							distanceY = distanceY > 0 ? 1:-1;
+						
+						willStartScroll(e1, e2, distanceX, distanceY);
+					}
+					
+					scrollContents(e1, e2, distanceX, distanceY);
+					
+					topY = topY - distanceY;
+					bottomY = bottomY - distanceY;
+					
+					invalidate();*/
+				}
+				
+				
+				boolean isAlginLeftOrRight = false;
+				if(isScrollableHorizan()){
+				
 				do{
-					if(-distanceY + topY > 0 
+					if(-distanceX + leftX > 0 
 							&& (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
 //						if(topY < 0){
 //							distanceY = topY;
 //							isAlginTopOrBottom = true;
 //							break;
 //						}else 
-						if(topY <= 0 && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
-							distanceY = topY;
-							isAlginTopOrBottom = true;
+						if(leftX <= 0 && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
+							distanceX = leftX;
+							isAlginLeftOrRight = true;
 							break;
-						}else if(topY < 0){
-							distanceY = topY;
-							isAlginTopOrBottom = true;
+						}else if(leftX < 0){
+							distanceX = leftX;
+							isAlginLeftOrRight = true;
 							break;
 						}
 //						else if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0
@@ -104,7 +258,7 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 ////								distanceY = bottomY - getHeight();
 //							return false;
 //						}
-						else if(((bottomY - topY > getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0)){
+						else if(((rightX - leftX > getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0)){
 //							if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0)
 //								break;
 //							else
@@ -116,10 +270,10 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 							return false;
 						}
 					}else{
-						if(-distanceY + topY < 0 && distanceY > 0 && (bottomY - topY <= getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0
+						if(-distanceX + leftX < 0 && distanceX > 0 && (rightX - leftX <= getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0
 								&& (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM) == 0){
-							distanceY = topY;
-							isAlginTopOrBottom = true;
+							distanceX = leftX;
+							isAlginLeftOrRight = true;
 							break;
 						}
 //						else if( (bottomY - topY <= getHeight()) && (listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) != 0){
@@ -130,25 +284,25 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 //							break;
 //						}
 						
-						else if(-distanceY + topY > 0 && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
+						else if(-distanceX + leftX > 0 && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP) == 0){
 							return false;
 						} 
-						else if(distanceY < 0){
+						else if(distanceX < 0){
 							break;
 						}
 					}
 					
-					if(-distanceY + bottomY < getHeight() 
+					if(-distanceX + rightX < getHeight() 
 							&& (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM) == 0){
 						
-						if(bottomY >= getHeight() && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
-							distanceY = bottomY - getHeight();
-							isAlginTopOrBottom = true;
+						if(rightX >= getHeight() && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) == 0){
+							distanceX = rightX - getHeight();
+							isAlginLeftOrRight = true;
 							break;
 						}else 
-						if(bottomY > getHeight()){
-							distanceY = bottomY - getHeight();
-							isAlginTopOrBottom = true;
+						if(rightX > getHeight()){
+							distanceX = rightX - getHeight();
+							isAlginLeftOrRight = true;
 							break;
 						}
 //						else if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0
@@ -159,7 +313,7 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 ////								distanceY = topY;
 //							return false;
 //						}
-						else if(((bottomY - topY > getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0)){
+						else if(((rightX - leftX > getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0)){
 //							if((listviewFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_ITEMS_HEIGHT_LESS_THAN_LISTVIEW) == 0)
 //								break;
 //							else
@@ -181,9 +335,9 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 ////								return false;
 //							break;
 //						}
-						if(-distanceY + bottomY > getHeight() && distanceY < 0 && (bottomY - topY <= getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0){
-							distanceY = bottomY - getHeight();
-							isAlginTopOrBottom = true;
+						if(-distanceX + rightX > getHeight() && distanceX < 0 && (rightX - leftX <= getHeight()) && (scrollFlag & SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT) != 0){
+							distanceX = rightX - getHeight();
+							isAlginLeftOrRight = true;
 //							if(bottomY - topY > getHeight())
 //								return false;
 							break;
@@ -206,16 +360,24 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 //					return false;
 //				}
 				
+				
+				
+				}
+				
 				if(!startScroll){
 					startScroll = true;
+					if(!isAlginLeftOrRight)
+						distanceX = distanceX > 0 ? 1:-1;
 					if(!isAlginTopOrBottom)
-						distanceY = distanceY > 0 ? 1:-1;
+						distanceY = distanceY > 0 ? 1:-1;	
 					
 					willStartScroll(e1, e2, distanceX, distanceY);
 				}
 				
 				scrollContents(e1, e2, distanceX, distanceY);
 				
+				leftX = leftX - distanceX;
+				rightX = rightX - distanceX;
 				topY = topY - distanceY;
 				bottomY = bottomY - distanceY;
 				
@@ -250,6 +412,16 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 	
 	protected boolean checkScrollable(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
+		return isScrollableHorizan()||isScrollableVertical();
+	}
+	
+	protected boolean checkScrollableHorizan(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		return isScrollableHorizan;
+	}
+	
+	protected boolean checkScrollableVertical(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
 		return true;
 	}
 	
@@ -266,83 +438,29 @@ public class ScrollViewLayer extends Layer implements ITouchStatusListener{
 	protected void scrollContents(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
 		for(ILayer layer : getLayers()){
-			layer.setY(layer.getY() - distanceY);
+			if(isScrollableVertical())
+				layer.setY(layer.getY() - distanceY);
+			if(isScrollableHorizan())
+				layer.setX(layer.getX() - distanceX);
 		}
 	}
 	
-//	private void initClipSpritess(){
-//		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-//		mlayers = layers;
-//		layers.add(new ButtonLayer(BitmapUtil.icon, 100, (int) itemHeight, false));
-//		layers.add(new ButtonLayer(BitmapUtil.icon, 100, (int) itemHeight, false));
-//		layers.add(new ButtonLayer(BitmapUtil.icon, 100, (int) itemHeight, false));
-//		
-//		setIsClipOutside(true);
-//		
-//		int x = 0;
-//		for(ButtonLayer layer : layers){
-////			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
-//			layer.setY(x);
-//			layer.setAnchorPoint(-0.55f, -0.15f);
-////			layer.setXscale(1.5f);
-////			layer.setYscale(1.5f);
-////			layer.setRotation(45);
-////			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-//			addChild(layer);
-////			layer.setIsClipOutside(true);
-//			x += itemHeight;
-//			layer.setOnLayerClickListener(new OnLayerClickListener() {
-//				
-//				@Override
-//				public void onClick(ILayer layer) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			});
-//		}
-//	}
-//	
-//	private void initClipSprites(){
-//		List<Sprite> layers = new ArrayList<Sprite>();
-//		mlayers = layers;
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-//		
-//		setIsClipOutside(true);
-//		
-//		int y = 0;
-//		for(Sprite layer : layers){
-//			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
-//			layer.setY(y);
-//			layer.setAnchorPoint(-0.55f, -0.15f);
-//			layer.setXscale(1.5f);
-//			layer.setYscale(1.5f);
-//			layer.setRotation(45);
-//			layer.setBackgroundColor(Color.RED);
-////			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-//			addChild(layer);
-////			layer.setIsClipOutside(true);
-//			y += itemHeight;
-//			layer.setOnLayerClickListener(new OnLayerClickListener() {
-//				
-//				@Override
-//				public void onClick(ILayer layer) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			});
-//		}
-//	}
-	
+	public boolean isScrollableHorizan() {
+		return isScrollableHorizan;
+	}
+
+	public void setScrollableHorizan(boolean isScrollableHorizan) {
+		this.isScrollableHorizan = isScrollableHorizan;
+	}
+
+	public boolean isScrollableVertical() {
+		return isScrollableVertical;
+	}
+
+	public void setScrollableVertical(boolean isScrollableVertical) {
+		this.isScrollableVertical = isScrollableVertical;
+	}
+
 	@Override
 	public void addChild(ILayer layer) {
 		// TODO Auto-generated method stub

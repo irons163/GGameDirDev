@@ -81,7 +81,7 @@ public class EditTextLayer extends Layer implements OnKeyListener{
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[DOWN_INDEX]);
 			if(buttonBitmaps[DOWN_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_INDEX];
+				this.setBitmap(buttonBitmaps[DOWN_INDEX]);
 			}
 			isClickCancled = false;
 		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && isPressed()){
@@ -90,20 +90,20 @@ public class EditTextLayer extends Layer implements OnKeyListener{
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[NORMAL_INDEX]);
 			if(buttonBitmaps[NORMAL_INDEX]!=null){
-				this.bitmap = buttonBitmaps[NORMAL_INDEX];
+				this.setBitmap(buttonBitmaps[NORMAL_INDEX]);
 			}
 			isClickCancled = true;
 		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
 			if(hasButtonColors)	
 				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+				this.setBitmap(buttonBitmaps[UP_INDEX]);
 			}
 		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed() && !isClickCancled){
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+				this.setBitmap(buttonBitmaps[UP_INDEX]);
 			}
 		}
 	}
