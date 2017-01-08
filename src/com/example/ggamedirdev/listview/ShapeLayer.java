@@ -1,6 +1,7 @@
 package com.example.ggamedirdev.listview;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -31,18 +32,26 @@ public class ShapeLayer extends Layer{
 //				path.transform(scaleMatrix);
 //			}
 //		}else
-			path = shape.toPath();
+//			path = shape.toPath();
+		path.set(shape.toPath());
 	}
 	
 	public void fitToSize(){
-		path = shape.toPath();
-		Matrix scaleMatrix = new Matrix();
-		RectF rectF = new RectF();
-		path.computeBounds(rectF, true);
-		if(rectF.width() != 0 && rectF.height() !=0){
-			scaleMatrix.setScale(this.getWidth()/rectF.width(), this.getHeight()/rectF.height(),rectF.centerX(),rectF.centerY());
-			path.transform(scaleMatrix);
-		}
+//		path = shape.toPath();
+//		Matrix scaleMatrix = new Matrix();
+//		RectF rectF = new RectF();
+//		path.computeBounds(rectF, true);
+//		if(rectF.width() != 0 && rectF.height() !=0){
+//			scaleMatrix.setScale(this.getWidth()/rectF.width(), this.getHeight()/rectF.height(),rectF.centerX(),rectF.centerY());
+//			path.transform(scaleMatrix);
+//		}
+		
+//		float sx = 0, sy = 0;
+//		boolean isNeedScale = false;
+		
+		RectF rectF = shape.getShapeBounds();
+		if(rectF.width() != 0 && rectF.height() !=0)
+			shape.sacle(this.getWidth()/rectF.width(), this.getHeight()/rectF.height());
 	}
 	
 	public void clipCanvas(Canvas canvas){
@@ -59,21 +68,21 @@ public class ShapeLayer extends Layer{
 		// TODO Auto-generated method stub
 		super.setX(x);
 //		shape.updateCenter(x);
-		shape.setCenter(getCenterX(), shape.getCenter().y);
+//		shape.setCenter(getCenterX(), shape.getCenter().y);
 	}
 	
 	@Override
 	public void setY(float y) {
 		// TODO Auto-generated method stub
 		super.setY(y);
-		shape.setCenter(shape.getCenter().x, getCenterY());
+//		shape.setCenter(shape.getCenter().x, getCenterY());
 	}
 	
 	@Override
 	public void setPosition(float x, float y) {
 		// TODO Auto-generated method stub
 		super.setPosition(x, y);
-		shape.setCenter(getCenterX(), getCenterY());
+//		shape.setCenter(getCenterX(), getCenterY());
 	}
 	
 	@Override
@@ -96,18 +105,26 @@ public class ShapeLayer extends Layer{
 				path.reset();
 			}else{
 				
-				path = shape.toPath();
-				Matrix scaleMatrix = new Matrix();
-				RectF rectF = new RectF();
-				path.computeBounds(rectF, true);
+//				path = shape.toPath();
+//				Matrix scaleMatrix = new Matrix();
+//				RectF rectF = new RectF();
+//				path.computeBounds(rectF, true);
+//				if(this.getWidth()==0){
+//					if(rectF.width() != 0 && rectF.height() !=0)
+//						scaleMatrix.setScale((w * shape.getShapeParam().getPercentageW())/rectF.width(), 1,rectF.centerX(),rectF.centerY());
+//				}else{
+//					scaleMatrix.setScale((w * shape.getShapeParam().getPercentageW())/this.getWidth(), 1,rectF.centerX(),rectF.centerY());
+//				}
+//				
+//				path.transform(scaleMatrix); 
+				
+				RectF rectF = shape.getShapeBounds();
 				if(this.getWidth()==0){
 					if(rectF.width() != 0 && rectF.height() !=0)
-						scaleMatrix.setScale((w * shape.getShapeParam().getPercentageW())/rectF.width(), 1,rectF.centerX(),rectF.centerY());
+						shape.sacle((w * shape.getShapeParam().getPercentageW())/rectF.width(), 1);
 				}else{
-					scaleMatrix.setScale((w * shape.getShapeParam().getPercentageW())/this.getWidth(), 1,rectF.centerX(),rectF.centerY());
+					shape.sacle((w * shape.getShapeParam().getPercentageW())/this.getWidth(), 1);
 				}
-				
-				path.transform(scaleMatrix); 
 			}
 			
 		}
@@ -137,18 +154,26 @@ public class ShapeLayer extends Layer{
 				path.reset();
 			}else{
 				
-				path = shape.toPath();
-				Matrix scaleMatrix = new Matrix();
-				RectF rectF = new RectF();
-				path.computeBounds(rectF, true);
-				if(this.getWidth()==0){
-					if(rectF.width() != 0 && rectF.height() !=0)
-						scaleMatrix.setScale(1, (h * shape.getShapeParam().getPercentageH())/rectF.height(),rectF.centerX(),rectF.centerY());
-				}else{
-					scaleMatrix.setScale(1, (h * shape.getShapeParam().getPercentageH())/rectF.height(),rectF.centerX(),rectF.centerY());
-				}
+//				path = shape.toPath();
+//				Matrix scaleMatrix = new Matrix();
+//				RectF rectF = new RectF();
+//				path.computeBounds(rectF, true);
+//				if(this.getWidth()==0){
+//					if(rectF.width() != 0 && rectF.height() !=0)
+//						scaleMatrix.setScale(1, (h * shape.getShapeParam().getPercentageH())/rectF.height(),rectF.centerX(),rectF.centerY());
+//				}else{
+//					scaleMatrix.setScale(1, (h * shape.getShapeParam().getPercentageH())/rectF.height(),rectF.centerX(),rectF.centerY());
+//				}
+//				
+//				path.transform(scaleMatrix); 
 				
-				path.transform(scaleMatrix); 
+				RectF rectF = shape.getShapeBounds();
+				if(this.getHeight()==0){
+					if(rectF.width() != 0 && rectF.height() !=0)
+						shape.sacle(1, (h * shape.getShapeParam().getPercentageH())/rectF.height());
+				}else{
+					shape.sacle(1, (h * shape.getShapeParam().getPercentageH())/this.getHeight());
+				}
 			}
 			
 		}
@@ -158,21 +183,46 @@ public class ShapeLayer extends Layer{
 	
 	@Override
 	public void setSize(int w, int h) {
-		// TODO Auto-generated method stub
-		if(h==0){
-			path.reset();
-		}else{
-			path = shape.toPath();
-			Matrix scaleMatrix = new Matrix();
-			RectF rectF = new RectF();
-			path.computeBounds(rectF, true);
-			scaleMatrix.setScale(h/this.getHeight(), 1,rectF.centerX(),rectF.centerY());
-			path.transform(scaleMatrix); 
+		float sx = 0, sy = 0;
+		boolean isNeedScale = false;
+		if(shape.getShapeParam().isEnabledPercentagePositionX()){
+			shape.setCenter(w * shape.getShapeParam().getPercentageX(), shape.getCenter().y);
+		}
+		if(shape.getShapeParam().isEnabledPercentageSizeW()){
+			if(w==0){
+				path.reset();
+			}else{
+				RectF rectF = shape.getShapeBounds();
+				if(this.getWidth()==0){
+					if(rectF.width() != 0 && rectF.height() !=0)
+						sx = (w * shape.getShapeParam().getPercentageW())/rectF.width();
+				}else{
+					sx = (w * shape.getShapeParam().getPercentageW())/this.getWidth();
+				}
+			}
 		}
 		
+		if(shape.getShapeParam().isEnabledPercentagePositionY()){
+			shape.setCenter(shape.getCenter().x, h * shape.getShapeParam().getPercentageY());
+		}
+		if(shape.getShapeParam().isEnabledPercentageSizeH()){
+			if(h==0){
+				path.reset();
+			}else{
+				RectF rectF = shape.getShapeBounds();
+				if(this.getHeight()==0){
+					if(rectF.width() != 0 && rectF.height() !=0)
+						sy = (h * shape.getShapeParam().getPercentageH())/rectF.height();
+				}else{
+					sy = (h * shape.getShapeParam().getPercentageH())/this.getHeight();
+				}
+			}
+		}
+		
+		if(isNeedScale)
+			shape.sacle(sx, sy);
+		
 		super.setSize(w, h);
-		
-		
 	}
 	
 	@Override
@@ -186,8 +236,8 @@ public class ShapeLayer extends Layer{
 		// TODO Auto-generated method stub
 		super.doDrawSelfWithClipedCanvas(canvas, paint);
 //		clipCanvas(canvas);
-		getFrameInScene();
-		shape.draw(canvas, paint);
+//		getFrameInScene();
+		shape.draw(canvas, paint, getFrameInScene().left, getFrameInScene().top);
 	}
 	
 	@Override
@@ -237,6 +287,15 @@ public class ShapeLayer extends Layer{
 		return isTouched;
 	}
 	
+	@Override
+	protected void onTouched(MotionEvent event) {
+		// TODO Auto-generated method stub
+		super.onTouched(event);
+		
+		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
+			setBackgroundColor(Color.GREEN);
+		}
+	}
 	
 	public static abstract class Shape{
 		Path path = new Path();
@@ -244,6 +303,7 @@ public class ShapeLayer extends Layer{
 		protected Paint drawPaint;
 		private PointF center = new PointF();
 		private ShapeParam shapeParam = new ShapeParam();
+		private RectF shapeBounds = new RectF();
 		
 		static class ShapeParam extends LayerParam{
 			
@@ -258,6 +318,8 @@ public class ShapeLayer extends Layer{
 		
 		public void setCenter(float cx, float cy){
 			center.set(cx, cy);
+			toPath();
+			calculateShapeBounds();
 		}
 		
 		public PointF getCenter(){
@@ -268,12 +330,16 @@ public class ShapeLayer extends Layer{
 			return paint;
 		}
 		
-		public void draw(Canvas canvas, Paint paint){
+		public void draw(Canvas canvas, Paint paint, float offsetX, float offsetY){
 			if(paint == null){
 				paint = getPaint();
 			}
 			
 			drawPaint = paint;
+		}
+		
+		public void draw(Canvas canvas, Paint paint){
+			draw(canvas, paint, 0, 0);
 		}
 		
 		public Path toPath(){
@@ -287,6 +353,26 @@ public class ShapeLayer extends Layer{
 		
 		public ShapeParam getShapeParam(){
 			return shapeParam;
+		}
+
+		public RectF getShapeBounds() {
+			return shapeBounds;
+		}
+		
+		public void sacle(float sx, float xy){
+//			path = shape.toPath();
+			Matrix scaleMatrix = new Matrix();
+//			RectF rectF = new RectF();
+//			path.computeBounds(rectF, true);
+			scaleMatrix.setScale(sx, xy, getShapeBounds().centerX(), getShapeBounds().centerY());
+			path.transform(scaleMatrix);
+			calculateShapeBounds();
+		}
+		
+		protected void calculateShapeBounds(){
+			RectF rectF = new RectF();
+			path.computeBounds(rectF, true);
+			getShapeBounds().set(rectF);
 		}
 	}
 
@@ -312,11 +398,18 @@ public class ShapeLayer extends Layer{
 	class RectShape extends Shape{
 		RectF rectF = new RectF();
 		
+		public void setRectF(RectF rectF){
+			this.rectF = rectF;
+			setCenter(rectF.centerX(), rectF.centerY());
+		}
+		
 		@Override
 		public void setCenter(float cx, float cy) {
 			// TODO Auto-generated method stub
-			super.setCenter(cx, cy);
 			rectF.offset(cx - rectF.centerX(), cy - rectF.centerY());
+			super.setCenter(cx, cy);
+//			rectF.offset(cx - rectF.centerX(), cy - rectF.centerY());
+//			getShapeBounds().set(rectF);
 		}
 		
 		@Override
@@ -334,6 +427,13 @@ public class ShapeLayer extends Layer{
 			path.addRect(rectF, Direction.CW);
 			return path;
 		}
+		
+		@Override
+		protected void calculateShapeBounds() {
+			// TODO Auto-generated method stub
+			super.calculateShapeBounds();
+			rectF.set(getShapeBounds());
+		}
 	}
 
 	public static class CircleShape extends Shape{
@@ -346,15 +446,23 @@ public class ShapeLayer extends Layer{
 		}
 		
 		public void setCenter(float cx, float cy, float radius){
-			setCenter(cx, cy);
 			this.radius = radius;
+			setCenter(cx, cy);
+		}
+
+		@Override
+		public void draw(Canvas canvas, Paint paint, float offsetX,
+				float offsetY) {
+			// TODO Auto-generated method stub
+			super.draw(canvas, paint, offsetX, offsetY);
+			
+			canvas.drawCircle(getCenter().x + offsetX, getCenter().y + offsetY, radius, drawPaint);
 		}
 		
 		@Override
 		public void draw(Canvas canvas, Paint paint) {
 			// TODO Auto-generated method stub
 			super.draw(canvas, paint);
-			canvas.drawCircle(getCenter().x, getCenter().y, radius, drawPaint);
 		}
 		
 		@Override
@@ -365,10 +473,18 @@ public class ShapeLayer extends Layer{
 			path.addCircle(getCenter().x, getCenter().y, radius, Direction.CW);
 			return path;
 		}
+		
+		@Override
+		protected void calculateShapeBounds() {
+			// TODO Auto-generated method stub
+			super.calculateShapeBounds();
+			radius = getShapeBounds().width()/2;
+		}
 	}
 	
 	public static class PolygonShape extends Shape{
 		private Path polygon = new Path();
+		private Path drawPath = new Path();
 		
 		public void setPath(Path path) {
 			// TODO Auto-generated method stub
@@ -382,10 +498,20 @@ public class ShapeLayer extends Layer{
 		}
 		
 		@Override
+		public void draw(Canvas canvas, Paint paint, float offsetX,
+				float offsetY) {
+			// TODO Auto-generated method stub
+			super.draw(canvas, paint, offsetX, offsetY);
+			drawPath.set(polygon);
+			drawPath.offset(offsetX, offsetY);
+			canvas.drawPath(drawPath, drawPaint);
+		}
+		
+		@Override
 		public void draw(Canvas canvas, Paint paint) {
 			// TODO Auto-generated method stub
 			super.draw(canvas, paint);
-			canvas.drawPath(polygon, drawPaint);
+			
 		}
 		
 		@Override

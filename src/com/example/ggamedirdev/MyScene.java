@@ -47,6 +47,7 @@ import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.ALayer.OnLayerClickListener;
 import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
+import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
@@ -422,12 +423,27 @@ public class MyScene extends EasyScene{
 		shapeLayer.setSize(100, 100);
 		shapeLayer.setPosition(550, 500);
 		CircleShape circleShape = new ShapeLayer.CircleShape();
-		circleShape.setCenter(50, 50, 30);
+		circleShape.setCenter(50, 50, 10);
 		circleShape.getPaint().setColor(Color.RED);
 		circleShape.getPaint().setStyle(Style.FILL);
 		shapeLayer.setShape(circleShape);
 		shapeLayer.setBackgroundColor(Color.YELLOW);
 		addChild(shapeLayer);
+		
+		ShapeLayer shapeLayer2 = new ShapeLayer();
+		shapeLayer2.setSize(100, 100);
+		shapeLayer2.setPosition(550, 500);
+		CircleShape circleShape2 = new ShapeLayer.CircleShape();
+		circleShape2.setCenter(50, 50, 10);
+		circleShape2.getPaint().setColor(Color.RED);
+		circleShape2.getPaint().setStyle(Style.FILL);
+		shapeLayer2.setShape(circleShape2);
+		shapeLayer2.setBackgroundColor(Color.YELLOW);
+		shapeLayer2.setWidth(200);
+		addChild(shapeLayer2);
+		
+		Layer layer2 = new Layer();
+		
 		
 //		CollectionLayer collectionLayer = new CollectionLayer();
 //		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
