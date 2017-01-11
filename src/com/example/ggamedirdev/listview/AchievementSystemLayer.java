@@ -10,7 +10,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import com.example.ggamedirdev.BitmapUtil;
-import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.Layer;

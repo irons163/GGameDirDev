@@ -30,6 +30,8 @@ import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
 import com.example.ggamedirdev.listview.ShapeLayer;
+import com.example.ggamedirdev.listview.ShapeLayer.Shape.ShapeParam;
+import com.example.ggamedirdev.listview.TabbarLayer;
 import com.example.ggamedirdev.listview.ShapeLayer.CircleShape;
 import com.example.ggamedirdev.listview.SpinnerLayer;
 import com.example.ggamedirdev.listview.SwitchLayer;
@@ -395,7 +397,7 @@ public class MyScene extends EasyScene{
 		});
 		
 		SwitchLayer switchLayer = new SwitchLayer();
-		switchLayer.setPosition(400, 800);
+		switchLayer.setPosition(500, 600);
 		addChild(switchLayer);
 		
 		checkboxLayer = new CheckboxLayer();
@@ -409,15 +411,15 @@ public class MyScene extends EasyScene{
 		checkboxLayer.setPosition(400, 400);
 		addChild(checkboxLayer);
 		
-//		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
-//		checkBoxGroup.setSize(150, 300);
-//		checkBoxGroup.setPosition(400, 500);
-//		
-//		CheckboxLayer checkboxLayer1 = new CheckboxLayer();
-//		checkboxLayer.setSize(150, 100);
-//		checkboxLayer.setPosition(0, 0);
-//		checkBoxGroup.addCheckBox(checkboxLayer1);
-//		addChild(checkBoxGroup);
+		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
+		checkBoxGroup.setSize(150, 300);
+		checkBoxGroup.setPosition(400, 500);
+		
+		CheckboxLayer checkboxLayer1 = new CheckboxLayer();
+		checkboxLayer.setSize(150, 100);
+		checkboxLayer.setPosition(0, 0);
+		checkBoxGroup.addCheckBox(checkboxLayer1);
+		addChild(checkBoxGroup);
 //		
 		ShapeLayer shapeLayer = new ShapeLayer();
 		shapeLayer.setSize(100, 100);
@@ -432,18 +434,54 @@ public class MyScene extends EasyScene{
 		
 		ShapeLayer shapeLayer2 = new ShapeLayer();
 		shapeLayer2.setSize(100, 100);
-		shapeLayer2.setPosition(550, 500);
+		shapeLayer2.setPosition(550, 600);
 		CircleShape circleShape2 = new ShapeLayer.CircleShape();
 		circleShape2.setCenter(50, 50, 10);
 		circleShape2.getPaint().setColor(Color.RED);
 		circleShape2.getPaint().setStyle(Style.FILL);
+		ShapeParam shapeParam = new ShapeParam();
+		shapeParam.setEnabledPercentageSizeW(true);
+		shapeParam.setPercentageW(1f);
+		shapeParam.setEnabledPercentageSizeH(true);
+		shapeParam.setPercentageH(1f);
+		circleShape2.setShapeParam(shapeParam);
 		shapeLayer2.setShape(circleShape2);
+		shapeLayer2.fitToSize();
 		shapeLayer2.setBackgroundColor(Color.YELLOW);
 		shapeLayer2.setWidth(200);
+		shapeLayer2.setHeight(150);
 		addChild(shapeLayer2);
+		
+		ShapeLayer shapeLayer3 = new ShapeLayer();
+//		shapeLayer3.setSize(100, 100);
+		shapeLayer3.setPosition(700, 600);
+		CircleShape circleShape3 = new ShapeLayer.CircleShape();
+		circleShape3.setCenter(50, 50, 10);
+		circleShape3.getPaint().setColor(Color.RED);
+		circleShape3.getPaint().setStyle(Style.FILL);
+		shapeParam = new ShapeParam();
+		shapeParam.setEnabledPercentageSizeW(true);
+		shapeParam.setPercentageW(1f);
+		shapeParam.setEnabledPercentageSizeH(true);
+		shapeParam.setPercentageH(1f);
+		shapeParam.setEnabledPercentagePositionX(true);
+		shapeParam.setPercentageX(0.5f);
+		circleShape3.setShapeParam(shapeParam);
+		shapeLayer3.setShape(circleShape3);
+		shapeLayer3.fitToSize();
+		shapeLayer3.setBackgroundColor(Color.YELLOW);
+		shapeLayer3.setWidth(200);
+		shapeLayer3.setHeight(150);
+		addChild(shapeLayer3);
 		
 		Layer layer2 = new Layer();
 		
+		TabbarLayer tabbarLayer = new TabbarLayer();
+		tabbarLayer.setSize(150, 50);
+		tabbarLayer.setPosition(70, 670);
+		tabbarLayer.setTabs(new ButtonLayer());
+		addChild(tabbarLayer);
+		tabbarLayer.setTabs(new ButtonLayer());
 		
 //		CollectionLayer collectionLayer = new CollectionLayer();
 //		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
@@ -608,9 +646,9 @@ public class MyScene extends EasyScene{
 		
 		selectViewLayer.drawSelf(canvas, null);
 		
-		scaleGuestureViewLayer.drawSelf(canvas, null);
+//		scaleGuestureViewLayer.drawSelf(canvas, null);
 		
-		scrollViewLayer.drawSelf(canvas, null);
+//		scrollViewLayer.drawSelf(canvas, null);
 		
 //		checkboxLayer.drawSelf(canvas, null);
 		

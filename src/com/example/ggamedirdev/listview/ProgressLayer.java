@@ -17,27 +17,10 @@ public class ProgressLayer extends ButtonLayer{
 	private float backgroundPathWidth, progressPathWidth;
 	private LabelLayer labelLayer;
 	
-//	public interface OnCheckStatusChangedListener{
-//		public void onChanged(ButtonLayer buttonLayer, boolean isChecked);
-//	}
-	
-//	private OnCheckStatusChangedListener onCheckStatusChangedListener = new OnCheckStatusChangedListener() {
-//		
-//		@Override
-//		public void onChanged(ButtonLayer buttonLayer, boolean isChecked) {
-//			// TODO Auto-generated method stub
-//			
-//		}
-//	};	
-	
 	public ProgressLayer() {
 		super(0, 0, false);
 		// TODO Auto-generated constructor stub
 		setBackgroundColor(Color.BLUE);
-		
-//		initButtons();
-//		initSprites();
-//		initClipSprites();
 		
 		setPaint(new Paint());
 		progressPath = new Path(); //betize
@@ -52,43 +35,7 @@ public class ProgressLayer extends ButtonLayer{
 		labelLayer.setLayerParam(layerParam);
 		addChild(labelLayer);
 		
-//		setOnLayerClickListener(new ALayer.OnLayerClickListener() {
-//			@Override
-//			public void onClick(ILayer layer) {
-//				// TODO Auto-generated method stub
-//				setBackgroundColor(Color.CYAN);
-//				setChecked(true);
-//			}
-//		});
-//		
-//		final Layer layer = new Layer();
-//		
-//		ButtonLayer buttonLayer = new ButtonLayer("XX", 100, 50, false);
-//		buttonLayer.setOnClickListener(new ButtonLayer.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(ButtonLayer buttonLayer) {
-//				// TODO Auto-generated method stub
-//				layer.setBackgroundColor(Color.MAGENTA);
-//			}
-//		});
-		
 	}
-	
-//	public void setChecked(boolean isChecked){
-//		if(this.isChecked != isChecked){
-//			this.isChecked = isChecked;
-//			onCheckStatusChangedListener.onChanged(this, getChecked());
-//		}
-//	}
-//	
-//	public boolean getChecked(){
-//		return isChecked;
-//	}
-//	
-//	public void setOnCheckStatusChangedListener(OnCheckStatusChangedListener onCheckStatusChangedListener){
-//		this.onCheckStatusChangedListener = onCheckStatusChangedListener;
-//	}
 	
 	public float getCurrentProgress() {
 		return currentProgress;
@@ -139,6 +86,17 @@ public class ProgressLayer extends ButtonLayer{
 		canvas.drawPath(backgroundPath, paint2);
 		paint2.setColor(Color.GREEN);
 		canvas.drawPath(progressPath, paint2);
+		
+//		progressPath
+		
+		backgroundPath.reset();
+		progressPath.reset();
+		paint2.setColor(Color.RED);
+		paint2.setStyle(Style.STROKE);
+		paint2.setStrokeWidth(10);
+		canvas.drawPath(backgroundPath, paint2);
+		paint2.setColor(Color.GREEN);
+		canvas.drawPath(progressPath, paint2);
 	}
 	
 	@Override
@@ -150,70 +108,7 @@ public class ProgressLayer extends ButtonLayer{
 		
 		dd(canvas, paint);
 	}
-	/*
-	@Override
-	protected void doDrawself(Canvas canvas, Paint paint) {
-		// TODO Auto-generated method stub
-//		super.doDrawself(canvas, paint);
-		if(getBackgroundColor()!=NONE_COLOR || bitmap!=null){
-			canvas.save();
-			
-			do {
-				canvas = getC(canvas, paint);
-				Paint originalPaint = paint;
-				
-				//use input paint first
-				int oldColor = 0;
-				Style oldStyle = null;
-				int oldAlpha = 255;
-				if(originalPaint==null && getPaint()!=null){
-					paint = getPaint();
-	//				paint.setAntiAlias(true);
-					if(getBackgroundColor()!=NONE_COLOR){
-						oldColor = getPaint().getColor();
-						oldStyle = getPaint().getStyle();
-						oldAlpha = getPaint().getAlpha();
-						getPaint().setColor(getBackgroundColor());
-						getPaint().setAlpha((int) (getAlpha()*oldAlpha/255.0f));
-						getPaint().setStyle(Style.FILL);
-						canvas.drawRect(getFrameInScene(), paint);
-					}
-				}else if(originalPaint!=null){
-					canvas.drawRect(getFrameInScene(), paint);
-				}
-				
-				if(isComposite()){
-					
-					
-					if(originalPaint==null && getPaint()!=null && getBackgroundColor()!=NONE_COLOR){
-	//					if(isClipOutside)
-	//						dst.intersect(getParent().getDst());
-	//					canvas.drawRect(dst, paint);
-						getPaint().setColor(oldColor);
-						getPaint().setStyle(oldStyle);
-						getPaint().setAlpha(oldAlpha);
-					}
-					if(bitmap!=null){
-						canvas.drawBitmap(bitmap, src, dst, paint);
-						dd(canvas, paint);
-					}
-				}else{
-					if(originalPaint==null && getPaint()!=null && getBackgroundColor()!=NONE_COLOR){
-	//					canvas.drawRect(getFrame(), paint);
-						getPaint().setColor(oldColor);
-						getPaint().setStyle(oldStyle);
-						getPaint().setAlpha(oldAlpha);
-					}
-				}
-				
-				//use input paint first
-				paint = originalPaint;
-			} while (false);
-			
-			canvas.restore();
-		}
-	}
-	*/
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub

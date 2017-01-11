@@ -3,6 +3,7 @@ package com.example.ggamedirdev.listview;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar.Tab;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,7 +27,6 @@ public class TabbarLayer extends Layer{
 	
 	public TabbarLayer() {
 		// TODO Auto-generated constructor stub
-		setPosition(70, 670);
 		setBackgroundColor(Color.BLUE);
 		
 		itemHeight = 100;
@@ -49,53 +49,27 @@ public class TabbarLayer extends Layer{
 		});
 		
 		contentLayer.addChild(buttonLayer);
-		
-		gestureDetector = new GestureDetector(null, new GestureDetector.OnGestureListener() {
-			
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-					float distanceY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public void onLongPress(MotionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-					float velocityY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public boolean onDown(MotionEvent e) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		});
-		
-		
 	}
 	
+	public void setTabs(ButtonLayer buttonLayer){
+		buttonLayer.setOnLayerClickListener(new OnLayerClickListener() {
+			
+			@Override
+			public void onClick(ILayer layer) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	OnTabSelectedListener onTabSelectedListener;
+	
 	public interface OnTabSelectedListener{
-		public void onTabSelected();
+		public void onTabSelected(ButtonLayer tab);
+	}
+	
+	public void setOnTabSelectedListemer(OnTabSelectedListener onTabSelectedListener){
+		this.onTabSelectedListener = onTabSelectedListener;
 	}
 	
 	public void addToContentLayer(){
