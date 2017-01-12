@@ -1,4 +1,4 @@
-package com.example.ggamedirdev;
+package com.example.ggamedirdev.achievement;
 
 import com.example.try_gameengine.framework.Layer;
 

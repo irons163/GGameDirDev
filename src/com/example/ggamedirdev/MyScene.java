@@ -19,17 +19,22 @@ import android.widget.ImageView.ScaleType;
 
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
+import com.example.ggamedirdev.listview.CalanderLayer;
 import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
 import com.example.ggamedirdev.listview.CollectionLayer;
+import com.example.ggamedirdev.listview.ControllerBarLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
+import com.example.ggamedirdev.listview.GameLevelLayer;
 import com.example.ggamedirdev.listview.ITouchStatusListener;
 import com.example.ggamedirdev.listview.ListViewLayer;
+import com.example.ggamedirdev.listview.NumberPickerLayer;
 import com.example.ggamedirdev.listview.ProgressLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
 import com.example.ggamedirdev.listview.ShapeLayer;
+import com.example.ggamedirdev.listview.VideoLayer;
 import com.example.ggamedirdev.listview.ShapeLayer.Shape.ShapeParam;
 import com.example.ggamedirdev.listview.TabbarLayer;
 import com.example.ggamedirdev.listview.ShapeLayer.CircleShape;
@@ -38,6 +43,7 @@ import com.example.ggamedirdev.listview.SwitchLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
 import com.example.ggamedirdev.listview.ViewPagerAdapter;
 import com.example.ggamedirdev.listview.ViewPagerLayer;
+import com.example.ggamedirdev.listview.WebViewLayer;
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.avg.SelectView;
 import com.example.try_gameengine.framework.ALayer;
@@ -345,13 +351,6 @@ public class MyScene extends EasyScene{
 		
 		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
 		
-		tabViewLayer = new TabViewLayer();
-		tabViewLayer.setWidth(200);
-		tabViewLayer.setHeight(600);
-		tabViewLayer.setPosition(0, 650);
-//		tabViewLayer.setAutoAdd(true);
-//		tabViewLayer.addp
-		
 		spinnerLayer = new SpinnerLayer();
 		spinnerLayer.setWidth(150);
 		spinnerLayer.setHeight(50);
@@ -479,9 +478,45 @@ public class MyScene extends EasyScene{
 		TabbarLayer tabbarLayer = new TabbarLayer();
 		tabbarLayer.setSize(150, 50);
 		tabbarLayer.setPosition(70, 670);
-		tabbarLayer.setTabs(new ButtonLayer());
+//		tabbarLayer.setTabs(new ButtonLayer());
 		addChild(tabbarLayer);
-		tabbarLayer.setTabs(new ButtonLayer());
+//		tabbarLayer.setTabs(new ButtonLayer());
+		
+		tabViewLayer = new TabViewLayer();
+		tabViewLayer.setWidth(200);
+		tabViewLayer.setHeight(600);
+		tabViewLayer.setPosition(0, 650);
+//		tabViewLayer.setAutoAdd(true);
+//		tabViewLayer.addp
+		
+		CalanderLayer calanderLayer = new CalanderLayer();
+		VideoLayer videoLayer = new VideoLayer();
+		
+		ControllerBarLayer controllerBarLayer = new ControllerBarLayer();
+		controllerBarLayer.setSize(100, 50);
+		controllerBarLayer.setPosition(50, 800);
+		addChild(controllerBarLayer);
+		
+		EditTextLayer editTextLayer = new EditTextLayer();
+		
+		GameLevelLayer gameLevelLayer = new GameLevelLayer();
+		
+		WebViewLayer webViewLayer = new WebViewLayer();
+		
+		NumberPickerLayer numberPickerLayer = new NumberPickerLayer();
+//		numberPickerLayer.setSize(50, 30);
+		numberPickerLayer.setPosition(50, 600);
+		numberPickerLayer.setType(com.example.ggamedirdev.listview.NumberPickerLayer.Type.NoneSquencial);
+		numberPickerLayer.setPickerRange(new int[]{1,2,3,4,5,6,7,8,9,10,11,12});
+		numberPickerLayer.setBackgroundColor(Color.MAGENTA);
+		addChild(numberPickerLayer);
+		
+		NumberPickerLayer dayPickerLayer = new NumberPickerLayer();
+		dayPickerLayer.setPosition(100, 600);
+		dayPickerLayer.setType(com.example.ggamedirdev.listview.NumberPickerLayer.Type.Squencial);
+		dayPickerLayer.setPickerRange(1, 31);
+		dayPickerLayer.setBackgroundColor(Color.MAGENTA);
+		addChild(dayPickerLayer);
 		
 //		CollectionLayer collectionLayer = new CollectionLayer();
 //		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
@@ -555,6 +590,33 @@ public class MyScene extends EasyScene{
 		});
 		
 		thread.start();
+		
+		final ProgressLayer progressLayerLine = new ProgressLayer();
+		progressLayerLine.setSize(100, 100);
+		progressLayerLine.setPosition(500, 800);
+		addChild(progressLayerLine);
+		
+		thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while (progressLayerLine.getCurrentProgress() < 100) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					progressLayerLine.setCurrentProgress(progressLayerLine.getCurrentProgress()+1);
+				}
+				
+			}
+		});
+		
+		thread.start();
+		
+		
 	}
 
 	GameView gameview;
@@ -644,7 +706,7 @@ public class MyScene extends EasyScene{
 		
 //		listViewLayer.drawSelf(canvas, null);
 		
-		selectViewLayer.drawSelf(canvas, null);
+//		selectViewLayer.drawSelf(canvas, null);
 		
 //		scaleGuestureViewLayer.drawSelf(canvas, null);
 		

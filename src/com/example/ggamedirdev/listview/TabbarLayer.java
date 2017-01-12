@@ -3,11 +3,9 @@ package com.example.ggamedirdev.listview;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ActionBar.Tab;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.ALayer;
@@ -17,9 +15,6 @@ import com.example.try_gameengine.framework.Layer;
 
 public class TabbarLayer extends Layer{
 	private List<? extends ILayer> mlayers;
-	private float itemHeight;
-	
-	GestureDetector gestureDetector;
 	
 	List<ILayer> tabs;
 	
@@ -28,8 +23,6 @@ public class TabbarLayer extends Layer{
 	public TabbarLayer() {
 		// TODO Auto-generated constructor stub
 		setBackgroundColor(Color.BLUE);
-		
-		itemHeight = 100;
 		
 		tabs = new ArrayList<ILayer>();
 		tabs.add(new Layer());
@@ -51,21 +44,33 @@ public class TabbarLayer extends Layer{
 		contentLayer.addChild(buttonLayer);
 	}
 	
-	public void setTabs(ButtonLayer buttonLayer){
-		buttonLayer.setOnLayerClickListener(new OnLayerClickListener() {
-			
-			@Override
-			public void onClick(ILayer layer) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+	public void setTabs(List<ILayer> buttonLayers){
+		tabs = buttonLayers;
+		calculationSize();
 	}
 	
-	OnTabSelectedListener onTabSelectedListener;
+	private void calculationSize() {
+		int tabNumber = tabs.size();
+		float tabW = tabNumber/getWidth();
+		for(int i = 0; i < tabs.size(); i++){
+			ILayer layer = tabs.get(i);
+			layer.setX(i*tabW);
+			layer.setY(getHeight());
+			layer.setWidth((int)tabW);
+		}
+	}
+	
+	OnTabSelectedListener onTabSelectedListener = new OnTabSelectedListener() {
+		
+		@Override
+		public void onTabSelected(int position, ButtonLayer tab) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 	
 	public interface OnTabSelectedListener{
-		public void onTabSelected(ButtonLayer tab);
+		public void onTabSelected(int position, ButtonLayer tab);
 	}
 	
 	public void setOnTabSelectedListemer(OnTabSelectedListener onTabSelectedListener){
@@ -90,9 +95,9 @@ public class TabbarLayer extends Layer{
 	}
 	
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(MotionEvent event, int touchEventFlag) {
 		// TODO Auto-generated method stub
-		return gestureDetector.onTouchEvent(event);
+		return super.onTouchEvent(event, touchEventFlag);
 	}
 
 	@Override

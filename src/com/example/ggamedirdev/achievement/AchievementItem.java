@@ -1,4 +1,4 @@
-package com.example.ggamedirdev;
+package com.example.ggamedirdev.achievement;
 
 import android.content.ContentValues;
 

@@ -3,9 +3,11 @@ package com.example.ggamedirdev.listview;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.ButtonLayer;
@@ -16,6 +18,11 @@ public class ProgressLayer extends ButtonLayer{
 	private Path backgroundPath, progressPath;
 	private float backgroundPathWidth, progressPathWidth;
 	private LabelLayer labelLayer;
+	private Type type;
+	
+	public enum Type{
+		circle, line
+	}
 	
 	public ProgressLayer() {
 		super(0, 0, false);
@@ -70,6 +77,7 @@ public class ProgressLayer extends ButtonLayer{
 	}
 	
 	protected void dd(Canvas canvas, Paint paint2) {
+		if(type == Type.circle){
 //		path = new Path(); //betize
 //		path.addArc(getFrameInScene(), (float)(100/100f*Math.PI*2), (float)-Math.PI/2);
 		
@@ -97,6 +105,35 @@ public class ProgressLayer extends ButtonLayer{
 		canvas.drawPath(backgroundPath, paint2);
 		paint2.setColor(Color.GREEN);
 		canvas.drawPath(progressPath, paint2);
+		
+		}else if(type == Type.line){
+			backgroundPath.reset();
+			progressPath.reset();
+			backgroundPath.addRect(getFrameInScene(), Direction.CW);
+//			path.addArc(getFrameInScene(), (float)(currentProgress/100f*Math.PI*2) * (180 / (float)Math.PI), (((float)(currentProgress/100f*Math.PI*2) - (float)-Math.PI/2) )* (float)(180 / Math.PI));
+			RectF rectF = new RectF(getFrameInScene());
+			float currentProgressWidth = rectF.width() * (currentProgress/100);
+			rectF.right = rectF.left + currentProgressWidth;
+			progressPath.addRect(rectF, Direction.CW);
+			
+			paint2.setColor(Color.RED);
+			paint2.setStyle(Style.STROKE);
+			paint2.setStrokeWidth(10);
+			canvas.drawPath(backgroundPath, paint2);
+			paint2.setColor(Color.GREEN);
+			canvas.drawPath(progressPath, paint2);
+			
+//			progressPath
+			
+			backgroundPath.reset();
+			progressPath.reset();
+			paint2.setColor(Color.RED);
+			paint2.setStyle(Style.STROKE);
+			paint2.setStrokeWidth(10);
+			canvas.drawPath(backgroundPath, paint2);
+			paint2.setColor(Color.GREEN);
+			canvas.drawPath(progressPath, paint2);
+		}
 	}
 	
 	@Override

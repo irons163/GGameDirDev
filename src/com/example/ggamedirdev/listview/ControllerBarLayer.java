@@ -18,15 +18,15 @@ public class ControllerBarLayer extends Layer{
 		// TODO Auto-generated constructor stub
 		controllerItemLayer = new ControllerItemLayer();
 		controllerItemLayer.setAnchorPoint(0.5f, 0.5f);
-		controllerItemLayer.setSize(50, 50);
+		controllerItemLayer.setSize(80, 80);
 		controllerItemLayer.setBitmap(BitmapUtil.cloud1);
 		
 		controllerBar = new Layer();
 		controllerBar.setAnchorPoint(0.5f, 0.5f);
-		controllerBar.setSize(100, 20);
-		
-		addChild(controllerItemLayer);
+		controllerBar.setSize(150, 80);
 		addChild(controllerBar);
+		addChild(controllerItemLayer);
+		
 	}
 	
 	public int getProgress() {
@@ -70,11 +70,12 @@ public class ControllerBarLayer extends Layer{
 			return super.onTouchEvent(event, touchEventFlag);
 		}
 		boolean isClickCancled = false;
+		float x = 0,y = 0;
 		@Override
 		protected void onTouched(MotionEvent event) {
 			// TODO Auto-generated method stub
 			super.onTouched(event);
-			float x = 0,y = 0;
+//			x = 0;y = 0;
 			float dx, dy;
 			
 			if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
@@ -87,6 +88,7 @@ public class ControllerBarLayer extends Layer{
 				
 				float newX = getX() + dx;
 				float newY = getY() + dy;
+				
 				if(newX < 0){
 					this.setX(0);
 					return;
@@ -99,7 +101,24 @@ public class ControllerBarLayer extends Layer{
 //				this.setY(getY() + dy);
 				
 			}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && !isPressed()){
-				x = y = 0;
+//				x = y = 0;
+				dx = event.getX() - x;
+				dy = event.getY() - y;
+				
+				float newX = getX() + dx;
+				float newY = getY() + dy;
+				
+				if(newX < 0){
+					this.setX(0);
+					return;
+				}else if(newX > getParent().getWidth()){
+					this.setX(getParent().getWidth());
+					return;
+				}
+				
+				this.setX(getX() + dx);
+//				this.setY(getY() + dy);
+				
 				isClickCancled = true;
 			}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
 				x = y = 0;
