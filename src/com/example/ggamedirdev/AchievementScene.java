@@ -60,8 +60,8 @@ public class AchievementScene extends EasyScene{
 	public AchievementScene(final Context context, String id, int level, int mode) {
 		super(context, id, level, mode);
 		
-		class MyListViewLayerListene extends ListViewLayer.DefaultListViewLayerListener{
-			public MyListViewLayerListene() {
+		class MyListViewLayerListener extends ListViewLayer.DefaultListViewLayerListener{
+			public MyListViewLayerListener() {
 				// TODO Auto-generated constructor stub
 				listViewLayer.super();
 			}
@@ -79,14 +79,19 @@ public class AchievementScene extends EasyScene{
 			
 			@Override
 			public ALayer itemForPositionAtIndexPath(ALayer cell, IndexPath indexPath) {
-//				if(cell==null){
-//					cell = new Layer(heightForItemAtIndexPath(indexPath));
-//				}
-//				
-//				cell.
-//				achievementItems.get(indexPath.getPosition())
+				AchievementLayer layer = null;
+				if(cell==null){
+					layer = new AchievementLayer(200, heightForItemAtIndexPath(indexPath), false);
+					cell = layer;
+				}
 				
-				return cell;
+//				cell.
+				AchievementItem item = achievementItems.get(indexPath.getPosition());
+//				cell.setBitmap();
+				layer.setTitle(indexPath.getPosition()+"");
+				layer.setInfo("QQ");
+				
+				return layer;
 			}
 			
 			@Override
@@ -97,9 +102,7 @@ public class AchievementScene extends EasyScene{
 		
 		ListViewLayer listViewLayer = new ListViewLayer();
 		listViewLayer.setWidth(CommonUtil.screenWidth);
-//		listViewLayer.setListViewLayerListener(new My)
-		
-
+		listViewLayer.setListViewLayerListener(new MyListViewLayerListener());
 		
 		addChild(listViewLayer);
 	}
@@ -107,7 +110,7 @@ public class AchievementScene extends EasyScene{
 	GameView gameview;
 	
 	@Override
-	public void initGameView(Activity activity, IGameController gameController,
+	public GameView initGameView(Activity activity, IGameController gameController,
 			IGameModel gameModel) {
 		// TODO Auto-generated method stub
 		class MyGameView extends GameView{
@@ -117,7 +120,7 @@ public class AchievementScene extends EasyScene{
 				// TODO Auto-generated constructor stub
 			}			
 		}		
-		gameview = new MyGameView(activity, gameController, gameModel);
+		return gameview = new MyGameView(activity, gameController, gameModel);
 	}
 
 	@Override
@@ -197,4 +200,29 @@ public class AchievementScene extends EasyScene{
 		
 	}
 
+}
+
+class AchievementLayer extends Layer{
+	private String title;
+	private String info;
+	
+	public AchievementLayer(int w, int h, boolean isAuto) {
+		// TODO Auto-generated constructor stub
+		super(w, h, isAuto);
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getInfo() {
+		return info;
+	}
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	
+	
 }

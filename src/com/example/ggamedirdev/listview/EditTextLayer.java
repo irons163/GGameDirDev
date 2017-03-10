@@ -75,7 +75,7 @@ public class EditTextLayer extends Layer implements OnKeyListener{
 	}
 
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
 		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
 			if(hasButtonColors)

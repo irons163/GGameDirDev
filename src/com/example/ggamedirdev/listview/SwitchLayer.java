@@ -75,10 +75,4 @@ public class SwitchLayer extends Layer{
 		
 //		canvas.clipPath(path);
 	}
-
-	@Override
-	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 }

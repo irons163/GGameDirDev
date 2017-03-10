@@ -40,7 +40,7 @@ public class GameActivity extends Stage{
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				Intent intent = null;
+//				Intent intent = null;
 				
 				switch (position) {
 				case 0:
@@ -51,7 +51,9 @@ public class GameActivity extends Stage{
 					break;
 				case 2:
 //					intent = new Intent(GameActivity.this, org.ggamedirdemo.stage.MainActivity.class);
-					startActivity(intent);
+//					startActivity(intent);
+					
+					sceneManager.startScene(1);
 					break;
 				default:
 					break;
@@ -101,10 +103,10 @@ public class GameActivity extends Stage{
 //		LayerManager.getInstance().setLayerBySenceIndex(1);
 //		Scene scene2 = new MultiDetectAreaScene(this, "b", 2, Scene.RESTART);
 		
-		sceneManager = new SceneManager();
+		sceneManager = SceneManager.getInstance();
 		sceneManager.addScene(scene);
 //		sceneManager.addScene(scene2);
-		
+		sceneManager.addScene(AchievementScene.class, this, "b", 2, Scene.RESTART);
 //		sceneManager.startScene(0);
 		
 		return sceneManager;
@@ -114,7 +116,7 @@ public class GameActivity extends Stage{
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 //		super.onBackPressed();
-		if(!sceneManager.previous())
+		if(!sceneManager.previousWithExistedScenes())
 			super.onBackPressed();
 //		sceneManager.previousAndLeaveWhenNoPrevious();
 	}

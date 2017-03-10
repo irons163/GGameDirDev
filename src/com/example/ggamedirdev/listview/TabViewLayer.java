@@ -123,10 +123,5 @@ public class TabViewLayer extends Layer{
 		return gestureDetector.onTouchEvent(event);
 	}
 
-	@Override
-	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

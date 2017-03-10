@@ -72,7 +72,7 @@ public class ControllerBarLayer extends Layer{
 		boolean isClickCancled = false;
 		float x = 0,y = 0;
 		@Override
-		protected void onTouched(MotionEvent event) {
+		public void onTouched(MotionEvent event) {
 			// TODO Auto-generated method stub
 			super.onTouched(event);
 //			x = 0;y = 0;

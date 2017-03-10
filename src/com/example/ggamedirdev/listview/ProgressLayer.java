@@ -153,10 +153,5 @@ public class ProgressLayer extends ButtonLayer{
 		return super.onTouchEvent(event);
 	}
 
-	@Override
-	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

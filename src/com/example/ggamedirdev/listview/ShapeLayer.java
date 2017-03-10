@@ -449,7 +449,7 @@ public class ShapeLayer extends Layer{
 	}
 	
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
 		super.onTouched(event);
 		

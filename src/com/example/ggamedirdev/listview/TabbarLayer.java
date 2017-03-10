@@ -99,10 +99,4 @@ public class TabbarLayer extends Layer{
 		// TODO Auto-generated method stub
 		return super.onTouchEvent(event, touchEventFlag);
 	}
-
-	@Override
-	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 }

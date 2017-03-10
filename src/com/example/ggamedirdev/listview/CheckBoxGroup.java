@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ILayer;
+import com.example.try_gameengine.framework.ILayerDelegate;
+import com.example.try_gameengine.framework.ILayerWithDelegate;
 import com.example.try_gameengine.framework.Layer;
 
 public class CheckBoxGroup extends Layer{
@@ -50,12 +52,13 @@ public class CheckBoxGroup extends Layer{
 	        for (Class c : interfaces) {
 	            Log.e("Name",c.getCanonicalName());
 	        }
-		ILayer proxyLayer = (ILayer)Proxy.newProxyInstance(checkboxLayer.getClass().getClassLoader(), new Class[]{ILayer.class}, myHandler);
+	    ILayer proxyLayer = (ILayerWithDelegate)Proxy.newProxyInstance(checkboxLayer.getClass().getClassLoader(), new Class[]{ILayerWithDelegate.class}, myHandler);
 			
 		layers.add(proxyLayer);
+//		addChild(checkboxLayer);
 		
 //		CheckboxLayer proxyLayer = (CheckboxLayer) (new MyHandler3().QQ(checkboxLayer));
-//		addChild(proxyLayer);		
+		addChild(proxyLayer);		
 	}
 	
 //	public void removeCheckBox(CheckboxLayer checkboxLayer){
@@ -170,17 +173,27 @@ public class CheckBoxGroup extends Layer{
 				result = false;
 				MotionEvent event = (MotionEvent) args[0];
 				if((checkboxLayer.isChecked() && currentCheckedNum > minCheckedNum)
-					&& (!checkboxLayer.isChecked() && currentCheckedNum < maxCheckedNum)){
+					|| (!checkboxLayer.isChecked() && currentCheckedNum < maxCheckedNum)){
 					result = method.invoke(checkboxLayer, args); 
-					if((event.getAction()==MotionEvent.ACTION_UP 
-							|| (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP)
-							&& checkboxLayer.isPressed()){
-						if(checkboxLayer.isChecked())
-							currentCheckedNum++;
-						else
-							currentCheckedNum--;
-						checkedListener.onCheckStatusChanged(checkboxLayer, checkboxLayer.isChecked());
-					}
+					
+				}
+				
+				return result;
+			}
+			
+			if(method.getName().equals("onTouched")){
+				result = method.invoke(checkboxLayer, args); 
+				
+				MotionEvent event = (MotionEvent) args[0];
+				if((event.getAction()==MotionEvent.ACTION_UP 
+						|| (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP)
+					&& checkboxLayer.isPressed()){
+//						&& checkboxLayer.isPressed()){
+					if(checkboxLayer.isChecked())
+						currentCheckedNum++;
+					else
+						currentCheckedNum--;
+					checkedListener.onCheckStatusChanged(checkboxLayer, checkboxLayer.isChecked());
 				}
 				
 				return result;

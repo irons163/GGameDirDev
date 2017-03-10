@@ -17,9 +17,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.widget.ImageView.ScaleType;
 
+import com.example.ggamedirdev.calendar.CalanderLayer;
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
-import com.example.ggamedirdev.listview.CalanderLayer;
 import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
 import com.example.ggamedirdev.listview.CollectionLayer;
@@ -412,13 +412,19 @@ public class MyScene extends EasyScene{
 		
 		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
 		checkBoxGroup.setSize(150, 300);
-		checkBoxGroup.setPosition(400, 500);
+		checkBoxGroup.setPosition(400, 550);
+		checkBoxGroup.setBackgroundColor(Color.CYAN);
+		addChild(checkBoxGroup);
 		
 		CheckboxLayer checkboxLayer1 = new CheckboxLayer();
-		checkboxLayer.setSize(150, 100);
-		checkboxLayer.setPosition(0, 0);
+		checkboxLayer1.setSize(150, 100);
+		checkboxLayer1.setPosition(0, 0);
 		checkBoxGroup.addCheckBox(checkboxLayer1);
-		addChild(checkBoxGroup);
+		
+		CheckboxLayer checkboxLayer2 = new CheckboxLayer();
+		checkboxLayer2.setSize(150, 100);
+		checkboxLayer2.setPosition(150, 100);
+		checkBoxGroup.addCheckBox(checkboxLayer2);
 //		
 		ShapeLayer shapeLayer = new ShapeLayer();
 		shapeLayer.setSize(100, 100);
@@ -622,7 +628,7 @@ public class MyScene extends EasyScene{
 	GameView gameview;
 	
 	@Override
-	public void initGameView(Activity activity, IGameController gameController,
+	public GameView initGameView(Activity activity, IGameController gameController,
 			IGameModel gameModel) {
 		// TODO Auto-generated method stub
 		class MyGameView extends GameView{
@@ -632,7 +638,7 @@ public class MyScene extends EasyScene{
 				// TODO Auto-generated constructor stub
 			}			
 		}		
-		gameview = new MyGameView(activity, gameController, gameModel);
+		return gameview = new MyGameView(activity, gameController, gameModel);
 	}
 
 	@Override
