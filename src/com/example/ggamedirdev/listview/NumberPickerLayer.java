@@ -6,7 +6,7 @@ import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.Layer;
 
 public class NumberPickerLayer extends Layer{
-	enum Type{
+	public enum Type{
 		Squencial,
 		NoneSquencial
 	}
@@ -51,7 +51,7 @@ public class NumberPickerLayer extends Layer{
 					changePickerValue();
 			}
 		});
-		labelLayer = new LabelLayer(0, 50, false);
+		labelLayer = new LabelLayer(0f, 50f, false);
 		
 		this.addChild(labelLayer);
 		this.addChild(increaseButton);
@@ -60,17 +60,45 @@ public class NumberPickerLayer extends Layer{
 	
 	public void setPickerRange(int[] range){
 		this.range = range;
+		changePickerValue();
 	}
 	
 	public void setPickerRange(int firstNumber, int lastNumber){
 		this.firstNumber = firstNumber;
 		this.lastNumber = lastNumber;
+		changePickerValue();
+	}
+	
+	public boolean setIndexForPickerRange(int index){
+		boolean leagal = false;
+		if(index < 0)
+			return leagal;
+		
+		if(type==Type.Squencial){
+			leagal = index + firstNumber <= lastNumber;
+		}else if(type==Type.NoneSquencial){
+			leagal = index <= (range.length - 1);
+		}
+		
+		if(leagal){
+			this.index = index;
+			changePickerValue();
+		}
+		return leagal;
 	}
 	
 	public int getCurrentNumber(){
 		return currentNumber;
 	}
 	
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
 	private boolean increaseIndex(){
 		boolean leagal = false;
 		if(type==Type.Squencial){
@@ -88,7 +116,7 @@ public class NumberPickerLayer extends Layer{
 	private boolean decreaseIndex(){
 		boolean leagal = false;
 		if(type==Type.Squencial){
-			leagal = index > firstNumber;
+			leagal = index + firstNumber > firstNumber;
 		}else if(type==Type.NoneSquencial){
 			leagal = index > 0;
 		}

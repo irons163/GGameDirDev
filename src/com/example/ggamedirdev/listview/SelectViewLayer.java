@@ -203,12 +203,12 @@ public class SelectViewLayer extends Layer{
 	}
 
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
 		if(event.getAction()==MotionEvent.ACTION_DOWN && isPressed()){
 			setBackgroundColor(buttonColors[DOWN_INDEX]);
 			if(buttonBitmaps[DOWN_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_INDEX];
+				this.setBitmap(buttonBitmaps[DOWN_INDEX]);
 			}
 			isClickCancled = false;
 		}else if(event.getAction()==MotionEvent.ACTION_MOVE && isPressed()){
@@ -217,12 +217,12 @@ public class SelectViewLayer extends Layer{
 		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled && !isPressed()){
 			setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+				this.setBitmap(buttonBitmaps[UP_INDEX]);
 			}
 		}else if(event.getAction()==MotionEvent.ACTION_UP && isPressed() && !isClickCancled){
 			setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+				this.setBitmap(buttonBitmaps[UP_INDEX]);
 			}
 		}
 	}

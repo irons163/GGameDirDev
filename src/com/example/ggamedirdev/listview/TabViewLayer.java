@@ -33,10 +33,6 @@ public class TabViewLayer extends Layer{
 		
 		itemHeight = 100;
 		
-//		initButtons();
-//		initSprites();
-		initClipSprites();
-		
 		tabs = new ArrayList<ILayer>();
 		tabs.add(new Layer());
 		tabs.add(new Layer());
@@ -53,6 +49,8 @@ public class TabViewLayer extends Layer{
 				layer.setBackgroundColor(Color.MAGENTA);
 			}
 		});
+		
+		contentLayer.addChild(buttonLayer);
 		
 		gestureDetector = new GestureDetector(null, new GestureDetector.OnGestureListener() {
 			
@@ -95,7 +93,7 @@ public class TabViewLayer extends Layer{
 			}
 		});
 		
-		contentLayer.addChild(buttonLayer);
+		
 	}
 	
 	public interface OnTabSelectedListener{
@@ -105,122 +103,7 @@ public class TabViewLayer extends Layer{
 	public void addToContentLayer(){
 		
 	}
-	
-	private void initClipSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){
-			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
-			layer.setY(y);
-			layer.setAnchorPoint(-0.55f, -0.15f);
-			layer.setXscale(1.5f);
-			layer.setYscale(1.5f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){			
-			layer.setY(y);
-			layer.setAnchorPoint(-0.65f, -0.15f);
-			layer.setXscale(2.0f);
-			layer.setYscale(2.0f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initButtons(){
-		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-		mlayers = layers;
-		layers.add(new ButtonLayer("1", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("2", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("3", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("4", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("5", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("6", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("7", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("8", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("9", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("100", 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(ButtonLayer layer : layers){
-			layer.setY(y);
-			layer.setBackgroundColor(Color.RED);
-			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
-				
-				@Override
-				public void onClick(ButtonLayer buttonLayer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	
+
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
@@ -240,10 +123,5 @@ public class TabViewLayer extends Layer{
 		return gestureDetector.onTouchEvent(event);
 	}
 
-	@Override
-	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

@@ -9,26 +9,41 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.widget.ImageView.ScaleType;
 
+import com.example.ggamedirdev.calendar.CalanderLayer;
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
+import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
+import com.example.ggamedirdev.listview.CollectionLayer;
+import com.example.ggamedirdev.listview.ControllerBarLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
+import com.example.ggamedirdev.listview.GameLevelLayer;
 import com.example.ggamedirdev.listview.ITouchStatusListener;
 import com.example.ggamedirdev.listview.ListViewLayer;
+import com.example.ggamedirdev.listview.NumberPickerLayer;
+import com.example.ggamedirdev.listview.ProgressLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
+import com.example.ggamedirdev.listview.ShapeLayer;
+import com.example.ggamedirdev.listview.VideoLayer;
+import com.example.ggamedirdev.listview.ShapeLayer.Shape.ShapeParam;
+import com.example.ggamedirdev.listview.TabbarLayer;
+import com.example.ggamedirdev.listview.ShapeLayer.CircleShape;
 import com.example.ggamedirdev.listview.SpinnerLayer;
 import com.example.ggamedirdev.listview.SwitchLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
 import com.example.ggamedirdev.listview.ViewPagerAdapter;
 import com.example.ggamedirdev.listview.ViewPagerLayer;
+import com.example.ggamedirdev.listview.WebViewLayer;
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.avg.SelectView;
 import com.example.try_gameengine.framework.ALayer;
@@ -40,6 +55,7 @@ import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.ALayer.OnLayerClickListener;
 import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
+import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
@@ -102,7 +118,7 @@ public class MyScene extends EasyScene{
 				// TODO Auto-generated method stub
 				RectF rectF;
 				if(sprite.getLocationInScene()!=null)
-					rectF = new RectF(sprite.getLocationInScene().x, sprite.getLocationInScene().y, sprite.getLocationInScene().x + sprite.w, sprite.getLocationInScene().y + sprite.h);
+					rectF = new RectF(sprite.getLocationInScene().x, sprite.getLocationInScene().y, sprite.getLocationInScene().x + sprite.getWidth(), sprite.getLocationInScene().y + sprite.getHeight());
 				else
 					rectF = sprite.getFrame();
 				return rectF;
@@ -113,7 +129,7 @@ public class MyScene extends EasyScene{
 				// TODO Auto-generated method stub;
 				PointF pointF;
 				if(sprite.getLocationInScene()!=null)
-					pointF = new PointF(sprite.getLocationInScene().x + sprite.w/2, sprite.getLocationInScene().y + sprite.h/2);
+					pointF = new PointF(sprite.getLocationInScene().x + sprite.getWidth()/2, sprite.getLocationInScene().y + sprite.getHeight()/2);
 				else
 					pointF = new PointF(sprite.getFrame().centerX(), sprite.getFrame().centerY());
 				return pointF;
@@ -233,14 +249,6 @@ public class MyScene extends EasyScene{
 		scrollViewLayer.addChild(layer);
 		scrollViewLayer.setAutoAdd(true);
 		
-		checkboxLayer = new CheckboxLayer();
-		checkboxLayer.setPosition(650, 700);
-		checkboxLayer.setWidth(150);
-		checkboxLayer.setHeight(350);
-		checkboxLayer.setAutoAdd(true);
-		
-
-		
 		final List<ALayer> pagers = new ArrayList<ALayer>();
 		pagers.add(new ButtonLayer("1", 100, (int) 100, false));
 		pagers.add(new ButtonLayer("2", 100, (int) 100, false));
@@ -343,12 +351,6 @@ public class MyScene extends EasyScene{
 		
 		((ITouchStatusListener)listViewLayer).setTouchedColors(new int[]{Color.RED, Color.YELLOW, Color.BLUE});
 		
-		tabViewLayer = new TabViewLayer();
-		tabViewLayer.setWidth(200);
-		tabViewLayer.setHeight(600);
-		tabViewLayer.setPosition(0, 650);
-//		tabViewLayer.setAutoAdd(true);
-		
 		spinnerLayer = new SpinnerLayer();
 		spinnerLayer.setWidth(150);
 		spinnerLayer.setHeight(50);
@@ -394,13 +396,239 @@ public class MyScene extends EasyScene{
 		});
 		
 		SwitchLayer switchLayer = new SwitchLayer();
+		switchLayer.setPosition(500, 600);
 		addChild(switchLayer);
+		
+		checkboxLayer = new CheckboxLayer();
+		checkboxLayer.setPosition(650, 700);
+		checkboxLayer.setWidth(150);
+		checkboxLayer.setHeight(350);
+		checkboxLayer.setAutoAdd(true);
+		
+		CheckboxLayer checkboxLayer = new CheckboxLayer();
+		checkboxLayer.setSize(150, 100);
+		checkboxLayer.setPosition(400, 400);
+		addChild(checkboxLayer);
+		
+		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
+		checkBoxGroup.setSize(150, 300);
+		checkBoxGroup.setPosition(400, 550);
+		checkBoxGroup.setBackgroundColor(Color.CYAN);
+		addChild(checkBoxGroup);
+		
+		CheckboxLayer checkboxLayer1 = new CheckboxLayer();
+		checkboxLayer1.setSize(150, 100);
+		checkboxLayer1.setPosition(0, 0);
+		checkBoxGroup.addCheckBox(checkboxLayer1);
+		
+		CheckboxLayer checkboxLayer2 = new CheckboxLayer();
+		checkboxLayer2.setSize(150, 100);
+		checkboxLayer2.setPosition(150, 100);
+		checkBoxGroup.addCheckBox(checkboxLayer2);
+//		
+		ShapeLayer shapeLayer = new ShapeLayer();
+		shapeLayer.setSize(100, 100);
+		shapeLayer.setPosition(550, 500);
+		CircleShape circleShape = new ShapeLayer.CircleShape();
+		circleShape.setCenter(50, 50, 10);
+		circleShape.getPaint().setColor(Color.RED);
+		circleShape.getPaint().setStyle(Style.FILL);
+		shapeLayer.setShape(circleShape);
+		shapeLayer.setBackgroundColor(Color.YELLOW);
+		addChild(shapeLayer);
+		
+		ShapeLayer shapeLayer2 = new ShapeLayer();
+		shapeLayer2.setSize(100, 100);
+		shapeLayer2.setPosition(550, 600);
+		CircleShape circleShape2 = new ShapeLayer.CircleShape();
+		circleShape2.setCenter(50, 50, 10);
+		circleShape2.getPaint().setColor(Color.RED);
+		circleShape2.getPaint().setStyle(Style.FILL);
+		ShapeParam shapeParam = new ShapeParam();
+		shapeParam.setEnabledPercentageSizeW(true);
+		shapeParam.setPercentageW(1f);
+		shapeParam.setEnabledPercentageSizeH(true);
+		shapeParam.setPercentageH(1f);
+		circleShape2.setShapeParam(shapeParam);
+		shapeLayer2.setShape(circleShape2);
+		shapeLayer2.fitToSize();
+		shapeLayer2.setBackgroundColor(Color.YELLOW);
+		shapeLayer2.setWidth(200);
+		shapeLayer2.setHeight(150);
+		addChild(shapeLayer2);
+		
+		ShapeLayer shapeLayer3 = new ShapeLayer();
+//		shapeLayer3.setSize(100, 100);
+		shapeLayer3.setPosition(700, 600);
+		CircleShape circleShape3 = new ShapeLayer.CircleShape();
+		circleShape3.setCenter(50, 50, 10);
+		circleShape3.getPaint().setColor(Color.RED);
+		circleShape3.getPaint().setStyle(Style.FILL);
+		shapeParam = new ShapeParam();
+		shapeParam.setEnabledPercentageSizeW(true);
+		shapeParam.setPercentageW(1f);
+		shapeParam.setEnabledPercentageSizeH(true);
+		shapeParam.setPercentageH(1f);
+		shapeParam.setEnabledPercentagePositionX(true);
+		shapeParam.setPercentageX(0.5f);
+		circleShape3.setShapeParam(shapeParam);
+		shapeLayer3.setShape(circleShape3);
+		shapeLayer3.fitToSize();
+		shapeLayer3.setBackgroundColor(Color.YELLOW);
+		shapeLayer3.setWidth(200);
+		shapeLayer3.setHeight(150);
+		addChild(shapeLayer3);
+		
+		Layer layer2 = new Layer();
+		
+		TabbarLayer tabbarLayer = new TabbarLayer();
+		tabbarLayer.setSize(150, 50);
+		tabbarLayer.setPosition(70, 670);
+//		tabbarLayer.setTabs(new ButtonLayer());
+		addChild(tabbarLayer);
+//		tabbarLayer.setTabs(new ButtonLayer());
+		
+		tabViewLayer = new TabViewLayer();
+		tabViewLayer.setWidth(200);
+		tabViewLayer.setHeight(600);
+		tabViewLayer.setPosition(0, 650);
+//		tabViewLayer.setAutoAdd(true);
+//		tabViewLayer.addp
+		
+		CalanderLayer calanderLayer = new CalanderLayer();
+		VideoLayer videoLayer = new VideoLayer();
+		
+		ControllerBarLayer controllerBarLayer = new ControllerBarLayer();
+		controllerBarLayer.setSize(100, 50);
+		controllerBarLayer.setPosition(50, 800);
+		addChild(controllerBarLayer);
+		
+		EditTextLayer editTextLayer = new EditTextLayer();
+		
+		GameLevelLayer gameLevelLayer = new GameLevelLayer();
+		
+		WebViewLayer webViewLayer = new WebViewLayer();
+		
+		NumberPickerLayer numberPickerLayer = new NumberPickerLayer();
+//		numberPickerLayer.setSize(50, 30);
+		numberPickerLayer.setPosition(50, 600);
+		numberPickerLayer.setType(com.example.ggamedirdev.listview.NumberPickerLayer.Type.NoneSquencial);
+		numberPickerLayer.setPickerRange(new int[]{1,2,3,4,5,6,7,8,9,10,11,12});
+		numberPickerLayer.setBackgroundColor(Color.MAGENTA);
+		addChild(numberPickerLayer);
+		
+		NumberPickerLayer dayPickerLayer = new NumberPickerLayer();
+		dayPickerLayer.setPosition(100, 600);
+		dayPickerLayer.setType(com.example.ggamedirdev.listview.NumberPickerLayer.Type.Squencial);
+		dayPickerLayer.setPickerRange(1, 31);
+		dayPickerLayer.setBackgroundColor(Color.MAGENTA);
+		addChild(dayPickerLayer);
+		
+//		CollectionLayer collectionLayer = new CollectionLayer();
+//		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
+////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
+////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
+//		collectionLayer.setWidth(200);
+////		listViewLayer.setHeight(850);
+//		collectionLayer.setHeight(500);
+//		collectionLayer.setAutoAdd(true);
+//		collectionLayer.setBackgroundColor(Color.CYAN);
+//		collectionLayer.setPosition(70, 70);
+//		
+//		layers = new ArrayList<ButtonLayer>();
+////		itemLayers = layers;
+//		layers.add(new ButtonLayer("1", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("2", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("3", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("4", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("5", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("6", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("7", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("8", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("9", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		layers.add(new ButtonLayer("100", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+//		
+//
+//		y = 0;
+//		for(ButtonLayer itemlayer : layers){
+//			itemlayer.setY(y);
+//			itemlayer.setBackgroundColor(Color.RED);
+//			itemlayer.setTextColor(Color.WHITE);
+//			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+////			addChild(layer);
+////			layer.setIsClipOutside(true);
+////			y += itemHeight;
+//			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(ButtonLayer buttonLayer) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
+//		}
+//		
+//		collectionLayer.setItems(layers);
+		
+		
+		
+		final ProgressLayer progressLayer = new ProgressLayer();
+		progressLayer.setSize(100, 100);
+		progressLayer.setPosition(500, 800);
+		addChild(progressLayer);
+		
+		Thread thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while (progressLayer.getCurrentProgress() < 100) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					progressLayer.setCurrentProgress(progressLayer.getCurrentProgress()+1);
+				}
+				
+			}
+		});
+		
+		thread.start();
+		
+		final ProgressLayer progressLayerLine = new ProgressLayer();
+		progressLayerLine.setSize(100, 100);
+		progressLayerLine.setPosition(500, 800);
+		addChild(progressLayerLine);
+		
+		thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while (progressLayerLine.getCurrentProgress() < 100) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					progressLayerLine.setCurrentProgress(progressLayerLine.getCurrentProgress()+1);
+				}
+				
+			}
+		});
+		
+		thread.start();
+		
+		
 	}
 
 	GameView gameview;
 	
 	@Override
-	public void initGameView(Activity activity, IGameController gameController,
+	public GameView initGameView(Activity activity, IGameController gameController,
 			IGameModel gameModel) {
 		// TODO Auto-generated method stub
 		class MyGameView extends GameView{
@@ -410,7 +638,7 @@ public class MyScene extends EasyScene{
 				// TODO Auto-generated constructor stub
 			}			
 		}		
-		gameview = new MyGameView(activity, gameController, gameModel);
+		return gameview = new MyGameView(activity, gameController, gameModel);
 	}
 
 	@Override
@@ -484,13 +712,13 @@ public class MyScene extends EasyScene{
 		
 //		listViewLayer.drawSelf(canvas, null);
 		
-		selectViewLayer.drawSelf(canvas, null);
+//		selectViewLayer.drawSelf(canvas, null);
 		
-		scaleGuestureViewLayer.drawSelf(canvas, null);
+//		scaleGuestureViewLayer.drawSelf(canvas, null);
 		
-		scrollViewLayer.drawSelf(canvas, null);
+//		scrollViewLayer.drawSelf(canvas, null);
 		
-		checkboxLayer.drawSelf(canvas, null);
+//		checkboxLayer.drawSelf(canvas, null);
 		
 //		tabViewLayer.drawSelf(canvas, null);
 	}

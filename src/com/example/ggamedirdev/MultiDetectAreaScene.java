@@ -103,7 +103,7 @@ public class MultiDetectAreaScene extends EasyScene{
 		player = new Sprite(BitmapUtil.yellowPoint, 100, 1000, false);
 		player.setBitmapAndFrameWH(BitmapUtil.hamster, 150, 150);
 		player.setCollisionRectFEnable(true);
-		player.setPosition(CommonUtil.screenWidth/2.0f - player.w/2.0f, CommonUtil.screenHeight - player.h);
+		player.setPosition(CommonUtil.screenWidth/2.0f - player.getWidth()/2.0f, CommonUtil.screenHeight - player.getHeight());
 		player.setCollisionOffsetXY(50, 100);
 		player.setCollisionRectFWH(100, 100);
 	}
@@ -111,7 +111,7 @@ public class MultiDetectAreaScene extends EasyScene{
 	GameView gameview;
 	
 	@Override
-	public void initGameView(Activity activity, IGameController gameController,
+	public GameView initGameView(Activity activity, IGameController gameController,
 			IGameModel gameModel) {
 		// TODO Auto-generated method stub
 		class MyGameView extends GameView{
@@ -121,7 +121,7 @@ public class MultiDetectAreaScene extends EasyScene{
 				// TODO Auto-generated constructor stub
 			}			
 		}		
-		gameview = new MyGameView(activity, gameController, gameModel);
+		return gameview = new MyGameView(activity, gameController, gameModel);
 	}
 
 	@Override

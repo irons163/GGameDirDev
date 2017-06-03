@@ -1,35 +1,31 @@
 package com.example.ggamedirdev.listview;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.example.ggamedirdev.BitmapUtil;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
+import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.Layer;
-import com.example.try_gameengine.framework.Sprite;
-import com.example.try_gameengine.framework.ButtonLayer.OnClickListener;
 
 public class CheckboxLayer extends ButtonLayer{
-	private List<? extends ILayer> mlayers;
-	private float itemHeight;
+	private Layer imageLayer;
+	private LabelLayer labelLayer;
 	private boolean isChecked;
 	
 	public interface OnCheckStatusChangedListener{
-		public void onChanged(ButtonLayer buttonLayer, boolean isChecked);
+		public void onChanged(ALayer layer, boolean isChecked);
 	}
 	
 	private OnCheckStatusChangedListener onCheckStatusChangedListener = new OnCheckStatusChangedListener() {
 		
 		@Override
-		public void onChanged(ButtonLayer buttonLayer, boolean isChecked) {
+		public void onChanged(ALayer layer, boolean isChecked) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -37,155 +33,49 @@ public class CheckboxLayer extends ButtonLayer{
 	
 	public CheckboxLayer() {
 		// TODO Auto-generated constructor stub
-		super(0, 0, false);
-		setPosition(70, 70);
+//		super(0, 0, false);
+//		addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS);
+		imageLayer = new Layer(); 
+		imageLayer.setBackgroundColor(Color.MAGENTA);
+		imageLayer.setWidth(30);
+		imageLayer.setHeight(30);
+		addChild(imageLayer);
+		
+		labelLayer = new LabelLayer(0.0f, imageLayer.getWidth(), false);
+		labelLayer.setText("Label");
+		addChild(labelLayer);
+		
 		setBackgroundColor(Color.BLUE);
 		
-		itemHeight = 100;
+//		final Layer layer = new Layer();
 		
-//		initButtons();
-//		initSprites();
-		initClipSprites();
+//		ButtonLayer buttonLayer = new ButtonLayer("XX", 100, 50, false);
+//		buttonLayer.setPosition(50, 50);
+//		buttonLayer.setOnClickListener(new ButtonLayer.OnClickListener() {
+//			
+//			@Override
+//			public void onClick(ButtonLayer buttonLayer) {
+//				imageLayer.setBackgroundColor(Color.MAGENTA);
+//			}
+//		});
 		
-		setOnLayerClickListener(new ALayer.OnLayerClickListener() {
-			
-			@Override
-			public void onClick(ILayer layer) {
-				// TODO Auto-generated method stub
-				setBackgroundColor(Color.CYAN);
-				setChecked(true);
-			}
-		});
 		
-		final Layer layer = new Layer();
-		
-		ButtonLayer buttonLayer = new ButtonLayer("XX", 100, 50, false);
-		buttonLayer.setOnClickListener(new ButtonLayer.OnClickListener() {
-			
-			@Override
-			public void onClick(ButtonLayer buttonLayer) {
-				// TODO Auto-generated method stub
-				layer.setBackgroundColor(Color.MAGENTA);
-			}
-		});
-		
-	}
-	
-	private void initClipSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.hamster, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){
-			layer.setBitmapAndFrameColAndRowNumAndAutoWH(layer.getBitmap(), 7, 2);
-			layer.setY(y);
-			layer.setAnchorPoint(-0.55f, -0.15f);
-			layer.setXscale(1.5f);
-			layer.setYscale(1.5f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initSprites(){
-		List<Sprite> layers = new ArrayList<Sprite>();
-		mlayers = layers;
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		layers.add(new Sprite(BitmapUtil.icon, 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(Sprite layer : layers){			
-			layer.setY(y);
-			layer.setAnchorPoint(-0.65f, -0.15f);
-			layer.setXscale(2.0f);
-			layer.setYscale(2.0f);
-			layer.setRotation(45);
-			layer.setBackgroundColor(Color.RED);
-//			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnLayerClickListener(new OnLayerClickListener() {
-				
-				@Override
-				public void onClick(ILayer layer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
-	}
-	
-	private void initButtons(){
-		List<ButtonLayer> layers = new ArrayList<ButtonLayer>();
-		mlayers = layers;
-		layers.add(new ButtonLayer("1", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("2", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("3", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("4", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("5", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("6", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("7", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("8", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("9", 100, (int) itemHeight, false));
-		layers.add(new ButtonLayer("100", 100, (int) itemHeight, false));
-		
-		setIsClipOutside(true);
-		
-		int y = 0;
-		for(ButtonLayer layer : layers){
-			layer.setY(y);
-			layer.setBackgroundColor(Color.RED);
-			layer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-			addChild(layer);
-//			layer.setIsClipOutside(true);
-			y += itemHeight;
-			layer.setOnClickListener(new ButtonLayer.OnClickListener() {
-				
-				@Override
-				public void onClick(ButtonLayer buttonLayer) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		}
 	}
 	
 	public void setChecked(boolean isChecked){
 		if(this.isChecked != isChecked){
 			this.isChecked = isChecked;
-			onCheckStatusChangedListener.onChanged(this, getChecked());
+			if(isChecked){
+//			imageLayer.setBitmap(bitmap);
+				imageLayer.setBackgroundColor(Color.BLUE);
+			}else{
+				imageLayer.setBackgroundColor(Color.MAGENTA);
+			}
+			onCheckStatusChangedListener.onChanged(this, isChecked());
 		}
 	}
 	
-	public boolean getChecked(){
+	public boolean isChecked(){
 		return isChecked;
 	}
 	
@@ -194,31 +84,40 @@ public class CheckboxLayer extends ButtonLayer{
 	}
 	
 	@Override
-	public void drawSelf(Canvas canvas, Paint paint) {
+	public void setOnLayerClickListener(
+			OnLayerClickListener onLayerClickListener) {
 		// TODO Auto-generated method stub
-		super.drawSelf(canvas, paint);
-			
-//		Paint mPaint = new Paint();
-//		mPaint.setColor(Color.BLUE);
-//		for(ILayer layer : mlayers){
-//			canvas.drawRect(layer.getFrame(), mPaint);
-//		}
+		super.setOnLayerClickListener(onLayerClickListener);
 		
 	}
 	
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
-		
-		
-		
-		return super.onTouchEvent(event);
+		super.drawSelf(canvas, paint);
+	}
+	
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event) {
+//		// TODO Auto-generated method stub
+//		return super.onTouchEvent(event, TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS);
+//	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event, int touchEventFlag) {
+		// TODO Auto-generated method stub
+		return super.onTouchEvent(event, touchEventFlag|TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS);
 	}
 
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
+		super.onTouched(event);
 		
+	if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed()){
+//			setBackgroundColor(Color.CYAN);
+			setChecked(!isChecked());
+		}	
 	}
 
 }
