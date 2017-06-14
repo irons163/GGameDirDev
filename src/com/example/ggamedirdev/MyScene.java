@@ -5,26 +5,27 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.widget.ImageView.ScaleType;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 
 import com.example.ggamedirdev.calendar.CalanderLayer;
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
 import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
-import com.example.ggamedirdev.listview.CollectionLayer;
 import com.example.ggamedirdev.listview.ControllerBarLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
+import com.example.ggamedirdev.listview.EditTextLayer.MyInputConnection;
 import com.example.ggamedirdev.listview.GameLevelLayer;
 import com.example.ggamedirdev.listview.ITouchStatusListener;
 import com.example.ggamedirdev.listview.ListViewLayer;
@@ -34,34 +35,29 @@ import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
 import com.example.ggamedirdev.listview.ShapeLayer;
-import com.example.ggamedirdev.listview.VideoLayer;
-import com.example.ggamedirdev.listview.ShapeLayer.Shape.ShapeParam;
-import com.example.ggamedirdev.listview.TabbarLayer;
 import com.example.ggamedirdev.listview.ShapeLayer.CircleShape;
+import com.example.ggamedirdev.listview.ShapeLayer.PolygonShape;
+import com.example.ggamedirdev.listview.ShapeLayer.Shape.ShapeParam;
 import com.example.ggamedirdev.listview.SpinnerLayer;
 import com.example.ggamedirdev.listview.SwitchLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
+import com.example.ggamedirdev.listview.TabbarLayer;
+import com.example.ggamedirdev.listview.VideoLayer;
 import com.example.ggamedirdev.listview.ViewPagerAdapter;
 import com.example.ggamedirdev.listview.ViewPagerLayer;
 import com.example.ggamedirdev.listview.WebViewLayer;
-import com.example.try_gameengine.Camera.Camera;
-import com.example.try_gameengine.avg.SelectView;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
-import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LabelLayer;
-import com.example.try_gameengine.framework.ALayer.OnLayerClickListener;
 import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
 import com.example.try_gameengine.framework.Layer;
-import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FRemoteController;
 import com.example.try_gameengine.scene.EasyScene;
-import com.example.try_gameengine.scene.SceneManager;
 import com.example.try_gameengine.stage.StageManager;
 import com.example.try_gameengine.utils.DetectArea;
 import com.example.try_gameengine.utils.DetectAreaPoint;
@@ -104,6 +100,8 @@ public class MyScene extends EasyScene{
 	private TabViewLayer tabViewLayer;
 	private ViewPagerLayer viewPagerLayer;
 	private SpinnerLayer spinnerLayer;
+	
+	MyInputConnection myInputConnection;
 	
 	private void setDectecAreas(){
 		userRectDetectArea = new DetectAreaRect(userRectF);
@@ -451,15 +449,14 @@ public class MyScene extends EasyScene{
 		shapeParam.setPercentageH(1f);
 		circleShape2.setShapeParam(shapeParam);
 		shapeLayer2.setShape(circleShape2);
-		shapeLayer2.fitToSize();
+		shapeLayer2.shapeFitToSize();
 		shapeLayer2.setBackgroundColor(Color.YELLOW);
 		shapeLayer2.setWidth(200);
 		shapeLayer2.setHeight(150);
 		addChild(shapeLayer2);
 		
 		ShapeLayer shapeLayer3 = new ShapeLayer();
-//		shapeLayer3.setSize(100, 100);
-		shapeLayer3.setPosition(700, 600);
+		shapeLayer3.setPosition(550, 800);
 		CircleShape circleShape3 = new ShapeLayer.CircleShape();
 		circleShape3.setCenter(50, 50, 10);
 		circleShape3.getPaint().setColor(Color.RED);
@@ -467,17 +464,70 @@ public class MyScene extends EasyScene{
 		shapeParam = new ShapeParam();
 		shapeParam.setEnabledPercentageSizeW(true);
 		shapeParam.setPercentageW(1f);
+		shapeParam.setEnabledPercentagePositionX(true);
+		shapeParam.setPercentageX(0.5f);
+		shapeParam.setEnabledPercentagePositionY(true);
+		shapeParam.setPercentageY(0.5f);
+		circleShape3.setShapeParam(shapeParam);
+		shapeLayer3.setShape(circleShape3);
+		shapeLayer3.shapeFitToSize();
+		shapeLayer3.setBackgroundColor(Color.YELLOW);
+		addChild(shapeLayer3);
+		
+		ShapeLayer shapeLayer4 = new ShapeLayer();
+		shapeLayer4.setPosition(550, 900);
+		
+		CircleShape circleShape4 = new ShapeLayer.CircleShape();
+		circleShape4.setCenter(50, 50, 10);
+		circleShape4.getPaint().setColor(Color.RED);
+		circleShape4.getPaint().setStyle(Style.FILL);
+		shapeParam = new ShapeParam();
+		shapeParam.setEnabledPercentageSizeW(true);
+		shapeParam.setPercentageW(1f);
 		shapeParam.setEnabledPercentageSizeH(true);
 		shapeParam.setPercentageH(1f);
 		shapeParam.setEnabledPercentagePositionX(true);
 		shapeParam.setPercentageX(0.5f);
-		circleShape3.setShapeParam(shapeParam);
-		shapeLayer3.setShape(circleShape3);
-		shapeLayer3.fitToSize();
-		shapeLayer3.setBackgroundColor(Color.YELLOW);
-		shapeLayer3.setWidth(200);
-		shapeLayer3.setHeight(150);
-		addChild(shapeLayer3);
+		shapeParam.setEnabledPercentagePositionY(true);
+		shapeParam.setPercentageY(0.5f);
+		circleShape4.setShapeParam(shapeParam);
+		
+		shapeLayer4.setShape(circleShape4);
+		shapeLayer4.shapeFitToSize();
+		shapeLayer4.setBackgroundColor(Color.YELLOW);
+		shapeLayer4.setWidth(100);
+		shapeLayer4.setHeight(100);
+		addChild(shapeLayer4);
+		
+		ShapeLayer shapeLayer5 = new ShapeLayer();
+		shapeLayer5.setPosition(550, 1000);
+		PolygonShape polygonShape = new ShapeLayer.PolygonShape();
+		polygonShape.setCenter(50, 50);
+		Path path  = new Path();
+		path.moveTo(20, 20);
+		path.lineTo(80, 40);
+		path.lineTo(120, 100);
+		path.lineTo(10, 80);
+		path.close();
+		polygonShape.setPath(path);
+		polygonShape.getPaint().setColor(Color.RED);
+		polygonShape.getPaint().setStyle(Style.FILL);
+		shapeParam = new ShapeParam();
+		shapeParam.setEnabledPercentageSizeW(true);
+		shapeParam.setPercentageW(1f);
+		shapeParam.setEnabledPercentageSizeH(true);
+		shapeParam.setPercentageH(1f);
+		shapeParam.setEnabledPercentagePositionX(true);
+		shapeParam.setPercentageX(0.5f);
+		shapeParam.setEnabledPercentagePositionY(true);
+		shapeParam.setPercentageY(0.5f);
+		polygonShape.setShapeParam(shapeParam);
+		shapeLayer5.setShape(polygonShape);
+		shapeLayer5.shapeFitToSize();
+		shapeLayer5.setBackgroundColor(Color.YELLOW);
+		shapeLayer5.setWidth(200);
+		shapeLayer5.setHeight(150);
+		addChild(shapeLayer5);
 		
 		Layer layer2 = new Layer();
 		
@@ -503,8 +553,7 @@ public class MyScene extends EasyScene{
 		controllerBarLayer.setPosition(50, 800);
 		addChild(controllerBarLayer);
 		
-		EditTextLayer editTextLayer = new EditTextLayer();
-		
+	    
 		GameLevelLayer gameLevelLayer = new GameLevelLayer();
 		
 		WebViewLayer webViewLayer = new WebViewLayer();
@@ -574,7 +623,7 @@ public class MyScene extends EasyScene{
 		
 		final ProgressLayer progressLayer = new ProgressLayer();
 		progressLayer.setSize(100, 100);
-		progressLayer.setPosition(500, 800);
+		progressLayer.setPosition(500, 900);
 		addChild(progressLayer);
 		
 		Thread thread = new Thread(new Runnable() {
@@ -599,7 +648,7 @@ public class MyScene extends EasyScene{
 		
 		final ProgressLayer progressLayerLine = new ProgressLayer();
 		progressLayerLine.setSize(100, 100);
-		progressLayerLine.setPosition(500, 800);
+		progressLayerLine.setPosition(500, 1000);
 		addChild(progressLayerLine);
 		
 		thread = new Thread(new Runnable() {
@@ -637,7 +686,14 @@ public class MyScene extends EasyScene{
 				super(context, gameController, gameModel);
 				// TODO Auto-generated constructor stub
 			}			
+			
+		    @Override 
+		    public InputConnection onCreateInputConnection(EditorInfo outAttrs) { 
+		        // TODO Auto-generated method stub 
+		        return myInputConnection;//super.onCreateInputConnection(outAttrs); 
+		    }
 		}		
+		
 		return gameview = new MyGameView(activity, gameController, gameModel);
 	}
 
@@ -757,6 +813,14 @@ public class MyScene extends EasyScene{
 	public void beforeGameStart() {
 		// TODO Auto-generated method stub
 		gameTimeUtil = new GameTimeUtil(1000);
+		
+		EditTextLayer editTextLayer = new EditTextLayer(gameview);
+		editTextLayer.setPosition(150, 600);
+		
+//		addChild(editTextLayer);
+		
+		myInputConnection = editTextLayer.getMyInputConnection();
+		
 //		getCamera().setLocation(gameview.getWidth()/2, gameview.getHeight()/2);
 		/*
 		Camera camera = new Camera(0, 0, gameview.getWidth()+500, gameview.getHeight());

@@ -40,7 +40,9 @@ import android.text.style.UpdateAppearance;
 import android.text.util.Linkify;
 import android.view.GestureDetector;
 import android.view.View;
+import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView.BufferType;
 
@@ -130,6 +132,9 @@ public class EditTextLayer extends Layer{
     private int mCurHintTextColor;
     protected int mTop;
     protected int mBottom;
+    private int mWidth;
+    
+    InputMethodManager input=null;
     
     private void requestLayout(){
     	final int count = getChildCount();
@@ -140,6 +145,7 @@ public class EditTextLayer extends Layer{
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
         final int scrollX = getScrollX();
+        mWidth = width;
     }
     
     private int getScrollX() {
@@ -349,6 +355,14 @@ public class EditTextLayer extends Layer{
 				layer.setBackgroundColor(Color.MAGENTA);
 			}
 		});
+		
+		input=(InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		
+		view.setFocusable(true);
+		view.requestFocus();
+		input.showSoftInput(view, 0);
+		
+		myInputConnection = new MyInputConnection(view, false);
 	}
 	
     /**
@@ -569,13 +583,13 @@ public class EditTextLayer extends Layer{
 
         mTransformation = method;
 
-        if (method instanceof TransformationMethod2) {
-            TransformationMethod2 method2 = (TransformationMethod2) method;
-            mAllowTransformationLengthChange = !isTextSelectable() && !(mText instanceof Editable);
-            method2.setLengthChangesAllowed(mAllowTransformationLengthChange);
-        } else {
+//        if (method instanceof TransformationMethod2) {
+//            TransformationMethod2 method2 = (TransformationMethod2) method;
+//            mAllowTransformationLengthChange = !isTextSelectable() && !(mText instanceof Editable);
+//            method2.setLengthChangesAllowed(mAllowTransformationLengthChange);
+//        } else {
             mAllowTransformationLengthChange = false;
-        }
+//        }
 
         setText(mText);
     }
@@ -743,6 +757,20 @@ public class EditTextLayer extends Layer{
    }
 
    /**
+    * This method is called when the text is changed, in case any subclasses
+    * would like to know.
+    *
+    * @param text The text the TextView is displaying
+    * @param start The offset of the start of the range of the text that was
+    * modified
+    * @param lengthBefore The length of the former text that has been replaced
+    * @param lengthAfter The length of the replacement modified text
+    */
+   protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
+       // intentionally empty, template pattern method can be overridden by subclasses
+   }
+   
+   /**
     * Not private so it can be called from an inner class without going
     * through a thunk.
     */
@@ -832,6 +860,15 @@ public class EditTextLayer extends Layer{
     * Not private so it can be called from an inner class without going
     * through a thunk.
     */
+   void handleTextChanged(CharSequence buffer, int start, int before, int after) {
+       sendOnTextChanged(buffer, start, before, after);
+       onTextChanged(buffer, start, before, after);
+   }
+   
+   /**
+    * Not private so it can be called from an inner class without going
+    * through a thunk.
+    */
    void spanChange(Spanned buf, Object what, int oldStart, int newStart, int oldEnd, int newEnd) {
        // XXX Make the start and end move together if this ends up
        // spending too much time invalidating.
@@ -881,6 +918,17 @@ public class EditTextLayer extends Layer{
 //               mHighlightPathBogus = true;
 //               checkForResize();
        }
+   }
+   
+   /**
+    * This method is called when the selection has changed, in case any
+    * subclasses would like to know.
+    *
+    * @param selStart The new selection start location.
+    * @param selEnd The new selection end location.
+    */
+   protected void onSelectionChanged(int selStart, int selEnd) {
+//       sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED);
    }
    
    
@@ -986,8 +1034,26 @@ public class EditTextLayer extends Layer{
                    right = getWidth() - getCompoundPaddingRight();
                }
 
-               invalidate(mScrollX + left, verticalPadding + top,
-                       mScrollX + right, verticalPadding + bottom);
+//               invalidate(mScrollX + left, verticalPadding + top,
+//                       mScrollX + right, verticalPadding + bottom);
+//               invalidate();
+   }
+   
+   int getVerticalOffset(boolean forceNormal) {
+       int voffset = 0;
+
+//       if (gravity != Gravity.TOP) {
+//           int boxht = getBoxHeight(l);
+//           int textht = l.getHeight();
+//
+//           if (textht < boxht) {
+//               if (gravity == Gravity.BOTTOM)
+//                   voffset = boxht - textht;
+//               else // (gravity == Gravity.CENTER_VERTICAL)
+//                   voffset = (boxht - textht) >> 1;
+//           }
+//       }
+       return voffset;
    }
    
    /**
@@ -1265,6 +1331,73 @@ public class EditTextLayer extends Layer{
            return low;
    }
    
+   /**
+    * Get the leftmost position that should be exposed for horizontal
+    * scrolling on the specified line.
+    */
+   public float getLineLeft(int line) {
+//       int dir = getParagraphDirection(line);
+//       Alignment align = getParagraphAlignment(line);
+//
+//       if (align == Alignment.ALIGN_LEFT) {
+//           return 0;
+//       } else if (align == Alignment.ALIGN_NORMAL) {
+//           if (dir == DIR_RIGHT_TO_LEFT)
+//               return getParagraphRight(line) - getLineMax(line);
+//           else
+//               return 0;
+//       } else if (align == Alignment.ALIGN_RIGHT) {
+//           return mWidth - getLineMax(line);
+//       } else if (align == Alignment.ALIGN_OPPOSITE) {
+//           if (dir == DIR_RIGHT_TO_LEFT)
+//               return 0;
+//           else
+//               return mWidth - getLineMax(line);
+//       } else { /* align == Alignment.ALIGN_CENTER */
+//           int left = getParagraphLeft(line);
+//           int right = getParagraphRight(line);
+//           int max = ((int) getLineMax(line)) & ~1;
+//
+//           return left + ((right - left) - max) / 2;
+//       }
+	   
+	   return 0;
+   }
+   
+   /**
+    * Get the rightmost position that should be exposed for horizontal
+    * scrolling on the specified line.
+    */
+	public float getLineRight(int line) {
+		return getParagraphLeft(line) + getLineMax(line);
+	}
+	
+    /**
+     * Gets the unsigned horizontal extent of the specified line, including
+     * leading margin indent, but excluding trailing whitespace.
+     */
+    public float getLineMax(int line) {
+//        float margin = getParagraphLeadingMargin(line);
+//        float signedExtent = getLineExtent(line, false);
+//        return margin + (signedExtent >= 0 ? signedExtent : -signedExtent);
+    	return mWidth;
+    }
+    
+    /**
+     * Get the left edge of the specified paragraph, inset by left margins.
+     */
+    public final int getParagraphLeft(int line) {
+        int left = 0;
+            return left; // leading margin has no impact, or no styles
+    }
+   
+   /**
+    * Return the text offset after the last character on the specified line.
+    */
+   public final int getLineEnd(int line) {
+       return getLineStart(line + 1);
+   }
+   
    int getLineCount(){
 	   return 1;
    }
@@ -1272,6 +1405,69 @@ public class EditTextLayer extends Layer{
    int getLineStart(int line){
 	   return 20;
    }
+   
+	private void addSelection(int line, int start, int end, int top,
+			int bottom, Path dest) {
+		int linestart = getLineStart(line);
+		int lineend = getLineEnd(line);
+
+		if (lineend > linestart && mText.charAt(lineend - 1) == '\n')
+			lineend--;
+
+//		for (int i = 0; i < dirs.mDirections.length; i += 2) {
+//			int here = linestart + dirs.mDirections[i];
+//			int there = here + (dirs.mDirections[i + 1] & RUN_LENGTH_MASK);
+
+		int here = linestart;
+		int there = here;
+		
+			if (there > lineend)
+				there = lineend;
+
+			if (start <= there && end >= here) {
+				int st = Math.max(start, here);
+				int en = Math.min(end, there);
+
+				if (st != en) {
+					float h1 = getHorizontal(st, false, line, false /*
+																	 * not
+																	 * clamped
+																	 */);
+					float h2 = getHorizontal(en, true, line, false /*
+																	 * not
+																	 * clamped
+																	 */);
+
+					float left = Math.min(h1, h2);
+					float right = Math.max(h1, h2);
+
+					dest.addRect(left, top, right, bottom, Path.Direction.CW);
+				}
+			}
+//		}
+	}
+	
+    private float getHorizontal(int offset, boolean trailing, boolean clamped) {
+        int line = getLineForOffset(offset);
+
+        return getHorizontal(offset, trailing, line, clamped);
+    }
+
+    private float getHorizontal(int offset, boolean trailing, int line, boolean clamped) {
+        int start = getLineStart(line);
+        int end = getLineEnd(line);
+
+        int left = 0;
+        int right = mWidth;
+
+        return getLineStartPos(line, left, right);
+    }
+    
+    private int getLineStartPos(int line, int left, int right) {
+		int x;
+		x = left;
+		return x;
+    }
    
    public final int getCurrentTextColor() {
        return mCurTextColor;
@@ -1365,6 +1561,25 @@ public class EditTextLayer extends Layer{
        public int getTextWidths(int start, int end, float[] widths, Paint p) {
            return p.getTextWidths(mChars, start + mStart, end - start, widths);
        }
+   }
+   
+   public class MyInputConnection extends BaseInputConnection{
+
+       public MyInputConnection(View targetView, boolean fullEditor) { 
+           super(targetView, fullEditor); 
+           // TODO Auto-generated constructor stub 
+       } 
+       public boolean commitText(CharSequence text, int newCursorPosition){ 
+//           inputString=inputString+(String) text; 
+           return true; 
+       } 
+       
+   }
+   
+   MyInputConnection myInputConnection;
+   
+   public MyInputConnection getMyInputConnection(){
+	   return myInputConnection;
    }
 }
 

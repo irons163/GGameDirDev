@@ -55,17 +55,21 @@ public class ShapeLayer extends Layer{
 //			shape.setEnable(false);
 //		}
 		
-		if(getWidth() ==0 || getHeight() ==0){
+		if(getWidth() ==0){
 			if(shape.getShapeParam().isEnabledPercentageSizeW()){
 				if(shape.getShapeParam().getPercentageW()!=0)
 					super.setWidth((int)Math.ceil(shape.getShapeBounds().width()/shape.getShapeParam().getPercentageW()));
 				else
 					throw new RuntimeException("PercentageW == 0");
-			}else{
+			}else {
 				setWidth((int)Math.ceil(shape.getShapeBounds().width()));
 			}
+		}else{
+			if(shape.getShapeParam().isEnabledPercentageSizeW() || shape.getShapeParam().isEnabledPercentagePositionX())
+				setWidth(getWidth());
+		}
 		
-		
+		if(getHeight() ==0){
 			if(shape.getShapeParam().isEnabledPercentageSizeH()){
 				if(shape.getShapeParam().getPercentageH()!=0)
 					super.setHeight((int)Math.ceil(shape.getShapeBounds().height()/shape.getShapeParam().getPercentageH()));
@@ -74,15 +78,16 @@ public class ShapeLayer extends Layer{
 			}else{
 				setHeight((int)Math.ceil(shape.getShapeBounds().height()));
 			}
-		
+		}else{
+			if(shape.getShapeParam().isEnabledPercentageSizeH() || shape.getShapeParam().isEnabledPercentagePositionY())
+				setHeight(getHeight());
 		}
-		
 		
 //		setWidth(getWidth());
 //		setHeight(getHeight());
 	}
 	
-	public void fitToSize(){
+	public void shapeFitToSize(){
 //		path = shape.toPath();
 //		Matrix scaleMatrix = new Matrix();
 //		RectF rectF = new RectF();
@@ -133,74 +138,7 @@ public class ShapeLayer extends Layer{
 	
 	@Override
 	public void setWidth(int w) {
-		// TODO Auto-generated method stub
-//		super.setWidth(w);
-//		if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
-//			child.setX(w * child.getLayerParam().getPercentageX());
-//		}
-//		if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeW()){
-//			child.setWidth((int)(w * child.getLayerParam().getPercentageW()));
-//		}
-//		shape.updateCenterByParentWidth(int w);
-		
-		if(shape.getShapeParam().isEnabledPercentagePositionX()){
-			shape.setCenter(w * shape.getShapeParam().getPercentageX(), shape.getCenter().y);
-		}
-		if(shape.getShapeParam().isEnabledPercentageSizeW()){
-//			boolean isNeedCalculateShapeBounds = true;
-			if(w==0){
-//				path.reset();
-				if(isEnableShape){
-					tmpSize = getSize();
-				}
-				
-				isEnableShape = false;
-				
-//				shape.setEnable(false);
-			}else{
-				
-//				path = shape.toPath();
-//				Matrix scaleMatrix = new Matrix();
-//				RectF rectF = new RectF();
-//				path.computeBounds(rectF, true);
-//				if(this.getWidth()==0){
-//					if(rectF.width() != 0 && rectF.height() !=0)
-//						scaleMatrix.setScale((w * shape.getShapeParam().getPercentageW())/rectF.width(), 1,rectF.centerX(),rectF.centerY());
-//				}else{
-//					scaleMatrix.setScale((w * shape.getShapeParam().getPercentageW())/this.getWidth(), 1,rectF.centerX(),rectF.centerY());
-//				}
-//				
-//				path.transform(scaleMatrix); 
-				
-				RectF rectF = shape.getShapeBounds();
-				if(!isEnableShape && this.getHeight()!=0){
-					float sx = w/tmpSize.x;
-//					float sy = this.getHeight()/tmpSize.y;
-					shape.sacle(sx, 1);
-					isEnableShape = true;
-//					shape.setEnable(isEnableShape);
-				}
-				/*
-				else if(this.getWidth()==0){
-					if(rectF.width() != 0 && rectF.height() !=0){
-						shape.sacle((w * shape.getShapeParam().getPercentageW())/rectF.width(), 1);
-						isNeedCalculateShapeBounds = false;
-					}
-				}
-				*/
-//				else if(this.getHeight()!=0){
-				else {
-					shape.sacle((w * shape.getShapeParam().getPercentageW())/this.getWidth(), 1);
-					if(!isEnableShape){
-						tmpSize.x = w;
-					}
-//					isNeedCalculateShapeBounds = false;
-				}
-			}
-			
-//			if(isNeedCalculateShapeBounds)
-//				shape.calculateShapeBounds();
-		}
+		changeShaderSize(w, getHeight());
 		
 		super.setWidth(w);	
 	}
@@ -210,125 +148,42 @@ public class ShapeLayer extends Layer{
 	
 	@Override
 	public void setHeight(int h) {
-		// TODO Auto-generated method stub
-//		if(h==0){
-//			path.reset();
-//		}else{
-//			path = shape.toPath();
-//			Matrix scaleMatrix = new Matrix();
-//			RectF rectF = new RectF();
-//			path.computeBounds(rectF, true);
-//			scaleMatrix.setScale(h/this.getHeight(), 1,rectF.centerX(),rectF.centerY());
-//			path.transform(scaleMatrix); 
-//		}
-		
-		if(shape.getShapeParam().isEnabledPercentagePositionY()){
-			shape.setCenter(shape.getCenter().x, h * shape.getShapeParam().getPercentageY());
-		}
-		if(shape.getShapeParam().isEnabledPercentageSizeH()){
-//			boolean isNeedCalculateShapeBounds = true;
-			if(h==0){
-//				path.reset();
-				
-				if(isEnableShape){
-					tmpSize = getSize();
-				}
-				
-				isEnableShape = false;
-				
-				if(this.getHeight()==0 || this.getWidth()==0){
-					
-				}
-//				shape.setEnable(false);
-				
-				
-			}else{
-				
-//				path = shape.toPath();
-//				Matrix scaleMatrix = new Matrix();
-//				RectF rectF = new RectF();
-//				path.computeBounds(rectF, true);
-//				if(this.getWidth()==0){
-//					if(rectF.width() != 0 && rectF.height() !=0)
-//						scaleMatrix.setScale(1, (h * shape.getShapeParam().getPercentageH())/rectF.height(),rectF.centerX(),rectF.centerY());
-//				}else{
-//					scaleMatrix.setScale(1, (h * shape.getShapeParam().getPercentageH())/rectF.height(),rectF.centerX(),rectF.centerY());
-//				}
-//				
-//				path.transform(scaleMatrix); 
-				
-				
-				
-				RectF rectF = shape.getShapeBounds();
-				if(!isEnableShape && this.getWidth()!=0){
-//					float sx = this.getWidth()/tmpSize.x;
-					float sy = h/tmpSize.y;
-					shape.sacle(1, sy);
-					isEnableShape = true;
-//					shape.setEnable(isEnableShape);
-				}
-				/*
-				else if(this.getHeight()==0 || this.getWidth()==0){
-					if(rectF.width() != 0 && rectF.height() !=0){
-						shape.sacle(1, (h * shape.getShapeParam().getPercentageH())/rectF.height());
-						isNeedCalculateShapeBounds = false;
-					}
-				}
-				*/
-//				else if(this.getWidth()!=0){
-				else {
-					shape.sacle(1, (h * shape.getShapeParam().getPercentageH())/this.getHeight());
-					if(!isEnableShape){
-						tmpSize.y = h;
-					}
-//					isNeedCalculateShapeBounds = false;
-				}
-			}
-			
-//			if(isNeedCalculateShapeBounds)
-//				shape.calculateShapeBounds();
-		}
+		changeShaderSize(getWidth(), h);
 		
 		super.setHeight(h);
 	}
 	
 	@Override
 	public void setSize(int w, int h) {
-		float sx = 0, sy = 0;
+		changeShaderSize(w, h);
+		
+		super.setSize(w, h);
+	}
+
+	private void changeShaderSize(int w, int h) {
+		float sx = 1, sy = 1;
 		boolean isNeedScale = false;
 		if(shape.getShapeParam().isEnabledPercentagePositionX()){
 			shape.setCenter(w * shape.getShapeParam().getPercentageX(), shape.getCenter().y);
 		}
 		if(shape.getShapeParam().isEnabledPercentageSizeW()){
 			if(w==0){
-//				path.reset();
 				if(isEnableShape){
 					tmpSize = getSize();
 				}
 				
 				isEnableShape = false;
-				
 //				shape.setEnable(false);
 			}else{
-				/*
-				RectF rectF = shape.getShapeBounds();
-				if(this.getWidth()==0){
-					if(rectF.width() != 0 && rectF.height() !=0)
-						sx = (w * shape.getShapeParam().getPercentageW())/rectF.width();
-				}else{
-					sx = (w * shape.getShapeParam().getPercentageW())/this.getWidth();
-				}
-				*/
-				
 				isNeedScale = true;
 				
 				if(!isEnableShape && h!=0){
 					sx = w/tmpSize.x;
-//					sy = this.getHeight()/tmpSize.y;
 					isEnableShape = true;
 //					shape.setEnable(isEnableShape);
 				}else {
-					sx = (w * shape.getShapeParam().getPercentageW())/this.getWidth();
+//					sx = (w * shape.getShapeParam().getPercentageW())/this.getWidth();
+					sx = (w * shape.getShapeParam().getPercentageW())/shape.getShapeBounds().width();
 					if(!isEnableShape){
 						tmpSize.x = w;
 					}
@@ -341,33 +196,21 @@ public class ShapeLayer extends Layer{
 		}
 		if(shape.getShapeParam().isEnabledPercentageSizeH()){
 			if(h==0){
-//				path.reset();
 				if(isEnableShape){
 					tmpSize = getSize();
 				}
 				
 				isEnableShape = false;
-				
-//				shape.setEnable(false);
 			}else{
-				/*
-				RectF rectF = shape.getShapeBounds();
-				if(this.getHeight()==0){
-					if(rectF.width() != 0 && rectF.height() !=0)
-						sy = (h * shape.getShapeParam().getPercentageH())/rectF.height();
-				}else{
-					sy = (h * shape.getShapeParam().getPercentageH())/this.getHeight();
-				}*/
-				
 				isNeedScale = true;
 				
-				if(!isEnableShape && h!=0){
-//					sx = w/tmpSize.x;
+				if(!isEnableShape && w!=0){
 					sy = h/tmpSize.y;
 					isEnableShape = true;
 //					shape.setEnable(isEnableShape);
 				}else {
-					sy =  (h * shape.getShapeParam().getPercentageH())/this.getHeight();
+//					sy =  (h * shape.getShapeParam().getPercentageH())/this.getHeight();
+					sy =  (h * shape.getShapeParam().getPercentageH())/shape.getShapeBounds().height();
 					if(!isEnableShape){
 						tmpSize.y = h;
 					}
@@ -377,8 +220,6 @@ public class ShapeLayer extends Layer{
 		
 		if(isNeedScale)
 			shape.sacle(sx, sy);
-		
-		super.setSize(w, h);
 	}
 	
 	@Override
@@ -674,6 +515,8 @@ public class ShapeLayer extends Layer{
 		public void setPath(Path path) {
 			// TODO Auto-generated method stub
 			this.polygon.set(path);
+			toPath();
+			calculateShapeBounds();
 		}
 		
 		@Override
