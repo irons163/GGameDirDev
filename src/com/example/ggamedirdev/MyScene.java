@@ -34,10 +34,6 @@ import com.example.ggamedirdev.listview.ProgressLayer;
 import com.example.ggamedirdev.listview.ScaleGuestureViewLayer;
 import com.example.ggamedirdev.listview.ScrollViewLayer;
 import com.example.ggamedirdev.listview.SelectViewLayer;
-import com.example.ggamedirdev.listview.ShapeLayer;
-import com.example.ggamedirdev.listview.ShapeLayer.CircleShape;
-import com.example.ggamedirdev.listview.ShapeLayer.PolygonShape;
-import com.example.ggamedirdev.listview.ShapeLayer.Shape.ShapeParam;
 import com.example.ggamedirdev.listview.SpinnerLayer;
 import com.example.ggamedirdev.listview.SwitchLayer;
 import com.example.ggamedirdev.listview.TabViewLayer;
@@ -52,7 +48,11 @@ import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.LabelLayer;
+import com.example.try_gameengine.framework.ShapeLayer;
 import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
+import com.example.try_gameengine.framework.ShapeLayer.CircleShape;
+import com.example.try_gameengine.framework.ShapeLayer.PolygonShape;
+import com.example.try_gameengine.framework.ShapeLayer.Shape.ShapeParam;
 import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.custome.Custom4D2FCommandType;
@@ -421,7 +421,7 @@ public class MyScene extends EasyScene{
 		
 		CheckboxLayer checkboxLayer2 = new CheckboxLayer();
 		checkboxLayer2.setSize(150, 100);
-		checkboxLayer2.setPosition(150, 100);
+		checkboxLayer2.setPosition(0, 100);
 		checkBoxGroup.addCheckBox(checkboxLayer2);
 //		
 		ShapeLayer shapeLayer = new ShapeLayer();
