@@ -9,17 +9,20 @@ import java.util.List;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.try_gameengine.center_notification.NSANotifiable;
+import com.example.try_gameengine.center_notification.NSANotification;
+import com.example.try_gameengine.center_notification.NSANotificationCenter;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.ILayerDelegate;
 import com.example.try_gameengine.framework.ILayerWithDelegate;
 import com.example.try_gameengine.framework.Layer;
 
-public class CheckBoxGroup extends Layer{
+public class CheckBoxGroup extends Layer implements NSANotifiable{
 	private List<ILayer> layers = new ArrayList<ILayer>();
 	private int currentCheckedNum;
 	private int minCheckedNum;
-	private int maxCheckedNum = Integer.MAX_VALUE;
+	private int maxCheckedNum = 1;
 	
 	private OnCheckedListener checkedListener = new OnCheckedListener() {
 		
@@ -59,6 +62,8 @@ public class CheckBoxGroup extends Layer{
 		
 //		CheckboxLayer proxyLayer = (CheckboxLayer) (new MyHandler3().QQ(checkboxLayer));
 		addChild(proxyLayer);		
+		
+		NSANotificationCenter.defaultCenter().addObserver(this, "EditClicked", null);
 	}
 	
 //	public void removeCheckBox(CheckboxLayer checkboxLayer){
@@ -166,7 +171,6 @@ public class CheckBoxGroup extends Layer{
 
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
-			// TODO Auto-generated method stub
 			Object result;
 			
 			if(method.getName().equals("onTouchEvent")){
@@ -174,26 +178,20 @@ public class CheckBoxGroup extends Layer{
 				MotionEvent event = (MotionEvent) args[0];
 				if((checkboxLayer.isChecked() && currentCheckedNum > minCheckedNum)
 					|| (!checkboxLayer.isChecked() && currentCheckedNum < maxCheckedNum)){
+					
 					result = method.invoke(checkboxLayer, args); 
 					
-				}
-				
-				return result;
-			}
-			
-			if(method.getName().equals("onTouched")){
-				result = method.invoke(checkboxLayer, args); 
-				
-				MotionEvent event = (MotionEvent) args[0];
-				if((event.getAction()==MotionEvent.ACTION_UP 
-						|| (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP)
-					&& checkboxLayer.isPressed()){
-//						&& checkboxLayer.isPressed()){
-					if(checkboxLayer.isChecked())
-						currentCheckedNum++;
-					else
-						currentCheckedNum--;
-					checkedListener.onCheckStatusChanged(checkboxLayer, checkboxLayer.isChecked());
+					if((Boolean)result && ((event.getAction()==MotionEvent.ACTION_UP 
+							|| (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP))
+						){
+//							&& checkboxLayer.isPressed()){
+						if(checkboxLayer.isChecked())
+							currentCheckedNum++;
+						else
+							currentCheckedNum--;
+						checkedListener.onCheckStatusChanged(checkboxLayer, checkboxLayer.isChecked());
+					}
+					
 				}
 				
 				return result;
@@ -207,6 +205,12 @@ public class CheckBoxGroup extends Layer{
 		public void dd(){
 			System.out.println("dd");
 		}
+	}
+
+	@Override
+	public void receiveNotification(NSANotification nsaNotification) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

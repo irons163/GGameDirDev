@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
+import com.example.try_gameengine.center_notification.NSANotification;
+import com.example.try_gameengine.center_notification.NSANotificationCenter;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.ILayer;
@@ -59,6 +61,13 @@ public class CheckboxLayer extends ButtonLayer{
 //			}
 //		});
 		
+		NSANotification nsaNotification = new NSANotification();
+		nsaNotification.setName("EditClicked");
+		nsaNotification.setObject(this);
+//		NSANotificationCenter.defaultCenter().postNotification(nsaNotification);
+	}
+	
+	void setCallBack(){
 		
 	}
 	
