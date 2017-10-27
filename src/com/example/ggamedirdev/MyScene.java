@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
 import com.example.ggamedirdev.calendar.CalanderLayer;
 import com.example.ggamedirdev.listview.AchievementSystemLayer;
@@ -47,6 +48,7 @@ import com.example.try_gameengine.framework.ButtonLayer;
 import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LabelLayer;
 import com.example.try_gameengine.framework.ShapeLayer;
 import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
@@ -100,6 +102,8 @@ public class MyScene extends EasyScene{
 	private TabViewLayer tabViewLayer;
 	private ViewPagerLayer viewPagerLayer;
 	private SpinnerLayer spinnerLayer;
+	
+	InputMethodManager input;
 	
 	MyInputConnection myInputConnection;
 	
@@ -685,6 +689,7 @@ public class MyScene extends EasyScene{
 					IGameModel gameModel) {
 				super(context, gameController, gameModel);
 				// TODO Auto-generated constructor stub
+//				input=(InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 			}			
 			
 		    @Override 
@@ -694,7 +699,26 @@ public class MyScene extends EasyScene{
 		    }
 		}		
 		
-		return gameview = new MyGameView(activity, gameController, gameModel);
+		gameview = new MyGameView(activity, gameController, gameModel);
+		
+		EditTextLayer editTextLayer = new EditTextLayer(gameview);
+		editTextLayer.setPosition(200, 800);
+		editTextLayer.setSize(250, 100);
+		editTextLayer.setBackgroundColor(Color.RED);
+		
+		addChild(editTextLayer);
+		
+		myInputConnection = editTextLayer.getMyInputConnection();
+		
+//		editTextLayer.setOnLayerClickListener(new OnLayerClickListener() {
+//			
+//			@Override
+//			public void onClick(ILayer layer) {
+//				input.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+//			}
+//		});
+		
+		return gameview;
 	}
 
 	@Override
@@ -814,12 +838,7 @@ public class MyScene extends EasyScene{
 		// TODO Auto-generated method stub
 		gameTimeUtil = new GameTimeUtil(1000);
 		
-		EditTextLayer editTextLayer = new EditTextLayer(gameview);
-		editTextLayer.setPosition(150, 600);
-		
-//		addChild(editTextLayer);
-		
-		myInputConnection = editTextLayer.getMyInputConnection();
+
 		
 //		getCamera().setLocation(gameview.getWidth()/2, gameview.getHeight()/2);
 		/*
@@ -843,13 +862,15 @@ public class MyScene extends EasyScene{
 	@Override
 	public void arrangeView(Activity activity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setActivityContentView(Activity activity) {
 		// TODO Auto-generated method stub
 		activity.setContentView(gameview);
+		
+
 	}
 
 	@Override

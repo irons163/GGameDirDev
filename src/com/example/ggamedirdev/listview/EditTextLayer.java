@@ -118,7 +118,6 @@ public class EditTextLayer extends Layer{
     private int mMinimum = 0;
     private int mMinMode = LINES;
     private BufferType mBufferType = BufferType.NORMAL;
-    private CharWrapper mCharWrapper;
     private Editable.Factory mEditableFactory = Editable.Factory.getInstance();
     private Spannable.Factory mSpannableFactory = Spannable.Factory.getInstance();
     private int mAutoLinkMask;
@@ -140,53 +139,7 @@ public class EditTextLayer extends Layer{
     	final int count = getChildCount();
         int width = getWidth();
         int height = getHeight();
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-        final int scrollX = getScrollX();
         mWidth = width;
-    }
-    
-    private int getScrollX() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int getPaddingBottom() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int getPaddingRight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int getPaddingTop() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int getPaddingLeft() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/**
-     * Returns whether the text is allowed to be wider than the View is.
-     * If false, the text will be wrapped to the width of the View.
-     *
-     * @attr ref android.R.styleable#TextView_scrollHorizontally
-     * @hide
-     */
-    public boolean getHorizontallyScrolling() {
-        return mHorizontallyScrolling;
-    }
-    
-    
-    public boolean isTextSelectable() {
-        return false;
     }
     
     /**
@@ -195,56 +148,6 @@ public class EditTextLayer extends Layer{
      */
     boolean isTextEditable() {
         return false;
-    }
-    
-    /**
-     * Test based on the <i>intrinsic</i> charateristics of the TextView.
-     * The text must be spannable and the movement method must allow for arbitary selection.
-     *
-     * See also {@link #canSelectText()}.
-     */
-    boolean textCanBeSelected() {
-        // prepareCursorController() relies on this method.
-        // If you change this condition, make sure prepareCursorController is called anywhere
-        // the value of this condition might be changed.
-        return false;
-    }
-    
-    /**
-     * Sets the autolink mask of the text.  See {@link
-     * android.text.util.Linkify#ALL Linkify.ALL} and peers for
-     * possible values.
-     *
-     * @attr ref android.R.styleable#TextView_autoLink
-     */
-    public final void setAutoLinkMask(int mask) {
-        mAutoLinkMask = mask;
-    }
-    
-    /**
-     * Sets the list of input filters that will be used if the buffer is
-     * Editable. Has no effect otherwise.
-     *
-     * @attr ref android.R.styleable#TextView_maxLength
-     */
-    public void setFilters(InputFilter[] filters) {
-        if (filters == null) {
-            throw new IllegalArgumentException();
-        }
-
-        mFilters = filters;
-
-        if (mText instanceof Editable) {
-            setFilters((Editable) mText, filters);
-        }
-    }
-    
-    /**
-     * Sets the list of input filters on the specified Editable,
-     * and includes mInput in the list if it is an InputFilter.
-     */
-    private void setFilters(Editable e, InputFilter[] filters) {
-        e.setFilters(filters);
     }
     
     private static boolean isMultilineInputType(int type) {
@@ -259,24 +162,14 @@ public class EditTextLayer extends Layer{
     public void setSingleLine(boolean singleLine) {
         // Could be used, but may break backward compatibility.
         // if (mSingleLine == singleLine) return;
-        setInputTypeSingleLine(singleLine);
         applySingleLine(singleLine, true, true);
     }
 
-    /**
-     * Adds or remove the EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE on the mInputType.
-     * @param singleLine
-     */
-    private void setInputTypeSingleLine(boolean singleLine) {
-        
-    }
-    
     private void applySingleLine(boolean singleLine, boolean applyTransformation,
             boolean changeMaxLines) {
         mSingleLine = singleLine;
         if (singleLine) {
             setLines(1);
-            setHorizontallyScrolling(true);
             if (applyTransformation) {
                 setTransformationMethod(SingleLineTransformationMethod.getInstance());
             }
@@ -284,7 +177,6 @@ public class EditTextLayer extends Layer{
             if (changeMaxLines) {
                 setMaxLines(Integer.MAX_VALUE);
             }
-            setHorizontallyScrolling(false);
             if (applyTransformation) {
                 setTransformationMethod(null);
             }
@@ -306,24 +198,6 @@ public class EditTextLayer extends Layer{
         requestLayout();
 //        invalidate();
     }
-    
-    /**
-     * Sets whether the text should be allowed to be wider than the
-     * View is.  If false, it will be wrapped to the width of the View.
-     *
-     * @attr ref android.R.styleable#TextView_scrollHorizontally
-     */
-    public void setHorizontallyScrolling(boolean whether) {
-        if (mHorizontallyScrolling != whether) {
-            mHorizontallyScrolling = whether;
-
-            if (mLayout != null) {
-//                nullLayouts();
-//                requestLayout();
-//                invalidate();
-            }
-        }
-    }
 	
 	public EditTextLayer(View view) {
 		// TODO Auto-generated constructor stub
@@ -343,26 +217,37 @@ public class EditTextLayer extends Layer{
 		
 		Bitmap frame;
 		
-		
 		final Layer layer = new Layer();
 		
-		ButtonLayer buttonLayer = new ButtonLayer("XX", 100, 50, false);
+		input=(InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		
+		ButtonLayer buttonLayer = new ButtonLayer("", 0, 0, false);
 		buttonLayer.setOnClickListener(new ButtonLayer.OnClickListener() {
 			
 			@Override
 			public void onClick(ButtonLayer buttonLayer) {
 				// TODO Auto-generated method stub
+				input.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 				layer.setBackgroundColor(Color.MAGENTA);
 			}
 		});
+		LayerParam param = buttonLayer.getLayerParam();
+		param.setPercentageW(1.0f);
+		param.setPercentageH(1.0f);
+		param.setEnabledPercentageSizeW(true);
+		param.setEnabledPercentageSizeH(true);
+		buttonLayer.setLayerParam(param);
 		
-		input=(InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		addChild(buttonLayer);
 		
 		view.setFocusable(true);
 		view.requestFocus();
 		input.showSoftInput(view, 0);
 		
 		myInputConnection = new MyInputConnection(view, false);
+		
+		mLayout = new LabelLayer("QQQ", 100, 50, false);
+		addChild(mLayout);
 	}
 	
     /**
@@ -521,27 +406,6 @@ public class EditTextLayer extends Layer{
         } else {
             input = TextKeyListener.getInstance();
         }
-        setRawInputType(type);
-        if (direct) {
-//            mEditor.mKeyListener = input;
-        } else {
-            setKeyListenerOnly(input);
-        }
-    }
-    
-    /**
-     * Directly change the content type integer of the text view, without
-     * modifying any other state.
-     * @see #setInputType(int)
-     * @see android.text.InputType
-     * @attr ref android.R.styleable#TextView_inputType
-     */
-    public void setRawInputType(int type) {
-
-    }
-    
-    private void setKeyListenerOnly(KeyListener input) {
-
     }
     
     private static boolean isPasswordInputType(int inputType) {
@@ -623,10 +487,6 @@ public class EditTextLayer extends Layer{
     */
    public void setText(CharSequence text, BufferType type) {
        setText(text, type, true, 0);
-
-       if (mCharWrapper != null) {
-           mCharWrapper.mChars = null;
-       }
    }
 
    private void setText(CharSequence text, BufferType type,
@@ -669,14 +529,11 @@ public class EditTextLayer extends Layer{
                needEditableForNotification) {
            Editable t = mEditableFactory.newEditable(text);
            text = t;
-           setFilters(t, mFilters);
 //           InputMethodManager imm = InputMethodManager.peekInstance();
            InputMethodManager imm = (InputMethodManager) StageManager.getCurrentStage().getSystemService(Context.INPUT_METHOD_SERVICE);
            if (imm != null) imm.restartInput(targetView);
        } else if (type == BufferType.SPANNABLE) {
            text = mSpannableFactory.newSpannable(text);
-       } else if (!(text instanceof CharWrapper)) {
-           text = TextUtils.stringOrSpannedString(text);
        }
 
        if (mAutoLinkMask != 0) {
@@ -876,27 +733,6 @@ public class EditTextLayer extends Layer{
        boolean selChanged = false;
        int newSelStart=-1, newSelEnd=-1;
 
-       if (what == Selection.SELECTION_END) {
-           selChanged = true;
-           newSelEnd = newStart;
-
-           if (oldStart >= 0 || newStart >= 0) {
-               invalidateCursor(Selection.getSelectionStart(buf), oldStart, newStart);
-               checkForResize();
-//               registerForPreDraw();
-           }
-       }
-
-       if (what == Selection.SELECTION_START) {
-           selChanged = true;
-           newSelStart = newStart;
-
-           if (oldStart >= 0 || newStart >= 0) {
-               int end = Selection.getSelectionEnd(buf);
-               invalidateCursor(end, oldStart, newStart);
-           }
-       }
-
        if (selChanged) {
            mHighlightPathBogus = true;
 
@@ -907,30 +743,9 @@ public class EditTextLayer extends Layer{
                if (newSelEnd < 0) {
                    newSelEnd = Selection.getSelectionEnd(buf);
                }
-               onSelectionChanged(newSelStart, newSelEnd);
            }
        }
-
-       if (what instanceof UpdateAppearance || what instanceof ParagraphStyle ||
-               what instanceof CharacterStyle) {
-
-//               invalidate();
-//               mHighlightPathBogus = true;
-//               checkForResize();
-       }
    }
-   
-   /**
-    * This method is called when the selection has changed, in case any
-    * subclasses would like to know.
-    *
-    * @param selStart The new selection start location.
-    * @param selEnd The new selection end location.
-    */
-   protected void onSelectionChanged(int selStart, int selEnd) {
-//       sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED);
-   }
-   
    
    /**
     * Check whether a change to the existing text layout requires a
@@ -970,25 +785,11 @@ public class EditTextLayer extends Layer{
        }
    }
    
-   void invalidateCursor() {
-       int where = getSelectionEnd();
-
-       invalidateCursor(where, where, where);
-   }
-   
    /**
     * Convenience for {@link Selection#getSelectionEnd}.
     */
    public int getSelectionEnd() {
        return Selection.getSelectionEnd(getText());
-   }
-
-   private void invalidateCursor(int a, int b, int c) {
-       if (a >= 0 || b >= 0 || c >= 0) {
-           int start = Math.min(Math.min(a, b), c);
-           int end = Math.max(Math.max(a, b), c);
-           invalidateRegion(start, end, true /* Also invalidates blinking cursor */);
-       }
    }
 
    int getLineTop(int lineStart){
@@ -1000,43 +801,6 @@ public class EditTextLayer extends Layer{
     */
    public final int getLineBottom(int line) {
        return getLineTop(line + 1);
-   }
-   
-   /**
-    * Invalidates the region of text enclosed between the start and end text offsets.
-    */
-   void invalidateRegion(int start, int end, boolean invalidateCursor) {
-               int lineStart = getLineForOffset(start);
-               int top = getLineTop(lineStart);
-
-               int lineEnd;
-
-               if (start == end)
-                   lineEnd = lineStart;
-               else
-                   lineEnd = getLineForOffset(end);
-
-               int bottom = getLineBottom(lineEnd);
-
-
-               final int compoundPaddingLeft = getCompoundPaddingLeft();
-               final int verticalPadding = getExtendedPaddingTop() + getVerticalOffset(true);
-
-               int left, right;
-               if (lineStart == lineEnd && !invalidateCursor) {
-                   left = (int) getLeft();
-                   right = (int) (getLeft() + getWidth());
-                   left += compoundPaddingLeft;
-                   right += compoundPaddingLeft;
-               } else {
-                   // Rectangle bounding box when the region spans several lines
-                   left = compoundPaddingLeft;
-                   right = getWidth() - getCompoundPaddingRight();
-               }
-
-//               invalidate(mScrollX + left, verticalPadding + top,
-//                       mScrollX + right, verticalPadding + bottom);
-//               invalidate();
    }
    
    int getVerticalOffset(boolean forceNormal) {
@@ -1223,10 +987,7 @@ public class EditTextLayer extends Layer{
        float clipRight = right - left - compoundPaddingRight + scrollX;
        float clipBottom = bottom - top + scrollY -
                ((scrollY == maxScrollY) ? 0 : extendedPaddingBottom);
-
        
-
-   	
        canvas.clipRect(clipLeft, clipTop, clipRight, clipBottom);
 
        int voffsetText = 0;
@@ -1238,74 +999,10 @@ public class EditTextLayer extends Layer{
 
        final int cursorOffsetVertical = voffsetCursor - voffsetText;
 
-       Path highlight = getUpdatedHighlightPath();
 //       layout.draw(canvas, highlight, mHighlightPaint, cursorOffsetVertical);
        layout.drawSelf(canvas, paint);
 
        canvas.restore();
-   }
-   
-   
-   
-   private Path getUpdatedHighlightPath() {
-       Path highlight = null;
-       Paint highlightPaint = mHighlightPaint;
-
-       final int selStart = getSelectionStart();
-       final int selEnd = getSelectionEnd();
-
-       return highlight;
-   }
-   
-   /**
-    * Fills in the specified Path with a representation of a highlight
-    * between the specified offsets.  This will often be a rectangle
-    * or a potentially discontinuous set of rectangles.  If the start
-    * and end are the same, the returned path is empty.
-    */
-   public void getSelectionPath(int start, int end, Path dest) {
-       dest.reset();
-
-       if (start == end)
-           return;
-
-       if (end < start) {
-           int temp = end;
-           end = start;
-           start = temp;
-       }
-
-       int startline = getLineForOffset(start);
-       int endline = getLineForOffset(end);
-
-       int top = getLineTop(startline);
-       int bottom = getLineBottom(endline);
-
-       if (startline == endline) {
-           addSelection(startline, start, end, top, bottom, dest);
-       } else {
-           final float width = mWidth;
-
-           addSelection(startline, start, getLineEnd(startline),
-                        top, getLineBottom(startline), dest);
-
-               dest.addRect(getLineRight(startline), top,
-                             width, getLineBottom(startline), Path.Direction.CW);
-
-           for (int i = startline + 1; i < endline; i++) {
-               top = getLineTop(i);
-               bottom = getLineBottom(i);
-               dest.addRect(0, top, width, bottom, Path.Direction.CW);
-           }
-
-           top = getLineTop(endline);
-           bottom = getLineBottom(endline);
-
-           addSelection(endline, getLineStart(endline), end,
-                        top, bottom, dest);
-
-               dest.addRect(0, top, getLineLeft(endline), bottom, Path.Direction.CW);
-       }
    }
    
    /**
@@ -1406,75 +1103,8 @@ public class EditTextLayer extends Layer{
 	   return 20;
    }
    
-	private void addSelection(int line, int start, int end, int top,
-			int bottom, Path dest) {
-		int linestart = getLineStart(line);
-		int lineend = getLineEnd(line);
-
-		if (lineend > linestart && mText.charAt(lineend - 1) == '\n')
-			lineend--;
-
-//		for (int i = 0; i < dirs.mDirections.length; i += 2) {
-//			int here = linestart + dirs.mDirections[i];
-//			int there = here + (dirs.mDirections[i + 1] & RUN_LENGTH_MASK);
-
-		int here = linestart;
-		int there = here;
-		
-			if (there > lineend)
-				there = lineend;
-
-			if (start <= there && end >= here) {
-				int st = Math.max(start, here);
-				int en = Math.min(end, there);
-
-				if (st != en) {
-					float h1 = getHorizontal(st, false, line, false /*
-																	 * not
-																	 * clamped
-																	 */);
-					float h2 = getHorizontal(en, true, line, false /*
-																	 * not
-																	 * clamped
-																	 */);
-
-					float left = Math.min(h1, h2);
-					float right = Math.max(h1, h2);
-
-					dest.addRect(left, top, right, bottom, Path.Direction.CW);
-				}
-			}
-//		}
-	}
-	
-    private float getHorizontal(int offset, boolean trailing, boolean clamped) {
-        int line = getLineForOffset(offset);
-
-        return getHorizontal(offset, trailing, line, clamped);
-    }
-
-    private float getHorizontal(int offset, boolean trailing, int line, boolean clamped) {
-        int start = getLineStart(line);
-        int end = getLineEnd(line);
-
-        int left = 0;
-        int right = mWidth;
-
-        return getLineStartPos(line, left, right);
-    }
-    
-    private int getLineStartPos(int line, int left, int right) {
-		int x;
-		x = left;
-		return x;
-    }
-   
    public final int getCurrentTextColor() {
        return mCurTextColor;
-   }
-   
-   public int getSelectionStart() {
-       return Selection.getSelectionStart(getText());
    }
    
    /**
@@ -1503,74 +1133,15 @@ public class EditTextLayer extends Layer{
        return bottom + (viewht - layoutht) / 2;
    }
    
-   
-   private static class CharWrapper implements CharSequence, GetChars {
-       private char[] mChars;
-       private int mStart, mLength;
-
-       public CharWrapper(char[] chars, int start, int len) {
-           mChars = chars;
-           mStart = start;
-           mLength = len;
-       }
-
-       /* package */ void set(char[] chars, int start, int len) {
-           mChars = chars;
-           mStart = start;
-           mLength = len;
-       }
-
-       public int length() {
-           return mLength;
-       }
-
-       public char charAt(int off) {
-           return mChars[off + mStart];
-       }
-
-       @Override
-       public String toString() {
-           return new String(mChars, mStart, mLength);
-       }
-
-       public CharSequence subSequence(int start, int end) {
-           if (start < 0 || end < 0 || start > mLength || end > mLength) {
-               throw new IndexOutOfBoundsException(start + ", " + end);
-           }
-
-           return new String(mChars, start + mStart, end - start);
-       }
-
-       public void getChars(int start, int end, char[] buf, int off) {
-           if (start < 0 || end < 0 || start > mLength || end > mLength) {
-               throw new IndexOutOfBoundsException(start + ", " + end);
-           }
-
-           System.arraycopy(mChars, start + mStart, buf, off, end - start);
-       }
-
-       public void drawText(Canvas c, int start, int end,
-                            float x, float y, Paint p) {
-           c.drawText(mChars, start + mStart, end - start, x, y, p);
-       }
-
-       public float measureText(int start, int end, Paint p) {
-           return p.measureText(mChars, start + mStart, end - start);
-       }
-
-       public int getTextWidths(int start, int end, float[] widths, Paint p) {
-           return p.getTextWidths(mChars, start + mStart, end - start, widths);
-       }
-   }
-   
    public class MyInputConnection extends BaseInputConnection{
 
        public MyInputConnection(View targetView, boolean fullEditor) { 
            super(targetView, fullEditor); 
-           // TODO Auto-generated constructor stub 
        } 
        public boolean commitText(CharSequence text, int newCursorPosition){ 
 //           inputString=inputString+(String) text; 
+    	   setText(mLayout.getText() + text);
+    	   mLayout.setText(mLayout.getText() + text);
            return true; 
        } 
        
