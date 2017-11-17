@@ -24,6 +24,7 @@ import com.example.ggamedirdev.listview.AchievementSystemLayer;
 import com.example.ggamedirdev.listview.BaseLayerAdapter;
 import com.example.ggamedirdev.listview.CheckBoxGroup;
 import com.example.ggamedirdev.listview.CheckboxLayer;
+import com.example.ggamedirdev.listview.CollectionLayer;
 import com.example.ggamedirdev.listview.ControllerBarLayer;
 import com.example.ggamedirdev.listview.EditTextLayer;
 import com.example.ggamedirdev.listview.EditTextLayer.MyInputConnection;
@@ -577,51 +578,51 @@ public class MyScene extends EasyScene{
 		dayPickerLayer.setBackgroundColor(Color.MAGENTA);
 		addChild(dayPickerLayer);
 		
-//		CollectionLayer collectionLayer = new CollectionLayer();
-//		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
-////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
-////		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
-//		collectionLayer.setWidth(200);
-////		listViewLayer.setHeight(850);
-//		collectionLayer.setHeight(500);
-//		collectionLayer.setAutoAdd(true);
-//		collectionLayer.setBackgroundColor(Color.CYAN);
-//		collectionLayer.setPosition(70, 70);
-//		
-//		layers = new ArrayList<ButtonLayer>();
-////		itemLayers = layers;
-//		layers.add(new ButtonLayer("1", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("2", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("3", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("4", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("5", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("6", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("7", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("8", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("9", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		layers.add(new ButtonLayer("100", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
-//		
-//
-//		y = 0;
-//		for(ButtonLayer itemlayer : layers){
-//			itemlayer.setY(y);
-//			itemlayer.setBackgroundColor(Color.RED);
-//			itemlayer.setTextColor(Color.WHITE);
-//			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
-////			addChild(layer);
-////			layer.setIsClipOutside(true);
-////			y += itemHeight;
-//			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(ButtonLayer buttonLayer) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			});
-//		}
-//		
-//		collectionLayer.setItems(layers);
+		CollectionLayer collectionLayer = new CollectionLayer();
+		collectionLayer.addScrollFlag(ScrollViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_WHEN_CONTENTS_HEIGHT_LESS_THAN_VIEW_HEIGHT);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_DOWN_WHEN_FIRST_ITEM_IN_THE_TOP);
+//		listViewLayer.addListViewFlag(ListViewLayer.SCROLL_LIMIT_FOR_CAN_SCOLL_UP_WHEN_LAST_ITEM_IN_THE_BOTTOM);
+		collectionLayer.setWidth(100);
+//		listViewLayer.setHeight(850);
+		collectionLayer.setHeight(500);
+		collectionLayer.setAutoAdd(true);
+		collectionLayer.setBackgroundColor(Color.CYAN);
+		collectionLayer.setPosition(280, 70);
+		
+		layers = new ArrayList<ButtonLayer>();
+//		itemLayers = layers;
+		layers.add(new ButtonLayer("1", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("2", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("3", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("4", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("5", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("6", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("7", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("8", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("9", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		layers.add(new ButtonLayer("100", 100, (int) collectionLayer.getItemContentLayerHeight(), false));
+		
+
+		y = 0;
+		for(ButtonLayer itemlayer : layers){
+			itemlayer.setY(y);
+			itemlayer.setBackgroundColor(Color.RED);
+			itemlayer.setTextColor(Color.WHITE);
+			itemlayer.setButtonColors(Color.RED, Color.BLUE, Color.YELLOW);
+//			addChild(layer);
+//			layer.setIsClipOutside(true);
+//			y += itemHeight;
+			itemlayer.setOnClickListener(new ButtonLayer.OnClickListener() {
+				
+				@Override
+				public void onClick(ButtonLayer buttonLayer) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
+		
+		collectionLayer.setItems(layers);
 		
 		
 		
